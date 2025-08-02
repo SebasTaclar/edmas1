@@ -257,8 +257,8 @@ onMounted(() => {
  position: fixed;
  top: 0;
  left: 0;
- right: 0;
- bottom: 0;
+ width: 100%;
+ height: 100%;
  background: rgba(0, 0, 0, 0.5);
  display: flex;
  align-items: center;
@@ -268,14 +268,14 @@ onMounted(() => {
 }
 
 .modal-container {
- background: var(--app-surface);
- border-radius: 16px;
- box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+ background: var(--app-bg-secondary);
+ border-radius: var(--border-radius-lg);
+ box-shadow: var(--app-shadow);
  width: 100%;
  max-width: 500px;
  max-height: 90vh;
  overflow: hidden;
- border: 1px solid var(--app-border);
+ border: 1px solid var(--app-border-color);
 }
 
 /* Header */
@@ -284,8 +284,8 @@ onMounted(() => {
  justify-content: space-between;
  align-items: center;
  padding: 1.5rem 2rem;
- border-bottom: 1px solid var(--app-border);
- background: var(--app-surface-elevated);
+ border-bottom: 1px solid var(--app-border-color);
+ background: var(--app-bg-secondary);
 }
 
 .modal-title {
