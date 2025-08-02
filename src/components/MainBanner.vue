@@ -14,17 +14,15 @@
     <!-- Contenido principal -->
     <div class="hero-container">
       <div class="hero-content">
-        <div class="hero-badge">
-          <span class="badge-text">Ed+1</span>
-        </div>
+
 
         <div class="hero-title">
-          <h1>ORGANIZA TORNEOS DE FÚTBOL</h1>
-          <h2>La plataforma líder para gestionar competiciones deportivas</h2>
+          <h1>{{ slides[currentSlide].title }}</h1>
+          <h2>Fútbol y Pasión en Bogotá</h2>
         </div>
 
         <div class="hero-description">
-          <p>Crea, gestiona y administra torneos de fútbol de manera profesional con herramientas avanzadas y una interfaz intuitiva.</p>
+          <p>{{ slides[currentSlide].description }}</p>
         </div>
 
         <div class="hero-actions">
@@ -66,7 +64,7 @@
         <polyline points="15,18 9,12 15,6"></polyline>
       </svg>
     </button>
-    <button class="carousel-control next" @click="nextSlide" aria-label="Siguiente imagen">
+    <button class="carousel-control next" @click="nextSlideManual" aria-label="Siguiente imagen">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="9,18 15,12 9,6"></polyline>
       </svg>
@@ -81,13 +79,23 @@ import { ref, onMounted, onUnmounted } from 'vue'
 const slides = ref([
   {
     image: '/images/mainCarrousel1.jpg',
-    title: 'Organiza Torneos Profesionales',
-    description: 'Gestiona competiciones deportivas con herramientas avanzadas'
+    title: 'Bienvenido a la Pasión del Fútbol',
+    description: 'Una página dedicada a los apasionados del fútbol, donde podrás vivir la emoción del deporte rey y conectarte con otros fanáticos.'
   },
   {
     image: '/images/mainCarrousel2.jpg',
-    title: 'Estadísticas en Tiempo Real',
-    description: 'Seguimiento completo de resultados y rendimiento'
+    title: 'Torneos, Sesiones de Fotos y Arbitraje',
+    description: 'Organizamos torneos profesionales, sesiones de fotos deportivas y contamos con arbitraje certificado para tus competiciones.'
+  },
+  {
+    image: '/images/mainCarrousel3.jpg',
+    title: 'Atención Médica Especializada',
+    description: 'Contamos con servicios de atención médica deportiva para garantizar la seguridad y bienestar de todos los participantes.'
+  },
+  {
+    image: '/images/mainCarrousel4.jpg',
+    title: '¡Te Esperamos en el Mejor Torneo de Bogotá!',
+    description: 'Participa en el torneo de fútbol más emocionante de Bogotá. ¡Ven y demuestra tu talento en las canchas!'
   }
 ])
 
@@ -99,12 +107,25 @@ const nextSlide = () => {
   currentSlide.value = (currentSlide.value + 1) % slides.value.length
 }
 
+const nextSlideManual = () => {
+  nextSlide()
+  // Reiniciar el temporizador cuando se cambie manualmente
+  stopAutoPlay()
+  startAutoPlay()
+}
+
 const prevSlide = () => {
   currentSlide.value = currentSlide.value === 0 ? slides.value.length - 1 : currentSlide.value - 1
+  // Reiniciar el temporizador cuando se cambie manualmente
+  stopAutoPlay()
+  startAutoPlay()
 }
 
 const goToSlide = (index: number) => {
   currentSlide.value = index
+  // Reiniciar el temporizador cuando se cambie manualmente
+  stopAutoPlay()
+  startAutoPlay()
 }
 
 // Auto-play del carrusel
@@ -197,6 +218,7 @@ onUnmounted(() => {
   color: var(--white);
   max-width: 800px;
   margin: 0 auto;
+  transition: opacity 0.5s ease-in-out;
 }
 
 .hero-badge {
@@ -219,6 +241,7 @@ onUnmounted(() => {
 
 .hero-title {
   margin-bottom: 2rem;
+  transition: all 0.5s ease-in-out;
 }
 
 .hero-title h1 {
@@ -231,6 +254,7 @@ onUnmounted(() => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  transition: all 0.5s ease-in-out;
 }
 
 .hero-title h2 {
@@ -238,11 +262,13 @@ onUnmounted(() => {
   font-weight: 400;
   color: rgba(255, 255, 255, 0.9);
   margin: 0;
+  transition: all 0.5s ease-in-out;
   line-height: 1.4;
 }
 
 .hero-description {
   margin-bottom: 2.5rem;
+  transition: all 0.5s ease-in-out;
 }
 
 .hero-description p {
@@ -251,6 +277,7 @@ onUnmounted(() => {
   color: rgba(255, 255, 255, 0.9);
   max-width: 600px;
   margin: 0 auto;
+  transition: all 0.5s ease-in-out;
 }
 
 .hero-actions {
@@ -343,14 +370,14 @@ onUnmounted(() => {
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 0.5rem;
+  gap: 0.8rem;
   z-index: 3;
 }
 
 .carousel-indicators button {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
+  width: 32px;
+  height: 8px;
+  border-radius: 4px;
   border: 2px solid var(--white);
   background: transparent;
   cursor: pointer;
@@ -359,7 +386,7 @@ onUnmounted(() => {
 
 .carousel-indicators button.active {
   background: var(--white);
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 
 .carousel-indicators button:hover {
