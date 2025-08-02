@@ -14,26 +14,6 @@ const router = createRouter({
       name: 'login',
       component: () => import('../views/Login.vue'),
     },
-    {
-      path: '/financiero',
-      name: 'financiero',
-      component: () => import('../views/Financiero.vue'),
-    },
-    {
-      path: '/supervisor',
-      name: 'supervisor',
-      component: () => import('../views/Supervisor.vue'),
-    },
-    {
-      path: '/producto',
-      name: 'producto',
-      component: () => import('../views/Producto.vue'),
-    },
-    {
-      path: '/recursos-humanos',
-      name: 'recursos-humanos',
-      component: () => import('../views/RecursosHumanos.vue'),
-    },
     // Catch-all route - debe ir al final
     {
       path: '/:pathMatch(.*)*',

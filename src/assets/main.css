@@ -1,34 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Brand Colors - Fodiservices */
-  --primary-color: #031633;
-  --primary-color-dark: #021122;
-  --primary-color-light: #042044;
-  --accent-color: #FFA500;
-  --accent-color-dark: #E6940A;
-  --accent-color-light: #FFB733;
+  /* Ed+1 Brand Colors */
+  --primary-blue: #005eb4;      /* Barra de módulos */
+  --secondary-blue: #3c9af0;    /* Azul claro */
+  --tertiary-blue: #004096;     /* Azul medio */
+  --dark-blue: #002b60;         /* Azul oscuro */
+  --white: #ffffff;             /* Blanco */
+
+  /* Legacy support for existing components */
+  --primary-color: var(--primary-blue);
+  --primary-color-dark: var(--dark-blue);
+  --primary-color-light: var(--secondary-blue);
+  --accent-color: var(--secondary-blue);
+  --accent-color-dark: var(--tertiary-blue);
+  --accent-color-light: var(--white);
 
   /* Brand Color with Alpha */
-  --primary-color-alpha-30: rgba(3, 22, 51, 0.3);
-  --primary-color-alpha-40: rgba(3, 22, 51, 0.4);
-  --primary-color-alpha-60: rgba(3, 22, 51, 0.6);
-  --primary-color-alpha-80: rgba(3, 22, 51, 0.8);
+  --primary-color-alpha-30: rgba(0, 94, 180, 0.3);
+  --primary-color-alpha-40: rgba(0, 94, 180, 0.4);
+  --primary-color-alpha-60: rgba(0, 94, 180, 0.6);
+  --primary-color-alpha-80: rgba(0, 94, 180, 0.8);
 
-  /* Accent Color with Alpha */
-  --accent-color-alpha-30: rgba(255, 165, 0, 0.3);
-  --accent-color-alpha-40: rgba(255, 165, 0, 0.4);
-  --accent-color-alpha-60: rgba(255, 165, 0, 0.6);
-  --accent-color-alpha-80: rgba(255, 165, 0, 0.8);
+  /* Secondary Color with Alpha */
+  --secondary-color-alpha-30: rgba(60, 154, 240, 0.3);
+  --secondary-color-alpha-40: rgba(60, 154, 240, 0.4);
+  --secondary-color-alpha-60: rgba(60, 154, 240, 0.6);
+  --secondary-color-alpha-80: rgba(60, 154, 240, 0.8);
 
   /* Gradients */
-  --primary-gradient: linear-gradient(135deg, #031633 0%, #021122 100%);
-  --primary-gradient-hover: linear-gradient(135deg, #021122 0%, #031633 100%);
-  --accent-gradient: linear-gradient(135deg, #FFA500 0%, #E6940A 100%);
-  --accent-gradient-hover: linear-gradient(135deg, #E6940A 0%, #FFA500 100%);
+  --primary-gradient: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+  --primary-gradient-hover: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-blue) 100%);
+  --secondary-gradient: linear-gradient(135deg, var(--secondary-blue) 0%, var(--primary-blue) 100%);
+  --secondary-gradient-hover: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
 
   /* Typography */
-  --font-family: 'Bricolage Grotesque', sans-serif;
+  --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* Dark Theme Variables (Default) */
