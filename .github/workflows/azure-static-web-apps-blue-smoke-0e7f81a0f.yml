@@ -35,7 +35,7 @@ jobs:
 
         run: npm run build
 
-      # Puedes agregar aquí tests si lo deseas
+      # Puedes agregar aquí tests si lo desea
 
       # - name: Run tests
 
