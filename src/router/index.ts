@@ -14,6 +14,26 @@ const router = createRouter({
       name: 'login',
       component: () => import('../views/Login.vue'),
     },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: () => import('../views/Admin.vue'),
+    },
+    {
+      path: '/admin/teams',
+      name: 'admin-teams',
+      component: () => import('../views/AdminTeams.vue'),
+    },
+    {
+      path: '/admin/tournaments',
+      name: 'admin-tournaments',
+      component: () => import('../views/AdminTournaments.vue'),
+    },
+    {
+      path: '/admin/categories',
+      name: 'admin-categories',
+      component: () => import('../views/AdminCategories.vue'),
+    },
     // Catch-all route - debe ir al final
     {
       path: '/:pathMatch(.*)*',

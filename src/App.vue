@@ -13,6 +13,7 @@
       <!-- Controles de navegación desktop -->
       <div class="nav-controls desktop-nav">
         <ThemeToggle />
+        <RouterLink v-if="isLoggedIn" class="link-navbar admin-link" to="/admin">Administración</RouterLink>
         <RouterLink v-if="!isLoggedIn" class="link-navbar access" to="/login">Acceder</RouterLink>
         <span v-if="isLoggedIn" class="link-navbar access user-badge">
           {{ username }}
@@ -26,6 +27,9 @@
           <!-- Controles mobile -->
           <div class="mobile-controls">
             <ThemeToggle />
+            <RouterLink v-if="isLoggedIn" class="mobile-link admin-link" to="/admin" @click="closeMobileMenu">
+              Administración
+            </RouterLink>
             <RouterLink v-if="!isLoggedIn" class="mobile-link access" to="/login" @click="closeMobileMenu">
               Acceder
             </RouterLink>
@@ -189,6 +193,19 @@ watch(route, () => {
   border-color: #dc3545;
 }
 
+.admin-link {
+  background-color: rgba(76, 175, 80, 0.1);
+  border: 2px solid #4caf50;
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.admin-link:hover {
+  background-color: #4caf50;
+  color: var(--white);
+  border-color: #4caf50;
+}
+
 @media (max-width: 768px) {
   .navbar {
     height: 70px;
@@ -309,6 +326,21 @@ watch(route, () => {
     text-align: center;
     padding: 1rem;
     font-size: 1.1rem;
+  }
+
+  .admin-link {
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+    font-size: 1.1rem;
+    background-color: rgba(76, 175, 80, 0.1);
+    border: 2px solid #4caf50;
+    color: #4caf50;
+  }
+
+  .admin-link:hover {
+    background-color: #4caf50;
+    color: var(--white);
   }
 }
 </style>
