@@ -3,6 +3,12 @@
     <section class="section">
       <MainBanner />
     </section>
+    <section id="ongoing_tournaments" class="section offset">
+      <OngoingTournaments />
+    </section>
+    <section id="our_work" class="section offset">
+      <our_work />
+    </section>
     <section class="section offset">
       <TopPlayers />
     </section>
@@ -25,6 +31,8 @@
 import MainBanner from '@/components/MainBanner.vue';
 import TopPlayers from '@/components/TopPlayers.vue';
 import Offerings from '@/components/Offerings.vue';
+import OngoingTournaments from '@/components/OngoingTournaments.vue';
+import our_work from '@/components/our_work.vue';
 import About from '@/components/About.vue';
 import Contact from '@/components/Contact.vue';
 import Footer_ from "@/components/Footer_.vue";
