@@ -20,7 +20,7 @@ export interface TeamStats {
 }
 
 export interface Category {
-  id: TeamCategory
+  id: string
   name: string
   description: string
 }
