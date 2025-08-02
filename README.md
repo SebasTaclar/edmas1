@@ -1,4 +1,4 @@
-# Ed+1 - Plataforma de Torneos de Fútbol
+# Ed90+1 - Plataforma de Torneos de Fútbol
 
 Una aplicación web responsive diseñada para organizar y gestionar torneos de fútbol de manera profesional y eficiente.
 
@@ -65,4 +65,4 @@ Este proyecto es privado y propietario.
 
 ---
 
-**Ed+1** - Llevando la organización de torneos de fútbol al siguiente nivel.
+**Ed90+1** - Llevando la organización de torneos de fútbol al siguiente nivel.

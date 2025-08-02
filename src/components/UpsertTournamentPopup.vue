@@ -10,7 +10,7 @@
     <div class="form-row">
      <div class="input-group">
       <label for="tournamentName">Nombre del Torneo *</label>
-      <input type="text" id="tournamentName" v-model="formData.name" required placeholder="Ej: Copa Ed+1 Verano 2025"
+      <input type="text" id="tournamentName" v-model="formData.name" required placeholder="Ej: Copa Ed90+1 Verano 2025"
        class="form-input" :class="{ 'error': errors.name }" @input="clearError('name')" />
       <span v-if="errors.name" class="error-message">{{ errors.name }}</span>
      </div>

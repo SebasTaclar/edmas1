@@ -4,7 +4,7 @@
    <!-- Header de Administración -->
    <div class="admin-header">
     <h1>Administración de Torneos</h1>
-    <p>Gestiona los torneos del sistema Ed+1</p>
+    <p>Gestiona los torneos del sistema Ed90+1</p>
    </div>
 
    <!-- Botón para crear nuevo torneo -->

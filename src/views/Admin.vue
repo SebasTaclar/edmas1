@@ -2,7 +2,7 @@
  <div class="admin-container">
   <div class="page-header">
    <h1>🛠️ MÓDULO ADMINISTRACIÓN</h1>
-   <p>Gestión completa del sistema Ed+1 - Equipos y Torneos</p>
+   <p>Gestión completa del sistema Ed90+1 - Equipos y Torneos</p>
   </div>
 
   <div class="dashboard-grid">
@@ -99,7 +99,7 @@
        <div class="activity-icon">🏆</div>
        <div class="activity-content">
         <h4>Torneo Creado</h4>
-        <p>Se creó el torneo "Copa Ed+1 Verano 2025"</p>
+        <p>Se creó el torneo "Copa Ed90+1 Verano 2025"</p>
         <span class="activity-time">Ayer</span>
        </div>
       </div>
