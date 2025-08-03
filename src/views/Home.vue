@@ -3,17 +3,23 @@
     <section class="section">
       <MainBanner />
     </section>
-    <section class="section offset">
+        <section class="section offset">
       <TopPlayers />
     </section>
-    <section id="offerings" class="section offset">
-      <Offerings />
+    <section id="ongoing_tournaments" class="section offset">
+      <OngoingTournaments />
+    </section>
+    <section id="our_work" class="section offset">
+      <our_work />
     </section>
     <section class="section offset">
       <About />
     </section>
     <section class="section offset">
       <Contact />
+    </section>
+    <section class="section offset">
+      <Sponsors />
     </section>
     <section class="section offset">
       <Footer_ />
@@ -24,9 +30,11 @@
 <script setup lang="ts">
 import MainBanner from '@/components/MainBanner.vue';
 import TopPlayers from '@/components/TopPlayers.vue';
-import Offerings from '@/components/Offerings.vue';
+import OngoingTournaments from '@/components/OngoingTournaments.vue';
+import our_work from '@/components/our_work.vue';
 import About from '@/components/About.vue';
 import Contact from '@/components/Contact.vue';
+import Sponsors from '@/components/Sponsors.vue';
 import Footer_ from "@/components/Footer_.vue";
 
 
