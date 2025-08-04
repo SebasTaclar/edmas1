@@ -1,47 +1,28 @@
+// Tipos para la API de torneos
+export interface TournamentCategory {
+  id: number
+  tournamentId: number
+  categoryId: number
+  category: {
+    id: number
+    name: string
+    description: string
+    createdAt: string
+    updatedAt: string
+  }
+}
+
 export interface Tournament {
-  id: string
+  id: number
   name: string
   description: string
   startDate: string
   endDate: string
-  status: TournamentStatus
-  categories: string[] // IDs de categorías permitidas
-  maxTeams?: number
-  currentTeams: number
-  registrationDeadline: string
+  maxTeams: number
   isActive: boolean
   createdAt: string
-}
-
-export type TournamentStatus =
-  | 'draft'
-  | 'registration_open'
-  | 'registration_closed'
-  | 'in_progress'
-  | 'completed'
-  | 'cancelled'
-
-export interface TournamentRegistration {
-  id: string
-  tournamentId: string
-  teamId: string
-  registrationDate: string
-  status: RegistrationStatus
-  isActive: boolean
-}
-
-export type RegistrationStatus = 'pending' | 'confirmed' | 'rejected' | 'cancelled'
-
-export interface TournamentsDatabase {
-  tournaments: Tournament[]
-  registrations: TournamentRegistration[]
-  metadata: {
-    lastTournamentId: number
-    lastRegistrationId: number
-    totalTournaments: number
-    totalRegistrations: number
-    lastUpdated: string
-  }
+  updatedAt: string
+  tournamentCategories: TournamentCategory[]
 }
 
 export interface CreateTournamentRequest {
@@ -49,25 +30,21 @@ export interface CreateTournamentRequest {
   description: string
   startDate: string
   endDate: string
-  categories: string[]
-  maxTeams?: number
-  registrationDeadline?: string
-  isActive?: boolean
+  maxTeams: number
+  categoryIds: number[] // Array de IDs de categorías
 }
 
 export interface CreateTournamentResponse {
-  success: boolean
-  tournament?: Tournament
-  error?: string
+  id: number
+  name: string
+  description: string
+  startDate: string
+  endDate: string
+  maxTeams: number
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+  tournamentCategories: TournamentCategory[]
 }
 
-export interface TournamentRegistrationRequest {
-  tournamentId: string
-  teamId: string
-}
-
-export interface TournamentRegistrationResponse {
-  success: boolean
-  registration?: TournamentRegistration
-  error?: string
-}
+export interface GetTournamentsResponse extends Array<Tournament> {}

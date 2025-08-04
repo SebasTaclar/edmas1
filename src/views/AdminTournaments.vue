@@ -43,7 +43,7 @@
       <div class="tournaments-list-section">
         <div class="section-header">
           <h2>Torneos Registrados</h2>
-          <div class="tournaments-count">{{ tournaments.length }} torneos</div>
+          <div class="tournaments-count">{{ tournaments?.length || 0 }} torneos</div>
         </div>
 
         <!-- Tabla de torneos -->
@@ -67,9 +67,13 @@
                 <td class="description">{{ tournament.description }}</td>
                 <td class="categories">
                   <div class="categories-list">
-                    <span v-for="categoryId in tournament.categories" :key="categoryId" class="category-badge"
-                      :class="categoryId">
-                      {{ getCategoryName(categoryId) }}
+                    <span v-for="tournamentCategory in tournament.tournamentCategories" :key="tournamentCategory.id"
+                      class="category-badge">
+                      {{ tournamentCategory.category.name }}
+                    </span>
+                    <span v-if="!tournament.tournamentCategories || tournament.tournamentCategories.length === 0"
+                      class="no-categories">
+                      Sin categorías
                     </span>
                   </div>
                 </td>
@@ -107,11 +111,11 @@
             </tbody>
           </table>
 
-          <div v-if="filteredTournaments.length === 0" class="no-tournaments">
+          <div v-if="(filteredTournaments?.length || 0) === 0" class="no-tournaments">
             <div class="no-tournaments-icon">🏆</div>
             <p>No hay torneos registrados {{ selectedStatusFilter
               || selectedCategoryFilter ? ' con los filtros aplicados' : ''
-            }}</p>
+              }}</p>
           </div>
         </div>
       </div>
@@ -129,8 +133,7 @@
 import { ref, onMounted, computed } from 'vue'
 import type { Tournament } from '@/types/TournamentType'
 import type { Category } from '@/types/CategoryType'
-import tournamentService from '@/utils/tournamentService'
-import teamService from '@/utils/teamService'
+import { useTournaments } from '@/composables/useTournaments'
 import { useCategories } from '@/composables/useCategories'
 import Spinner from '@/components/Spinner.vue'
 import UpsertTournamentPopup from '@/components/UpsertTournamentPopup.vue'
@@ -140,7 +143,7 @@ defineOptions({
 })
 
 // Estado de la aplicación
-const tournaments = ref<Tournament[]>([])
+const { tournaments, loadTournaments, deleteTournament } = useTournaments()
 const { categories, loadCategories } = useCategories()
 const loading = ref(false)
 const selectedStatusFilter = ref<string>('')
@@ -153,7 +156,7 @@ const modalMode = ref<'create' | 'edit'>('create')
 
 // Computed properties
 const filteredTournaments = computed(() => {
-  let filtered = tournaments.value
+  let filtered = tournaments.value || []
 
   // Filtrar por estado
   if (selectedStatusFilter.value) {
@@ -167,7 +170,9 @@ const filteredTournaments = computed(() => {
   // Filtrar por categoría
   if (selectedCategoryFilter.value) {
     filtered = filtered.filter(tournament =>
-      tournament.categories.includes(selectedCategoryFilter.value)
+      tournament.tournamentCategories?.some(tc =>
+        tc.categoryId.toString() === selectedCategoryFilter.value
+      )
     )
   }
 
@@ -175,9 +180,9 @@ const filteredTournaments = computed(() => {
 })
 
 // Funciones
-const loadData = () => {
-  tournaments.value = tournamentService.getAllTournaments(true) // Incluir inactivos para admin
-  loadCategories()
+const loadData = async () => {
+  await loadTournaments()
+  await loadCategories()
 }
 
 const openCreateModal = () => {
@@ -197,37 +202,41 @@ const closeUpsertModal = () => {
   selectedTournament.value = null
 }
 
-const handleTournamentSave = () => {
-  loadData() // Recargar la lista
+const handleTournamentSave = async () => {
+  await loadData() // Recargar la lista
   closeUpsertModal()
 }
 
-const toggleTournamentStatus = (tournament: Tournament) => {
-  loading.value = true
-
-  try {
-    const success = tournament.isActive
-      ? tournamentService.deactivateTournament(tournament.id)
-      : tournamentService.activateTournament(tournament.id)
-
-    if (success) {
-      loadData() // Recargar datos
-    }
-  } catch (error) {
-    console.error('Error al cambiar estado del torneo:', error)
-  } finally {
-    loading.value = false
-  }
+// TODO: Implementar cuando los endpoints estén disponibles
+const toggleTournamentStatus = async (tournament: Tournament) => {
+  console.log('Toggle status para:', tournament.name, '- Funcionalidad no implementada aún')
+  // loading.value = true
+  // try {
+  //   const result = tournament.isActive
+  //     ? await deactivateTournament(tournament.id)
+  //     : await activateTournament(tournament.id)
+  //
+  //   if (result.success) {
+  //     await loadData()
+  //   }
+  // } catch (error) {
+  //   console.error('Error al cambiar estado del torneo:', error)
+  // } finally {
+  //   loading.value = false
+  // }
 }
 
-const getCategoryName = (categoryId: string): string => {
-  const category = categories.value.find((cat: Category) => cat.id.toString() === categoryId);
-  return category?.name || categoryId;
+// Función para obtener nombres de categoría a partir de los datos del torneo
+const getCategoriesNames = (tournament: Tournament): string => {
+  return tournament.tournamentCategories
+    ?.map(tc => tc.category.name)
+    .join(', ') || 'Sin categorías';
 };
 
-const getRegisteredTeamsCount = (tournamentId: string): number => {
-  const teams = teamService.getAllTeams()
-  return teams.filter(team => team.tournaments.includes(tournamentId)).length
+// TODO: Implementar cuando tengamos el servicio real de equipos
+const getRegisteredTeamsCount = (tournamentId: number): number => {
+  // Por ahora retornar 0 hasta que implementemos el servicio real de equipos
+  return 0;
 }
 
 const formatDate = (dateString: string): string => {
@@ -239,8 +248,8 @@ const formatDate = (dateString: string): string => {
   })
 }
 
-onMounted(() => {
-  loadData()
+onMounted(async () => {
+  await loadData()
 })
 </script>
 

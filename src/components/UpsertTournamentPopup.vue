@@ -50,7 +50,7 @@
               </div>
               <div v-else class="categories-checkboxes">
                 <label v-for="category in categories" :key="category.id" class="category-checkbox">
-                  <input type="checkbox" :value="category.id" v-model="formData.categories"
+                  <input type="checkbox" :value="category.id" v-model="formData.categoryIds"
                     @change="clearError('categories')" />
                   <span class="checkbox-text">
                     <strong>{{ category.name }}</strong>
@@ -68,16 +68,8 @@
             <label for="maxTeams">Máximo de Equipos</label>
             <input type="number" id="maxTeams" v-model.number="formData.maxTeams" min="2" max="64" placeholder="16"
               class="form-input" :class="{ 'error': errors.maxTeams }" @input="clearError('maxTeams')" />
-            <small class="input-help">Déjalo vacío para sin límite</small>
+            <small class="input-help">Número máximo de equipos permitidos</small>
             <span v-if="errors.maxTeams" class="error-message">{{ errors.maxTeams }}</span>
-          </div>
-
-          <div class="input-group">
-            <label class="checkbox-label">
-              <input type="checkbox" v-model="formData.isActive" class="form-checkbox" />
-              <span class="checkbox-text">Torneo activo</span>
-            </label>
-            <small class="input-help">Los equipos pueden registrarse solo en torneos activos</small>
           </div>
         </div>
 
@@ -104,7 +96,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import type { Tournament, CreateTournamentRequest } from '@/types/TournamentType'
-import tournamentService from '@/utils/tournamentService'
+import { useTournaments } from '@/composables/useTournaments'
 import { useCategories } from '@/composables/useCategories'
 import Spinner from '@/components/Spinner.vue'
 import ConfirmationModal from '@/components/ConfirmationModal.vue'
@@ -122,13 +114,13 @@ const formData = ref<CreateTournamentRequest>({
   description: '',
   startDate: '',
   endDate: '',
-  categories: [],
-  maxTeams: undefined,
-  isActive: true
+  categoryIds: [], // Cambiado de categories a categoryIds
+  maxTeams: 0
 })
 
 // Estado de la aplicación
 const { categories, loadCategories } = useCategories()
+const { createTournament, updateTournament } = useTournaments()
 const loading = ref(false)
 const errors = ref<Record<string, string>>({})
 const showConfirmation = ref(false)
@@ -143,14 +135,16 @@ const hasChanges = computed(() => {
 
 const initializeForm = () => {
   if (mode === 'edit' && tournamentData) {
+    // Extraer los IDs de categorías de la estructura anidada
+    const categoryIds = tournamentData.tournamentCategories?.map(tc => tc.categoryId) || [];
+
     formData.value = {
       name: tournamentData.name,
       description: tournamentData.description,
-      startDate: tournamentData.startDate,
-      endDate: tournamentData.endDate,
-      categories: [...tournamentData.categories],
-      maxTeams: tournamentData.maxTeams,
-      isActive: tournamentData.isActive
+      startDate: tournamentData.startDate.split('T')[0], // Solo la fecha
+      endDate: tournamentData.endDate.split('T')[0], // Solo la fecha
+      categoryIds: categoryIds,
+      maxTeams: tournamentData.maxTeams || 16
     }
   } else {
     // Valores por defecto para crear
@@ -163,9 +157,8 @@ const initializeForm = () => {
       description: '',
       startDate: today.toISOString().split('T')[0],
       endDate: nextWeek.toISOString().split('T')[0],
-      categories: [],
-      maxTeams: undefined,
-      isActive: true
+      categoryIds: [],
+      maxTeams: 16 // Valor por defecto
     }
   }
 
@@ -202,11 +195,11 @@ const validateForm = (): boolean => {
     }
   }
 
-  if (formData.value.categories.length === 0) {
+  if (formData.value.categoryIds.length === 0) {
     errors.value.categories = 'Debe seleccionar al menos una categoría'
   }
 
-  if (formData.value.maxTeams !== undefined && formData.value.maxTeams < 2) {
+  if (formData.value.maxTeams < 2) {
     errors.value.maxTeams = 'El máximo de equipos debe ser al menos 2'
   }
 
@@ -224,15 +217,29 @@ const handleSubmit = async () => {
     let result
 
     if (mode === 'create') {
-      result = tournamentService.createTournament(formData.value)
+      // Convertir las fechas al formato ISO completo
+      const formDataForApi = {
+        ...formData.value,
+        startDate: new Date(formData.value.startDate + 'T09:00:00.000Z').toISOString(),
+        endDate: new Date(formData.value.endDate + 'T18:00:00.000Z').toISOString()
+      };
+
+      result = await createTournament(formDataForApi)
     } else {
-      result = tournamentService.updateTournament(tournamentData!.id, formData.value)
+      // Para actualización (cuando esté implementado)
+      const formDataForApi = {
+        ...formData.value,
+        startDate: new Date(formData.value.startDate + 'T09:00:00.000Z').toISOString(),
+        endDate: new Date(formData.value.endDate + 'T18:00:00.000Z').toISOString()
+      };
+
+      result = await updateTournament(tournamentData!.id, formDataForApi)
     }
 
     if (result.success) {
       emit('save')
     } else {
-      errors.value.general = result.error || 'Error al guardar el torneo'
+      errors.value.general = result.message || 'Error al guardar el torneo'
     }
   } catch (error) {
     errors.value.general = 'Error interno del sistema'

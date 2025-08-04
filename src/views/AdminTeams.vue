@@ -196,7 +196,6 @@ import type { Team, CreateTeamRequest } from '@/types/TeamType'
 import type { Category } from '@/types/CategoryType'
 import type { Tournament } from '@/types/TournamentType'
 import teamService from '@/utils/teamService'
-import tournamentService from '@/utils/tournamentService'
 import { useCategories } from '@/composables/useCategories'
 import Spinner from '@/components/Spinner.vue'
 
@@ -214,11 +213,13 @@ const newTeam = ref<CreateTeamRequest>({
 // Estado de la aplicación
 const teams = ref<Team[]>([])
 const { categories, loadCategories } = useCategories()
-const tournaments = ref<Tournament[]>([])
 const loading = ref(false)
 const errors = ref<Record<string, string>>({})
 const selectedCategoryFilter = ref<string>('')
 const visiblePasswords = ref<Record<string, boolean>>({})
+
+// TODO: Implementar torneos cuando estén disponibles
+// const tournaments = ref<Tournament[]>([])
 
 // Modal de éxito
 const showSuccessModal = ref(false)
@@ -232,20 +233,26 @@ const filteredTeams = computed(() => {
   return teams.value.filter(team => team.category === selectedCategoryFilter.value)
 })
 
-const availableTournaments = computed(() => {
-  if (!newTeam.value.category) {
-    return tournaments.value
-  }
-  return tournaments.value.filter(tournament =>
-    tournament.categories.includes(newTeam.value.category)
-  )
+// TODO: Implementar cuando el servicio de torneos esté disponible
+const availableTournaments = computed((): Tournament[] => {
+  // Por ahora retornar array vacío hasta que implementemos torneos
+  return []
+  // if (!newTeam.value.category) {
+  //   return tournaments.value
+  // }
+  // return tournaments.value.filter(tournament =>
+  //   tournament.tournamentCategories?.some(tc =>
+  //     tc.categoryId.toString() === newTeam.value.category
+  //   )
+  // )
 })
 
 // Funciones
 const loadData = () => {
   teams.value = teamService.getAllTeams()
   loadCategories()
-  tournaments.value = tournamentService.getAllTournaments()
+  // TODO: Cargar torneos cuando el servicio esté disponible
+  // tournaments.value = tournamentService.getAllTournaments()
 }
 
 const clearError = (field: string) => {
@@ -303,8 +310,10 @@ const getCategoryName = (categoryId: string): string => {
 };
 
 const getTournamentName = (tournamentId: string): string => {
-  const tournament = tournaments.value.find(t => t.id === tournamentId)
-  return tournament?.name || tournamentId
+  // TODO: Implementar cuando el servicio de torneos esté disponible
+  return tournamentId; // Por ahora solo retornar el ID
+  // const tournament = tournaments.value.find(t => t.id === tournamentId)
+  // return tournament?.name || tournamentId
 }
 
 const formatDate = (dateString: string): string => {

@@ -123,8 +123,8 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCategories } from '@/composables/useCategories';
+import { useTournaments } from '@/composables/useTournaments';
 import teamService from '@/utils/teamService';
-import tournamentService from '@/utils/tournamentService';
 
 defineOptions({
   name: 'AdminView',
@@ -132,29 +132,29 @@ defineOptions({
 
 const router = useRouter();
 
-// Usar el composable de categorías
+// Usar los composables
 const { categories, loadCategories } = useCategories();
+const { tournaments, loadTournaments } = useTournaments();
 
 // Estado reactivo
 const teams = ref<any[]>([]);
-const tournaments = ref<any[]>([]);
 
 // Computed properties para estadísticas
-const teamsCount = computed(() => teams.value.length);
-const tournamentsCount = computed(() => tournaments.value.length);
-const activeTeamsCount = computed(() => teams.value.filter(team => team.isActive).length);
-const activeTournamentsCount = computed(() => tournaments.value.filter(tournament => tournament.isActive).length);
-const categoriesCount = computed(() => categories.value.length);
+const teamsCount = computed(() => teams.value?.length || 0);
+const tournamentsCount = computed(() => tournaments.value?.length || 0);
+const activeTeamsCount = computed(() => teams.value?.filter(team => team.isActive)?.length || 0);
+const activeTournamentsCount = computed(() => tournaments.value?.filter(tournament => tournament.isActive)?.length || 0);
+const categoriesCount = computed(() => categories.value?.length || 0);
 
 // Cálculo simple de registros totales (equipos * torneos promedio)
 const totalRegistrations = computed(() => {
-  return teams.value.reduce((total, team) => total + (team.tournaments?.length || 0), 0);
+  return teams.value?.reduce((total, team) => total + (team.tournaments?.length || 0), 0) || 0;
 });
 
 // Funciones
 const loadData = async () => {
   teams.value = teamService.getAllTeams();
-  tournaments.value = tournamentService.getAllTournaments(true); // Incluir inactivos
+  await loadTournaments(); // Cargar torneos desde la API
   await loadCategories(); // Cargar categorías desde la API
 };
 
