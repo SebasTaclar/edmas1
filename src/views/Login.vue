@@ -89,7 +89,8 @@ const clearCustomValidityMessage = (event: Event) => {
 };
 </script>
 
-<style scoped>
+<style>
+/* Modo claro (día) - por defecto */
 .login-main {
   display: flex;
   justify-content: center;
@@ -97,7 +98,7 @@ const clearCustomValidityMessage = (event: Event) => {
   min-height: 100vh;
   width: 100%;
   padding: 2rem;
-  background: var(--bg-gradient-primary);
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%);
   position: relative;
   transition: all 0.3s ease;
 }
@@ -109,17 +110,17 @@ const clearCustomValidityMessage = (event: Event) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: var(--bg-gradient-accent);
+  background: linear-gradient(45deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 197, 253, 0.1) 100%);
   pointer-events: none;
 }
 
 .login-container {
-  background: var(--bg-secondary);
-  backdrop-filter: var(--backdrop-blur);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 3rem;
-  border: 1px solid var(--border-primary);
-  box-shadow: 0 8px 32px var(--shadow-primary);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   text-align: center;
   width: 100%;
   max-width: 400px;
@@ -135,19 +136,19 @@ const clearCustomValidityMessage = (event: Event) => {
 .login-header h1 {
   font-size: 2.5rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #1e293b;
   margin: 0 0 0.5rem 0;
-  text-shadow: 0 2px 4px var(--shadow-primary);
-  font-family: var(--font-primary);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: var(--font-family);
 }
 
 .login-header h2 {
   font-size: 1.1rem;
-  color: var(--text-secondary);
+  color: #64748b;
   margin: 0;
   font-weight: 400;
   opacity: 0.9;
-  font-family: var(--font-primary);
+  font-family: var(--font-family);
 }
 
 .login-form {
@@ -164,44 +165,44 @@ const clearCustomValidityMessage = (event: Event) => {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #374151;
   font-size: 0.95rem;
-  font-family: var(--font-primary);
+  font-family: var(--font-family);
 }
 
 .form-input {
   width: 100%;
   padding: 16px 20px;
-  background: var(--bg-tertiary);
-  border: 2px solid var(--border-primary);
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid rgba(59, 130, 246, 0.2);
   border-radius: 12px;
-  color: var(--text-primary);
+  color: #1e293b;
   font-size: 1rem;
-  font-family: var(--font-primary);
-  backdrop-filter: var(--backdrop-blur);
+  font-family: var(--font-family);
+  backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
 .form-input::placeholder {
-  color: var(--text-muted);
+  color: #9ca3af;
 }
 
 .form-input:focus {
   outline: none;
-  border-color: var(--primary-color-alpha-60);
-  background: var(--bg-secondary);
-  box-shadow: 0 0 20px var(--primary-color-alpha-30);
+  border-color: #3b82f6;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
   transform: translateY(-1px);
 }
 
 .form-input:invalid {
-  border-color: rgba(239, 68, 68, 0.6);
+  border-color: rgba(59, 130, 246, 0.2);
 }
 
 .btn-primary {
   width: 100%;
-  background: var(--primary-gradient);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   border: none;
   border-radius: 12px;
@@ -210,21 +211,21 @@ const clearCustomValidityMessage = (event: Event) => {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px var(--primary-color-alpha-30);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
   backdrop-filter: blur(10px);
-  font-family: var(--font-primary);
+  font-family: var(--font-family);
   margin-top: 1rem;
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px var(--primary-color-alpha-40);
-  background: var(--primary-gradient-hover);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
 }
 
 .btn-primary:disabled {
-  background: var(--bg-tertiary);
-  color: var(--text-disabled);
+  background: rgba(156, 163, 175, 0.5);
+  color: rgba(107, 114, 128, 0.8);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -232,6 +233,197 @@ const clearCustomValidityMessage = (event: Event) => {
 
 .btn-primary:active:not(:disabled) {
   transform: translateY(0);
+}
+
+/* Modo oscuro (dark) - aplicar con mayor especificidad */
+@media (prefers-color-scheme: dark) {
+  .login-main {
+    background: linear-gradient(135deg, #00205b 0%, #003d7a 50%, #005eb4 100%) !important;
+  }
+
+  .login-main::before {
+    background: linear-gradient(45deg, rgba(0, 32, 91, 0.2) 0%, rgba(0, 94, 180, 0.1) 100%) !important;
+  }
+
+  .login-container {
+    background: rgba(0, 32, 91, 0.95) !important;
+    border: 1px solid rgba(60, 154, 240, 0.2) !important;
+    box-shadow: 0 8px 32px rgba(0, 94, 180, 0.3) !important;
+  }
+
+  .login-header h1 {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .login-header h2 {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  .input-group label {
+    color: #ffffff !important;
+  }
+
+  .form-input {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+  }
+
+  .form-input::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .form-input:focus {
+    border-color: #3c9af0 !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    box-shadow: 0 0 20px rgba(60, 154, 240, 0.4) !important;
+  }
+
+  .form-input:invalid {
+    border-color: rgba(60, 154, 240, 0.3) !important;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #3c9af0 0%, #005eb4 100%) !important;
+    box-shadow: 0 4px 15px rgba(60, 154, 240, 0.4) !important;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    box-shadow: 0 6px 20px rgba(60, 154, 240, 0.5) !important;
+    background: linear-gradient(135deg, #005eb4 0%, #003d7a 100%) !important;
+  }
+
+  .btn-primary:disabled {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+}
+
+/* También detectar data-theme="dark" para compatibilidad con toggle manual */
+[data-theme="dark"] .login-main {
+  background: linear-gradient(135deg, #00205b 0%, #003d7a 50%, #005eb4 100%) !important;
+}
+
+[data-theme="dark"] .login-main::before {
+  background: linear-gradient(45deg, rgba(0, 32, 91, 0.2) 0%, rgba(0, 94, 180, 0.1) 100%) !important;
+}
+
+[data-theme="dark"] .login-container {
+  background: rgba(0, 32, 91, 0.95) !important;
+  border: 1px solid rgba(60, 154, 240, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 94, 180, 0.3) !important;
+}
+
+[data-theme="dark"] .login-header h1 {
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .login-header h2 {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+[data-theme="dark"] .input-group label {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .form-input {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .form-input::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+[data-theme="dark"] .form-input:focus {
+  border-color: #3c9af0 !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 0 20px rgba(60, 154, 240, 0.4) !important;
+}
+
+[data-theme="dark"] .form-input:invalid {
+  border-color: rgba(60, 154, 240, 0.3) !important;
+}
+
+[data-theme="dark"] .btn-primary {
+  background: linear-gradient(135deg, #3c9af0 0%, #005eb4 100%) !important;
+  box-shadow: 0 4px 15px rgba(60, 154, 240, 0.4) !important;
+}
+
+[data-theme="dark"] .btn-primary:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(60, 154, 240, 0.5) !important;
+  background: linear-gradient(135deg, #005eb4 0%, #003d7a 100%) !important;
+}
+
+[data-theme="dark"] .btn-primary:disabled {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* También detectar si el body tiene clase dark para compatibilidad con toggle manual */
+body.dark .login-main {
+  background: linear-gradient(135deg, #00205b 0%, #003d7a 50%, #005eb4 100%) !important;
+}
+
+body.dark .login-main::before {
+  background: linear-gradient(45deg, rgba(0, 32, 91, 0.2) 0%, rgba(0, 94, 180, 0.1) 100%) !important;
+}
+
+body.dark .login-container {
+  background: rgba(0, 32, 91, 0.95) !important;
+  border: 1px solid rgba(60, 154, 240, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 94, 180, 0.3) !important;
+}
+
+body.dark .login-header h1 {
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark .login-header h2 {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+body.dark .input-group label {
+  color: #ffffff !important;
+}
+
+body.dark .form-input {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+body.dark .form-input::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+body.dark .form-input:focus {
+  border-color: #3c9af0 !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 0 20px rgba(60, 154, 240, 0.4) !important;
+}
+
+body.dark .form-input:invalid {
+  border-color: rgba(60, 154, 240, 0.3) !important;
+}
+
+body.dark .btn-primary {
+  background: linear-gradient(135deg, #3c9af0 0%, #005eb4 100%) !important;
+  box-shadow: 0 4px 15px rgba(60, 154, 240, 0.4) !important;
+}
+
+body.dark .btn-primary:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(60, 154, 240, 0.5) !important;
+  background: linear-gradient(135deg, #005eb4 0%, #003d7a 100%) !important;
+}
+
+body.dark .btn-primary:disabled {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 
 /* Responsive Design */

@@ -67,26 +67,26 @@
 
 /* Modo Oscuro */
 :root[data-theme='dark'] {
-  --app-bg-primary: #082032;
-  --app-bg-secondary: #0a2536;
+  --app-bg-primary: var(--dark-blue);
+  --app-bg-secondary: var(--tertiary-blue);
   --app-text-primary: var(--white);
-  --app-text-secondary: rgba(255, 255, 255, 0.9);
-  --app-border-color: rgba(255, 255, 255, 0.2);
-  --app-hover-bg: rgba(8, 32, 50, 0.8);
-  --app-input-bg: rgba(255, 255, 255, 0.08);
-  --app-table-header-bg: rgba(8, 32, 50, 0.6);
-  --app-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  --app-text-secondary: rgba(255, 255, 255, 0.85);
+  --app-border-color: rgba(255, 255, 255, 0.25);
+  --app-hover-bg: rgba(60, 154, 240, 0.15);
+  --app-input-bg: rgba(255, 255, 255, 0.12);
+  --app-table-header-bg: rgba(0, 0, 0, 0.3);
+  --app-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 
   /* Variables adicionales para mejor contraste en modo oscuro */
   --app-text-on-surface: var(--white);
-  --app-text-muted: rgba(255, 255, 255, 0.75);
-  --app-surface-elevated: rgba(255, 255, 255, 0.05);
-  --app-border-light: rgba(255, 255, 255, 0.12);
+  --app-text-muted: rgba(255, 255, 255, 0.65);
+  --app-surface-elevated: rgba(255, 255, 255, 0.08);
+  --app-border-light: rgba(255, 255, 255, 0.15);
   --app-accent-text: var(--white);
 
   /* Variables específicas para componentes administrativos */
-  --app-surface: rgba(255, 255, 255, 0.04);
-  --app-border: rgba(255, 255, 255, 0.15);
+  --app-surface: rgba(255, 255, 255, 0.06);
+  --app-border: rgba(255, 255, 255, 0.2);
   --app-primary: var(--primary-blue);
   --app-primary-dark: var(--dark-blue);
   --app-primary-light: var(--secondary-blue);
