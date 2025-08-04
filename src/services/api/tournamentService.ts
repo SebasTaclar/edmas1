@@ -39,23 +39,31 @@ class TournamentService {
 
   /**
    * Actualizar un torneo existente
-   * TODO: Implementar cuando el endpoint esté disponible
    */
   async updateTournament(
     id: number,
     tournamentData: Partial<CreateTournamentRequest>,
   ): Promise<Tournament> {
-    // Por ahora solo lanzar error hasta que se implemente el endpoint
-    throw new Error('Endpoint de actualización no implementado aún')
+    try {
+      const response = await this.api.put<Tournament>(`/tournament/${id}`, tournamentData)
+      return response.data
+    } catch (error) {
+      console.error('Error al actualizar torneo:', error)
+      throw error
+    }
   }
 
   /**
    * Eliminar un torneo
-   * TODO: Implementar cuando el endpoint esté disponible
    */
   async deleteTournament(id: number): Promise<{ success: boolean; message: string }> {
-    // Por ahora solo lanzar error hasta que se implemente el endpoint
-    throw new Error('Endpoint de eliminación no implementado aún')
+    try {
+      const response = await this.api.delete<{ message: string }>(`/tournament/${id}`)
+      return { success: true, message: response.message }
+    } catch (error) {
+      console.error('Error al eliminar torneo:', error)
+      throw error
+    }
   }
 }
 

@@ -188,7 +188,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { getBaseUrl } from '@/utils/apiConfig'
+import { API_CONFIG } from '@/services/api/apiConfig'
 import axios from 'axios'
 import Spinner from '@/components/Spinner.vue'
 import ConfirmationModal from '@/components/ConfirmationModal.vue'
@@ -293,7 +293,7 @@ const loadProductByCode = async () => {
   loadingProduct.value = true
   try {
     const token = sessionStorage.getItem('token')
-    const response = await axios.get(`${getBaseUrl()}/api/v1/products`, {
+    const response = await axios.get(`\/products`, {
       params: { code: rent.value.code },
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -397,7 +397,7 @@ const loadClientByRut = async () => {
   loadingClient.value = true
   try {
     const token = sessionStorage.getItem('token')
-    const response = await axios.get(`${getBaseUrl()}/api/v1/clients`, {
+    const response = await axios.get(`\/clients`, {
       params: { rut: rent.value.clientRut },
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -647,7 +647,7 @@ const ensureProductExists = async () => {
     const token = sessionStorage.getItem('token')
 
     // Check if product exists
-    const checkResponse = await axios.get(`${getBaseUrl()}/api/v1/products`, {
+    const checkResponse = await axios.get(`\/products`, {
       params: { code: rent.value.code },
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -667,7 +667,7 @@ const ensureProductExists = async () => {
         priceWarranty: rent.value.warrantyValue
       }
 
-      await axios.post(`${getBaseUrl()}/api/v1/products`, productPayload, {
+      await axios.post(`\/products`, productPayload, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -703,7 +703,7 @@ const ensureClientExists = async () => {
     const token = sessionStorage.getItem('token')
 
     // Check if client exists
-    const checkResponse = await axios.get(`${getBaseUrl()}/api/v1/clients`, {
+    const checkResponse = await axios.get(`\/clients`, {
       params: { rut: rent.value.clientRut },
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -726,7 +726,7 @@ const ensureClientExists = async () => {
         createdAt: new Date().toISOString()
       }
 
-      await axios.post(`${getBaseUrl()}/api/v1/clients`, clientPayload, {
+      await axios.post(`\/clients`, clientPayload, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -754,7 +754,7 @@ const updateProductRentStatus = async (productCode: string, isRented: boolean) =
     const token = sessionStorage.getItem('token')
 
     // First, get the product by code to get its ID
-    const getResponse = await axios.get(`${getBaseUrl()}/api/v1/products`, {
+    const getResponse = await axios.get(`\/products`, {
       params: { code: productCode },
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -771,7 +771,7 @@ const updateProductRentStatus = async (productCode: string, isRented: boolean) =
         rented: isRented
       }
 
-      await axios.put(`${getBaseUrl()}/api/v1/products/${product._id}`, updatePayload, {
+      await axios.put(`\/products/${product._id}`, updatePayload, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -808,7 +808,7 @@ const handleCreateRent = async (rentPayload: Rent) => {
     // Note: paymentMethod is intentionally excluded for create mode
   }
 
-  const response = await axios.post(`${getBaseUrl()}/api/v1/rents`, backendPayload, {
+  const response = await axios.post(`\/rents`, backendPayload, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -847,7 +847,7 @@ const handleEditRent = async (rentPayload: Rent) => {
     backendPayload.paymentMethod = rentPayload.paymentMethod
   }
 
-  const response = await axios.put(`${getBaseUrl()}/api/v1/rents/${rentPayload.id}`, backendPayload, {
+  const response = await axios.put(`\/rents/${rentPayload.id}`, backendPayload, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'

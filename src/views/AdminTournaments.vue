@@ -106,6 +106,9 @@
                     :title="tournament.isActive ? 'Desactivar torneo' : 'Activar torneo'">
                     {{ tournament.isActive ? 'Desactivar' : 'Activar' }}
                   </button>
+                  <button @click="confirmDelete(tournament)" class="btn-action delete" title="Eliminar torneo">
+                    Eliminar
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -115,7 +118,7 @@
             <div class="no-tournaments-icon">🏆</div>
             <p>No hay torneos registrados {{ selectedStatusFilter
               || selectedCategoryFilter ? ' con los filtros aplicados' : ''
-            }}</p>
+              }}</p>
           </div>
         </div>
       </div>
@@ -124,6 +127,11 @@
     <!-- Modal para crear/editar torneo -->
     <UpsertTournamentPopup v-if="showUpsertModal" :tournament-data="selectedTournament" :mode="modalMode"
       @close="closeUpsertModal" @save="handleTournamentSave" />
+
+    <!-- Modal de confirmación para eliminar -->
+    <ConfirmationModal v-if="showDeleteModal" :title="'Eliminar Torneo'"
+      :message="`¿Estás seguro de que deseas eliminar el torneo '${tournamentToDelete?.name}'?`"
+      :confirmText="'Eliminar'" :cancelText="'Cancelar'" @confirm="handleDelete" @cancel="closeDeleteModal" />
 
     <Spinner v-if="loading" />
   </main>
@@ -137,6 +145,7 @@ import { useTournaments } from '@/composables/useTournaments'
 import { useCategories } from '@/composables/useCategories'
 import Spinner from '@/components/Spinner.vue'
 import UpsertTournamentPopup from '@/components/UpsertTournamentPopup.vue'
+import ConfirmationModal from '@/components/ConfirmationModal.vue'
 
 defineOptions({
   name: 'AdminTournamentsView',
@@ -153,6 +162,10 @@ const selectedCategoryFilter = ref<string>('')
 const showUpsertModal = ref(false)
 const selectedTournament = ref<Tournament | null>(null)
 const modalMode = ref<'create' | 'edit'>('create')
+
+// Modal de eliminación
+const showDeleteModal = ref(false)
+const tournamentToDelete = ref<Tournament | null>(null)
 
 // Computed properties
 const filteredTournaments = computed(() => {
@@ -205,6 +218,32 @@ const closeUpsertModal = () => {
 const handleTournamentSave = async () => {
   await loadData() // Recargar la lista
   closeUpsertModal()
+}
+
+// Funciones para eliminación
+const confirmDelete = (tournament: Tournament) => {
+  tournamentToDelete.value = tournament
+  showDeleteModal.value = true
+}
+
+const closeDeleteModal = () => {
+  showDeleteModal.value = false
+  tournamentToDelete.value = null
+}
+
+const handleDelete = async () => {
+  if (!tournamentToDelete.value) return
+
+  try {
+    loading.value = true
+    await deleteTournament(tournamentToDelete.value.id)
+    closeDeleteModal()
+    await loadData() // Recargar la lista
+  } catch (error) {
+    console.error('Error deleting tournament:', error)
+  } finally {
+    loading.value = false
+  }
 }
 
 // TODO: Implementar cuando los endpoints estén disponibles

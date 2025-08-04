@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { getBaseUrl } from '@/utils/apiConfig';
+import { API_CONFIG } from '@/services/api/apiConfig';
 import axios from 'axios';
 import Spinner from '@/components/Spinner.vue';
 import ConfirmationModal from '@/components/ConfirmationModal.vue';
@@ -161,7 +161,7 @@ const handleEditClient = async () => {
   try {
     console.log('Updating client:', client.value);
     const token = sessionStorage.getItem('token');
-    const url = `${getBaseUrl()}/api/v1/clients/${client.value.id}`;
+    const url = `\/clients/${client.value.id}`;
     await axios.put(url, client.value, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -182,7 +182,7 @@ const handleCreateClient = async () => {
   loading.value = true;
   try {
     const token = sessionStorage.getItem('token');
-    const url = `${getBaseUrl()}/api/v1/clients`;
+    const url = `\/clients`;
 
     // First, create the client to get the ID
     const response = await axios.post(url, client.value, {

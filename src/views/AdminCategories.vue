@@ -164,7 +164,7 @@ const closeDeleteModal = () => {
 const getTeamsCount = (categoryId: number): number => {
   // Por ahora retornar 0, ya que eliminaremos el servicio mock
   // TODO: Integrar con el servicio real de teams cuando esté disponible
-  return categoryId;
+  return 0;
 };
 
 const isCategoryInUse = (categoryId: number): boolean => {
@@ -324,7 +324,7 @@ onMounted(async () => {
 .btn-primary:hover {
   background: var(--tertiary-blue);
   transform: translateY(-1px);
-  box-shadow: var(--app-shadow);
+  box-shadow: var(--shadow-light);
 }
 
 .categories-table-container {
@@ -433,23 +433,25 @@ onMounted(async () => {
 }
 
 .btn-action.edit {
-  background: #d4edda;
-  color: #155724;
+  background: var(--secondary-blue);
+  color: var(--white);
 }
 
 .btn-action.edit:hover {
-  background: #c3e6cb;
+  background: var(--primary-blue);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-light);
 }
 
 .btn-action.delete {
-  background: #f8d7da;
-  color: #721c24;
+  background: var(--danger);
+  color: var(--white);
 }
 
 .btn-action.delete:hover:not(:disabled) {
-  background: #f1b0b7;
+  background: #c82333;
   transform: translateY(-1px);
+  box-shadow: var(--shadow-light);
 }
 
 .btn-action.delete:disabled {
@@ -457,6 +459,7 @@ onMounted(async () => {
   cursor: not-allowed;
   color: var(--app-text-secondary);
   background: var(--app-input-bg);
+  border: 1px solid var(--app-border-color);
 }
 
 .no-categories {

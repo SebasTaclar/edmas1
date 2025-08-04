@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getBaseUrl } from './apiConfig'
+import { API_CONFIG } from '@/services/api/apiConfig'
 
 export interface PhotoUploadResult {
   success: boolean
@@ -41,7 +41,7 @@ export class PhotoService {
           const fileName = `clients/${photoFileName}`
 
           const presignedResponse = await axios.post(
-            `${getBaseUrl()}/api/v1/generatePreSignedUrlAwsS3`,
+            `${API_CONFIG.baseURL}/generatePreSignedUrlAwsS3`,
             {
               fileName,
               fileType: 'image/*',
@@ -64,7 +64,7 @@ export class PhotoService {
       }
 
       // If no photoFileName provided, get it from the client record
-      const clientResponse = await axios.get(`${getBaseUrl()}/api/v1/clients`, {
+      const clientResponse = await axios.get(`${API_CONFIG.baseURL}/clients`, {
         params: {
           id: clientId,
         },
@@ -81,7 +81,7 @@ export class PhotoService {
           const fileName = `clients/${clientPhotoFileName}`
 
           const presignedResponse = await axios.post(
-            `${getBaseUrl()}/api/v1/generatePreSignedUrlAwsS3`,
+            `\/generatePreSignedUrlAwsS3`,
             {
               fileName,
               fileType: 'image/*',
@@ -139,7 +139,7 @@ export class PhotoService {
 
       // Step 1: Get presigned URL for upload
       const presignedResponse = await axios.post(
-        `${getBaseUrl()}/api/v1/generatePreSignedUrlAwsS3`,
+        `\/generatePreSignedUrlAwsS3`,
         {
           fileName,
           fileType: file.type,
@@ -169,7 +169,7 @@ export class PhotoService {
       }
 
       await axios.put(
-        `${getBaseUrl()}/api/v1/clients/${clientId}`,
+        `\/clients/${clientId}`,
         {
           ...(typeof clientData === 'object' && clientData !== null ? clientData : {}),
           photoFileName: fileName.split('/').pop(),
@@ -212,7 +212,7 @@ export class PhotoService {
 
       // Clear the photoFileName from the client record
       await axios.put(
-        `${getBaseUrl()}/api/v1/clients`,
+        `\/clients`,
         {
           id: clientId,
           photoFileName: '',
