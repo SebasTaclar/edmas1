@@ -28,17 +28,12 @@ const toggleTheme = () => {
 
 const updateTheme = () => {
  const root = document.documentElement
- const body = document.body
 
  if (isDark.value) {
   root.setAttribute('data-theme', 'dark')
-  body.classList.add('dark')
-  body.classList.remove('light')
   localStorage.setItem('theme', 'dark')
  } else {
   root.setAttribute('data-theme', 'light')
-  body.classList.add('light')
-  body.classList.remove('dark')
   localStorage.setItem('theme', 'light')
  }
 }
