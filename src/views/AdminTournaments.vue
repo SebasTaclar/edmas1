@@ -115,7 +115,7 @@
             <div class="no-tournaments-icon">🏆</div>
             <p>No hay torneos registrados {{ selectedStatusFilter
               || selectedCategoryFilter ? ' con los filtros aplicados' : ''
-              }}</p>
+            }}</p>
           </div>
         </div>
       </div>

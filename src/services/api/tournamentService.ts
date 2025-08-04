@@ -13,15 +13,8 @@ class TournamentService {
    */
   async getTournaments(): Promise<Tournament[]> {
     try {
-      const response = await this.api.get<{
-        success: boolean
-        message: string
-        data: Tournament[]
-        timestamp: string
-        statusCode: number
-      }>('/tournament')
-
-      return response.data.data
+      const response = await this.api.get<Tournament[]>('/tournament')
+      return response.data
     } catch (error) {
       console.error('Error al obtener torneos:', error)
       throw error
@@ -35,15 +28,9 @@ class TournamentService {
     tournamentData: CreateTournamentRequest,
   ): Promise<CreateTournamentResponse> {
     try {
-      const response = await this.api.post<{
-        success: boolean
-        message: string
-        data: CreateTournamentResponse
-        timestamp: string
-        statusCode: number
-      }>('/tournament', tournamentData)
+      const response = await this.api.post<CreateTournamentResponse>('/tournament', tournamentData)
 
-      return response.data.data
+      return response.data
     } catch (error) {
       console.error('Error al crear torneo:', error)
       throw error
