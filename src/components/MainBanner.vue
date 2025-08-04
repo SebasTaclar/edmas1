@@ -14,34 +14,119 @@
     <!-- Contenido principal -->
     <div class="hero-container">
       <div class="hero-content">
-
+        <!-- Logo del carrusel -->
+        <div class="hero-logo">
+          <img src="/images/logo.png" alt="Ed90+1 Logo" class="carousel-logo" />
+        </div>
 
         <div class="hero-title">
           <h1>{{ slides[currentSlide].title }}</h1>
-          <h2>Fútbol y Pasión en Bogotá</h2>
         </div>
 
         <div class="hero-description">
           <p>{{ slides[currentSlide].description }}</p>
         </div>
 
-        <div class="hero-actions">
-          <a href="#offerings" class="btn-primary">Empezar Ahora</a>
-          <a href="#about" class="btn-secondary">Conocer Más</a>
-        </div>
+        <!-- Sección de torneos destacados -->
+        <div class="tournaments-section">
+          <h3 class="tournaments-title">Partidos y sorteos</h3>
+          <div class="tournaments-carousel-container">
+            <div class="tournaments-carousel" :style="{ transform: `translateX(-${currentTournamentSlide * (100 / tournamentsPerView)}%)` }">
+              <div class="tournament-card">
+                <div class="tournament-badge">
+                  <span class="tournament-icon">🏆</span>
+                  <span class="tournament-league">Conoce nuestros torneos</span>
+                </div>
+                <div class="tournament-info">
+                  <span class="tournament-time">4 ago • 6:00</span>
+                  <h4 class="tournament-name">Sorteo de los play-offs</h4>
+                </div>
+                <button class="tournament-btn">Ver más detalles</button>
+              </div>
 
-        <div class="hero-features">
-          <div class="feature-item">
-            <div class="feature-icon">⚽</div>
-            <span>Gestión de Equipos</span>
+              <div class="tournament-card">
+                <div class="tournament-badge">
+                  <span class="tournament-icon">🏆</span>
+                  <span class="tournament-league">UEFA Conference League</span>
+                </div>
+                <div class="tournament-info">
+                  <span class="tournament-time">4 ago • 7:00</span>
+                  <h4 class="tournament-name">Sorteo de los play-offs</h4>
+                </div>
+                <button class="tournament-btn">Ver más detalles</button>
+              </div>
+
+              <div class="tournament-card">
+                <div class="tournament-badge">
+                  <span class="tournament-icon">⚽</span>
+                  <span class="tournament-league">UEFA Champions League</span>
+                </div>
+                <div class="tournament-info">
+                  <span class="tournament-time">4 ago • 5:00</span>
+                  <h4 class="tournament-name">Sorteo de los play-offs</h4>
+                </div>
+                <button class="tournament-btn">Ver más detalles</button>
+              </div>
+
+              <div class="tournament-card">
+                <div class="tournament-badge">
+                  <span class="tournament-icon">🏆</span>
+                  <span class="tournament-league">Copa Libertadores</span>
+                </div>
+                <div class="tournament-info">
+                  <span class="tournament-time">5 ago • 8:30</span>
+                  <h4 class="tournament-name">Semifinales</h4>
+                </div>
+                <button class="tournament-btn">Ver más detalles</button>
+              </div>
+
+              <div class="tournament-card">
+                <div class="tournament-badge">
+                  <span class="tournament-icon">⚽</span>
+                  <span class="tournament-league">Liga Bogotá</span>
+                </div>
+                <div class="tournament-info">
+                  <span class="tournament-time">6 ago • 4:00</span>
+                  <h4 class="tournament-name">Fecha 15</h4>
+                </div>
+                <button class="tournament-btn">Ver más detalles</button>
+              </div>
+
+              <div class="tournament-card">
+                <div class="tournament-badge">
+                  <span class="tournament-icon">🏆</span>
+                  <span class="tournament-league">Copa Nacional</span>
+                </div>
+                <div class="tournament-info">
+                  <span class="tournament-time">7 ago • 7:15</span>
+                  <h4 class="tournament-name">Cuartos de final</h4>
+                </div>
+                <button class="tournament-btn">Ver más detalles</button>
+              </div>
+            </div>
+
+            <!-- Controles del carrusel de torneos -->
+            <button class="tournament-carousel-control prev" @click="prevTournament" v-show="currentTournamentSlide > 0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15,18 9,12 15,6"></polyline>
+              </svg>
+            </button>
+            <button class="tournament-carousel-control next" @click="nextTournament" v-show="currentTournamentSlide < maxTournamentSlide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9,18 15,12 9,6"></polyline>
+              </svg>
+            </button>
           </div>
-          <div class="feature-item">
-            <div class="feature-icon">🏆</div>
-            <span>Tabla de Posiciones</span>
-          </div>
-          <div class="feature-item">
-            <div class="feature-icon">📊</div>
-            <span>Estadísticas Avanzadas</span>
+
+          <!-- Indicadores de torneos (solo en móvil) -->
+          <div class="tournament-indicators">
+            <button
+              v-for="n in Math.ceil(totalTournaments / tournamentsPerView)"
+              :key="n"
+              :class="{ 'active': currentTournamentSlide === n - 1 }"
+              @click="currentTournamentSlide = n - 1"
+              :aria-label="`Ir a grupo ${n} de torneos`">
+            </button>
           </div>
         </div>
       </div>
@@ -73,9 +158,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed, onBeforeUnmount } from 'vue'
 
-// Configuración del carrusel
+// Configuración del carrusel principal
 const slides = ref([
   {
     image: '/images/mainCarrousel1.jpg',
@@ -102,7 +187,32 @@ const slides = ref([
 const currentSlide = ref(0)
 let intervalId: number | null = null
 
-// Funciones del carrusel
+// Configuración del carrusel de torneos
+const currentTournamentSlide = ref(0)
+const totalTournaments = 6
+const windowWidth = ref(window.innerWidth)
+
+const tournamentsPerView = computed(() => {
+  // En desktop mostrar 3, en tablet 2, en móvil 1
+  if (windowWidth.value >= 1024) return 3
+  if (windowWidth.value >= 768) return 2
+  return 1
+})
+
+const maxTournamentSlide = computed(() => {
+  return Math.max(0, totalTournaments - tournamentsPerView.value)
+})
+
+// Función para actualizar el ancho de ventana
+const updateWindowWidth = () => {
+  windowWidth.value = window.innerWidth
+  // Resetear slide si es necesario
+  if (currentTournamentSlide.value > maxTournamentSlide.value) {
+    currentTournamentSlide.value = 0
+  }
+}
+
+// Funciones del carrusel principal
 const nextSlide = () => {
   currentSlide.value = (currentSlide.value + 1) % slides.value.length
 }
@@ -128,7 +238,20 @@ const goToSlide = (index: number) => {
   startAutoPlay()
 }
 
-// Auto-play del carrusel
+// Funciones del carrusel de torneos
+const nextTournament = () => {
+  if (currentTournamentSlide.value < maxTournamentSlide.value) {
+    currentTournamentSlide.value++
+  }
+}
+
+const prevTournament = () => {
+  if (currentTournamentSlide.value > 0) {
+    currentTournamentSlide.value--
+  }
+}
+
+// Auto-play del carrusel principal
 const startAutoPlay = () => {
   intervalId = window.setInterval(nextSlide, 6000)
 }
@@ -142,10 +265,12 @@ const stopAutoPlay = () => {
 
 onMounted(() => {
   startAutoPlay()
+  window.addEventListener('resize', updateWindowWidth)
 })
 
 onUnmounted(() => {
   stopAutoPlay()
+  window.removeEventListener('resize', updateWindowWidth)
 })
 </script>
 
@@ -197,9 +322,9 @@ onUnmounted(() => {
   height: 100%;
   background: linear-gradient(
     135deg,
-    rgba(0, 43, 96, 0.8) 0%,
-    rgba(0, 64, 150, 0.6) 50%,
-    rgba(0, 94, 180, 0.4) 100%
+    rgba(0, 20, 40, 0.7) 0%,
+    rgba(0, 43, 96, 0.5) 50%,
+    rgba(0, 64, 150, 0.3) 100%
   );
 }
 
@@ -219,6 +344,26 @@ onUnmounted(() => {
   max-width: 800px;
   margin: 0 auto;
   transition: opacity 0.5s ease-in-out;
+}
+
+/* Logo del carrusel */
+.hero-logo {
+  margin-bottom: 2rem;
+  transition: all 0.5s ease-in-out;
+}
+
+.carousel-logo {
+  height: 120px;
+  width: auto;
+  max-width: 280px;
+  object-fit: contain;
+  filter: brightness(1.2) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  transition: all var(--transition-normal);
+}
+
+.carousel-logo:hover {
+  transform: scale(1.05);
+  filter: brightness(1.4) drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
 }
 
 .hero-badge {
@@ -286,81 +431,236 @@ onUnmounted(() => {
   justify-content: center;
   margin-bottom: 3rem;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 10;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--primary-blue) 100%);
-  color: var(--white);
+  background: linear-gradient(135deg, #3c9af0 0%, #005eb4 100%);
+  color: #ffffff;
   padding: 1rem 2rem;
-  border-radius: var(--border-radius-lg);
+  border-radius: 0.75rem;
   text-decoration: none;
   font-weight: 600;
   font-size: 1.1rem;
-  transition: all var(--transition-normal);
-  box-shadow: var(--shadow-medium);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border: 2px solid transparent;
+  display: inline-block;
 }
 
 .btn-primary:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-heavy);
-  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--tertiary-blue) 100%);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(135deg, #005eb4 0%, #004096 100%);
 }
 
 .btn-secondary {
   background: transparent;
-  color: var(--white);
+  color: #ffffff;
   padding: 1rem 2rem;
-  border-radius: var(--border-radius-lg);
+  border-radius: 0.75rem;
   text-decoration: none;
   font-weight: 600;
   font-size: 1.1rem;
-  transition: all var(--transition-normal);
-  border: 2px solid var(--white);
+  transition: all 0.3s ease;
+  border: 2px solid #ffffff;
+  display: inline-block;
 }
 
 .btn-secondary:hover {
-  background: var(--white);
-  color: var(--primary-blue);
+  background: #ffffff;
+  color: #005eb4;
   transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
 }
 
-.hero-features {
+/* Sección de torneos */
+.tournaments-section {
+  margin-top: 3rem;
+}
+
+.tournaments-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 2rem;
+  text-align: left;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.tournaments-carousel-container {
+  position: relative;
+  overflow: hidden;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.tournaments-carousel {
   display: flex;
-  gap: 2rem;
-  justify-content: center;
-  flex-wrap: wrap;
+  transition: transform 0.3s ease-in-out;
+  gap: 1rem;
 }
 
-.feature-item {
+.tournament-card {
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  flex: 0 0 calc(33.333% - 0.667rem);
+  min-height: 160px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+}
+
+.tournament-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  pointer-events: none;
+}
+
+.tournament-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.tournament-card:hover::before {
+  opacity: 1;
+}
+
+.tournament-badge {
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: var(--border-radius-lg);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all var(--transition-normal);
-  min-width: 120px;
+  gap: 0.4rem;
+  margin-bottom: 0.8rem;
 }
 
-.feature-item:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-5px);
+.tournament-icon {
+  font-size: 1rem;
 }
 
-.feature-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+.tournament-league {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
-.feature-item span {
-  font-size: 0.9rem;
+.tournament-info {
+  margin-bottom: 1rem;
+  flex-grow: 1;
+}
+
+.tournament-time {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
   font-weight: 500;
-  text-align: center;
-  line-height: 1.3;
+}
+
+.tournament-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--white);
+  margin: 0.4rem 0 0 0;
+  line-height: 1.2;
+}
+
+.tournament-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--white);
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  width: 100%;
+}
+
+.tournament-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Controles del carrusel de torneos */
+.tournament-carousel-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-normal);
+  backdrop-filter: blur(10px);
+  z-index: 2;
+  color: var(--white);
+}
+
+.tournament-carousel-control:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.tournament-carousel-control.prev {
+  left: -45px;
+}
+
+.tournament-carousel-control.next {
+  right: -45px;
+}
+
+.tournament-carousel-control svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Indicadores de torneos */
+.tournament-indicators {
+  display: none;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.tournament-indicators button {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.tournament-indicators button.active {
+  background: var(--white);
+  transform: scale(1.2);
+}
+
+.tournament-indicators button:hover {
+  background: rgba(255, 255, 255, 0.7);
 }
 
 /* Indicadores del carrusel */
@@ -442,13 +742,16 @@ onUnmounted(() => {
     font-size: 2.8rem;
   }
 
-  .hero-features {
-    gap: 1rem;
+  .tournament-card {
+    flex: 0 0 calc(50% - 0.5rem);
   }
 
-  .feature-item {
-    min-width: 100px;
-    padding: 0.8rem;
+  .tournament-carousel-control.prev {
+    left: -40px;
+  }
+
+  .tournament-carousel-control.next {
+    right: -40px;
   }
 }
 
@@ -471,8 +774,8 @@ onUnmounted(() => {
     font-size: 1.1rem;
   }
 
-  .hero-description p {
-    font-size: 1rem;
+  .hero-description {
+    display: none;
   }
 
   .hero-actions {
@@ -489,22 +792,42 @@ onUnmounted(() => {
     text-align: center;
   }
 
-  .hero-features {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.8rem;
+  .tournament-card {
+    flex: 0 0 100%;
+    min-height: 140px;
   }
 
-  .feature-item {
-    flex-direction: row;
-    min-width: 200px;
-    padding: 0.6rem 1rem;
+  .tournaments-title {
+    font-size: 1.4rem;
+    text-align: center;
   }
 
-  .feature-icon {
-    font-size: 1.5rem;
-    margin-bottom: 0;
-    margin-right: 0.5rem;
+  .tournament-carousel-control {
+    width: 35px;
+    height: 35px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .tournament-carousel-control:hover {
+    background: rgba(0, 0, 0, 0.9);
+  }
+
+  .tournament-carousel-control.prev {
+    left: -15px;
+  }
+
+  .tournament-carousel-control.next {
+    right: -15px;
+  }
+
+  .tournament-carousel-control svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .tournament-indicators {
+    display: flex;
   }
 
   .carousel-control {
@@ -523,6 +846,11 @@ onUnmounted(() => {
   .carousel-control svg {
     width: 16px;
     height: 16px;
+  }
+
+  .carousel-logo {
+    height: 90px;
+    max-width: 220px;
   }
 }
 
@@ -551,5 +879,14 @@ onUnmounted(() => {
 
   .feature-item {
     min-width: 180px;
+  }
+
+  .carousel-logo {
+    height: 70px;
+    max-width: 180px;
+  }
+
+  .hero-logo {
+    margin-bottom: 1.5rem;
   }
 }</style>

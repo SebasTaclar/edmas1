@@ -191,6 +191,11 @@ onMounted(() => {
   transition: color 0.3s ease;
 }
 
+/* Título blanco en modo oscuro */
+:root[data-theme='dark'] .page-header h1 {
+ color: var(--white);
+}
+
 .page-header p {
   color: var(--app-text-secondary);
   font-size: 1.1rem;
@@ -259,6 +264,11 @@ onMounted(() => {
   margin-bottom: 0.5rem;
 }
 
+/* Números blancos en modo oscuro */
+:root[data-theme='dark'] .value {
+ color: var(--white);
+}
+
 .label {
   color: var(--app-text-secondary);
   font-size: 0.9rem;
@@ -321,6 +331,11 @@ onMounted(() => {
   font-weight: 700;
   color: var(--primary-blue);
   margin-bottom: 0.3rem;
+}
+
+/* Números de estadísticas blancos en modo oscuro */
+:root[data-theme='dark'] .stat-value {
+ color: var(--white);
 }
 
 .stat-label {

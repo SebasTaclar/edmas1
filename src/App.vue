@@ -1,7 +1,14 @@
 <template>
   <header>
     <nav class="navbar">
-      <RouterLink class="link-navbar home" to="/" @click="closeMobileMenu">Ed90+1</RouterLink>
+      <RouterLink class="link-navbar home" to="/" @click="closeMobileMenu">
+        <div class="brand-title">ED90<span class="mas">mas</span>1<span class="domain">.com</span></div>
+      </RouterLink>
+
+      <!-- Saludo personalizado -->
+      <div v-if="isLoggedIn" class="user-greeting">
+        <span>Hola, {{ username }}</span>
+      </div>
 
       <!-- Menu hamburguesa para mobile -->
       <button class="hamburger-menu" @click="toggleMobileMenu" :class="{ 'active': isMobileMenuOpen }">
@@ -15,9 +22,6 @@
         <ThemeToggle />
         <RouterLink v-if="isLoggedIn" class="link-navbar admin-link" to="/admin">Administración</RouterLink>
         <RouterLink v-if="!isLoggedIn" class="link-navbar access" to="/login">Acceder</RouterLink>
-        <span v-if="isLoggedIn" class="link-navbar access user-badge">
-          {{ username }}
-        </span>
         <RouterLink v-if="isLoggedIn" @click="logout" class="link-navbar logout-btn" to="/">Cerrar sesión</RouterLink>
       </div>
 
@@ -33,9 +37,9 @@
             <RouterLink v-if="!isLoggedIn" class="mobile-link access" to="/login" @click="closeMobileMenu">
               Acceder
             </RouterLink>
-            <span v-if="isLoggedIn" class="mobile-user-info user-badge">
-              {{ username }}
-            </span>
+            <div v-if="isLoggedIn" class="mobile-user-greeting">
+              <span>Hola, {{ username }}</span>
+            </div>
             <RouterLink v-if="isLoggedIn" @click="logout; closeMobileMenu()" class="mobile-link logout-btn" to="/">
               Cerrar sesión
             </RouterLink>
@@ -143,64 +147,117 @@ watch(route, () => {
 }
 
 .home {
-  font-size: 1.8rem;
-  font-weight: 800;
+  display: flex;
+  align-items: center;
+  padding: 5px 15px;
+}
+
+.navbar-logo {
+  height: 45px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  transition: all var(--transition-normal);
+  filter: brightness(1.1);
+}
+
+.navbar-logo:hover {
+  transform: scale(1.05);
+  filter: brightness(1.3);
+}
+
+.brand-title {
+  font-size: 1.5rem;
+  font-weight: 600;
   color: var(--white);
-  background: linear-gradient(45deg, var(--secondary-blue), var(--white));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.5px;
+  transition: all var(--transition-normal);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.brand-title .mas {
+  color: var(--white);
+  font-weight: 600;
+  font-size: 1.5rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.brand-title .domain {
+  color: var(--white);
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.brand-title:hover {
+  transform: scale(1.05);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.brand-title:hover .mas {
+  color: var(--white);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.brand-title:hover .domain {
+  color: var(--white);
+}
+
+.user-greeting {
+  color: var(--white);
+  font-weight: 600;
+  font-size: 1rem;
+  margin-left: 1.5rem;
+  opacity: 0.95;
+}
+
+.user-greeting span {
+  transition: opacity var(--transition-normal);
+}
+
+.user-greeting:hover span {
+  opacity: 1;
 }
 
 .access {
   margin-left: 0;
-  background-color: var(--secondary-blue);
-  border: 2px solid var(--secondary-blue);
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   font-weight: 600;
+  backdrop-filter: blur(10px);
 }
 
 .access:hover {
-  background-color: var(--white);
-  color: var(--primary-blue);
-  border-color: var(--white);
-}
-
-.user-badge {
-  background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--primary-blue) 100%);
-  color: var(--white);
-  padding: 0.6rem 1.2rem;
-  border-radius: var(--border-radius-xl);
-  font-weight: 600;
-  font-size: 0.9rem;
-  border: 2px solid var(--white);
-  box-shadow: var(--shadow-light);
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
 }
 
 .logout-btn {
-  background-color: rgba(220, 53, 69, 0.1);
-  border: 2px solid #dc3545;
-  color: #dc3545;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--white);
   font-weight: 600;
+  backdrop-filter: blur(10px);
 }
 
 .logout-btn:hover {
-  background-color: #dc3545;
-  color: var(--white);
-  border-color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.2);
+  border-color: rgba(220, 53, 69, 0.5);
+  color: #ff6b6b;
 }
 
 .admin-link {
-  background-color: rgba(76, 175, 80, 0.1);
-  border: 2px solid #4caf50;
-  color: #4caf50;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--white);
   font-weight: 600;
+  backdrop-filter: blur(10px);
 }
 
 .admin-link:hover {
-  background-color: #4caf50;
-  color: var(--white);
-  border-color: #4caf50;
+  background-color: rgba(76, 175, 80, 0.2);
+  border-color: rgba(76, 175, 80, 0.5);
+  color: #81c784;
 }
 
 @media (max-width: 768px) {
@@ -301,14 +358,30 @@ watch(route, () => {
     align-items: center;
   }
 
-  .mobile-user-info {
+  .mobile-user-greeting {
+    color: var(--white);
     text-align: center;
     padding: 1rem;
     margin: 0.5rem 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    opacity: 0.95;
   }
 
   .home {
-    font-size: 1.4rem;
+    padding: 5px 10px;
+  }
+
+  .brand-title {
+    font-size: 1.3rem;
+  }
+
+  .brand-title .mas {
+    font-size: 1.3rem;
+  }
+
+  .brand-title .domain {
+    font-size: 1.3rem;
   }
 
   .access {
@@ -316,6 +389,14 @@ watch(route, () => {
     text-align: center;
     padding: 1rem;
     font-size: 1.1rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+  }
+
+  .access:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
   }
 
   .logout-btn {
@@ -323,6 +404,16 @@ watch(route, () => {
     text-align: center;
     padding: 1rem;
     font-size: 1.1rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--white);
+    backdrop-filter: blur(10px);
+  }
+
+  .logout-btn:hover {
+    background-color: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.5);
+    color: #ff6b6b;
   }
 
   .admin-link {
@@ -330,14 +421,16 @@ watch(route, () => {
     text-align: center;
     padding: 1rem;
     font-size: 1.1rem;
-    background-color: rgba(76, 175, 80, 0.1);
-    border: 2px solid #4caf50;
-    color: #4caf50;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--white);
+    backdrop-filter: blur(10px);
   }
 
   .admin-link:hover {
-    background-color: #4caf50;
-    color: var(--white);
+    background-color: rgba(76, 175, 80, 0.2);
+    border-color: rgba(76, 175, 80, 0.5);
+    color: #81c784;
   }
 }
 </style>
