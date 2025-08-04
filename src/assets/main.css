@@ -41,7 +41,7 @@
 /* Dark Theme Variables (Default) */
 :root {
   /* Default theme - Dark */
-  --bg-color: #1a1a1a;
+  --bg-color: #000000;
   --text-color: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.9);
   --border-color: rgba(255, 255, 255, 0.2);
@@ -51,36 +51,39 @@
 
 :root,
 :root[data-theme='dark'] {
-  --bg-primary: #2d2d2d;
-  --bg-secondary: rgba(255, 255, 255, 0.1);
-  --bg-tertiary: rgba(255, 255, 255, 0.05);
+  --bg-primary: #000000;
+  --bg-secondary: rgba(255, 255, 255, 0.05);
+  --bg-tertiary: rgba(255, 255, 255, 0.03);
 
   /* Component-specific variables */
-  --bg-color: #1a1a1a;
+  --bg-color: #000000;
   --text-color: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.9);
-  --border-color: rgba(255, 255, 255, 0.2);
-  --card-bg: rgba(255, 255, 255, 0.1);
-  --card-hover-bg: rgba(255, 255, 255, 0.15);
+  --border-color: rgba(255, 255, 255, 0.15);
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --card-hover-bg: rgba(255, 255, 255, 0.1);
 
   --text-primary: #ffffff;
   --text-muted: rgba(255, 255, 255, 0.7);
   --text-disabled: rgba(255, 255, 255, 0.3);
 
-  --border-primary: rgba(255, 255, 255, 0.2);
-  --border-secondary: rgba(255, 255, 255, 0.1);
+  --border-primary: rgba(255, 255, 255, 0.15);
+  --border-secondary: rgba(255, 255, 255, 0.08);
 
-  --shadow-primary: rgba(0, 0, 0, 0.3);
-  --shadow-secondary: rgba(0, 0, 0, 0.1);
+  --shadow-primary: rgba(0, 0, 0, 0.4);
+  --shadow-secondary: rgba(0, 0, 0, 0.2);
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --shadow-medium: rgba(0, 0, 0, 0.15);
+  --shadow-heavy: rgba(0, 0, 0, 0.3);
 
   --backdrop-blur: blur(20px);
-  --overlay-bg: rgba(0, 0, 0, 0.7);
+  --overlay-bg: rgba(0, 0, 0, 0.8);
 
   /* Dark theme gradients */
-  --bg-gradient-primary: linear-gradient(135deg, #333 0%, #666 100%);
+  --bg-gradient-primary: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
   --bg-gradient-accent: radial-gradient(
     circle at 80% 20%,
-    rgba(3, 22, 51, 0.1) 0%,
+    rgba(0, 0, 0, 0.15) 0%,
     transparent 50%
   );
 }
@@ -268,4 +271,18 @@ select {
 input::placeholder,
 textarea::placeholder {
   color: var(--text-muted);
+}
+
+/* Dark theme specific improvements */
+:root[data-theme='dark'] {
+  /* Border radius variables */
+  --border-radius-sm: 0.25rem;
+  --border-radius-md: 0.5rem;
+  --border-radius-lg: 0.75rem;
+  --border-radius-xl: 1rem;
+
+  /* Transition variables */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
 }
