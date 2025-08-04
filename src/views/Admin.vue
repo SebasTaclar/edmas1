@@ -124,7 +124,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCategories } from '@/composables/useCategories';
 import { useTournaments } from '@/composables/useTournaments';
-import teamService from '@/utils/teamService';
+import { useTeams } from '@/composables/useTeams';
 
 defineOptions({
   name: 'AdminView',
@@ -135,9 +135,7 @@ const router = useRouter();
 // Usar los composables
 const { categories, loadCategories } = useCategories();
 const { tournaments, loadTournaments } = useTournaments();
-
-// Estado reactivo
-const teams = ref<any[]>([]);
+const { teams, loadTeams } = useTeams();
 
 // Computed properties para estadísticas
 const teamsCount = computed(() => teams.value?.length || 0);
@@ -153,9 +151,11 @@ const totalRegistrations = computed(() => {
 
 // Funciones
 const loadData = async () => {
-  teams.value = teamService.getAllTeams();
-  await loadTournaments(); // Cargar torneos desde la API
-  await loadCategories(); // Cargar categorías desde la API
+  await Promise.all([
+    loadTeams(),
+    loadTournaments(),
+    loadCategories()
+  ]);
 };
 
 const navigateTo = (path: string) => {
@@ -193,7 +193,7 @@ onMounted(() => {
 
 /* Título blanco en modo oscuro */
 :root[data-theme='dark'] .page-header h1 {
- color: var(--white);
+  color: var(--white);
 }
 
 .page-header p {
@@ -266,7 +266,7 @@ onMounted(() => {
 
 /* Números blancos en modo oscuro */
 :root[data-theme='dark'] .value {
- color: var(--white);
+  color: var(--white);
 }
 
 .label {
@@ -335,7 +335,7 @@ onMounted(() => {
 
 /* Números de estadísticas blancos en modo oscuro */
 :root[data-theme='dark'] .stat-value {
- color: var(--white);
+  color: var(--white);
 }
 
 .stat-label {

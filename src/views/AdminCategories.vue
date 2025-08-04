@@ -102,17 +102,20 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useCategories } from '@/composables/useCategories';
+import { useTeams } from '@/composables/useTeams';
 import type { Category } from '@/types/CategoryType';
 import UpsertCategoryPopup from '@/components/UpsertCategoryPopup.vue';
 import ConfirmationModal from '@/components/ConfirmationModal.vue';
 
-// Usar el composable de categorías
+// Usar el composable de categorías y teams
 const {
   categories,
   loadCategories,
   deleteCategory,
   clearError
 } = useCategories();
+
+const { teams, loadTeams } = useTeams();
 
 // Estados reactivos locales
 const searchQuery = ref('');
@@ -162,9 +165,9 @@ const closeDeleteModal = () => {
 
 // Funciones de datos
 const getTeamsCount = (categoryId: number): number => {
-  // Por ahora retornar 0, ya que eliminaremos el servicio mock
-  // TODO: Integrar con el servicio real de teams cuando esté disponible
-  return 0;
+  // TODO: Cuando la API de teams incluya categorías, filtrar por categoryId
+  // Por ahora retornar el total de equipos como placeholder
+  return teams.value.length;
 };
 
 const isCategoryInUse = (categoryId: number): boolean => {
@@ -192,9 +195,17 @@ const handleDelete = async () => {
 // Inicialización
 onMounted(async () => {
   clearError();
-  const result = await loadCategories();
-  if (!result.success) {
-    console.error('Error al cargar categorías:', result.message);
+  const [categoriesResult, teamsResult] = await Promise.all([
+    loadCategories(),
+    loadTeams()
+  ]);
+
+  if (!categoriesResult.success) {
+    console.error('Error al cargar categorías:', categoriesResult.message);
+  }
+
+  if (!teamsResult.success) {
+    console.error('Error al cargar equipos:', teamsResult.message);
   }
 });
 </script>

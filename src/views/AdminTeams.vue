@@ -7,71 +7,20 @@
         <p>Gestiona los equipos registrados en el torneo</p>
       </div>
 
-      <!-- Formulario para crear nuevo equipo -->
+      <!-- Sección de gestión de equipos -->
       <div class="create-team-section">
         <div class="section-header">
-          <h2>Agregar Nuevo Equipo</h2>
+          <h2>Gestionar Equipos</h2>
           <div class="section-icon">⚽</div>
         </div>
 
-        <form @submit.prevent="handleCreateTeam" class="create-team-form">
-          <div class="form-row">
-            <div class="input-group">
-              <label for="teamName">Nombre del Equipo</label>
-              <input type="text" id="teamName" v-model="newTeam.name" required placeholder="Ej: Deportivo La Cantera"
-                class="form-input" :class="{ 'error': errors.name }" @input="clearError('name')" />
-              <span v-if="errors.name" class="error-message">{{ errors.name }}</span>
-            </div>
-
-            <div class="input-group">
-              <label for="teamCategory">Categoría</label>
-              <select id="teamCategory" v-model="newTeam.category" required class="form-select"
-                :class="{ 'error': errors.category }" @change="clearError('category')">
-                <option value="">Seleccionar categoría</option>
-                <option v-for="category in categories" :key="category.id" :value="category.id">
-                  {{ category.name }}
-                </option>
-              </select>
-              <span v-if="errors.category" class="error-message">{{ errors.category }}</span>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="input-group tournaments-group">
-              <label for="teamTournaments">Torneos Asociados</label>
-              <div class="tournaments-selection">
-                <div v-if="availableTournaments.length === 0" class="no-tournaments-message">
-                  {{ newTeam.category ?
-                    'No hay torneos disponibles para esta categoría' : 'Selecciona una categoría primero' }}
-                </div>
-                <div v-else class="tournaments-checkboxes">
-                  <label v-for="tournament in availableTournaments" :key="tournament.id" class="tournament-checkbox">
-                    <input type="checkbox" :value="tournament.id" v-model="newTeam.tournaments"
-                      @change="clearError('tournaments')" />
-                    <span class="checkbox-text">
-                      <strong>{{ tournament.name }}</strong>
-                      <small>{{ tournament.description }}</small>
-                      <span class="tournament-dates">
-                        {{ new Date(tournament.startDate).toLocaleDateString('es-ES') }} -
-                        {{ new Date(tournament.endDate).toLocaleDateString('es-ES') }}
-                      </span>
-                    </span>
-                  </label>
-                </div>
-              </div>
-              <span v-if="errors.tournaments" class="error-message">{{ errors.tournaments }}</span>
-            </div>
-          </div>
-
-          <div class="form-actions">
-            <button type="submit" :disabled="loading || !newTeam.name || !newTeam.category" class="btn-primary">
-              {{ loading ? 'Creando...' : 'Crear Equipo' }}
-            </button>
-            <button type="button" @click="resetForm" class="btn-secondary">
-              Limpiar
-            </button>
-          </div>
-        </form>
+        <!-- Acciones -->
+        <div class="actions-section">
+          <button @click="openCreateModal" class="btn-primary">
+            <i class="fas fa-plus"></i>
+            Nuevo Equipo
+          </button>
+        </div>
       </div>
 
       <!-- Lista de equipos existentes -->
@@ -84,13 +33,7 @@
         <!-- Filtros -->
         <div class="filters">
           <div class="filter-group">
-            <label for="categoryFilter">Filtrar por categoría:</label>
-            <select id="categoryFilter" v-model="selectedCategoryFilter" class="form-select">
-              <option value="">Todas las categorías</option>
-              <option v-for="category in categories" :key="category.id" :value="category.id">
-                {{ category.name }}
-              </option>
-            </select>
+            <span>Total: {{ teams.length }} equipos</span>
           </div>
         </div>
 
@@ -100,9 +43,8 @@
             <thead>
               <tr>
                 <th>Equipo</th>
-                <th>Usuario</th>
-                <th>Contraseña</th>
-                <th>Categoría</th>
+                <th>Capitán</th>
+                <th>Email</th>
                 <th>Torneos</th>
                 <th>Estado</th>
                 <th>Fecha Creación</th>
@@ -111,27 +53,20 @@
             </thead>
             <tbody>
               <tr v-for="team in filteredTeams" :key="team.id" :class="{ 'inactive': !team.isActive }">
-                <td class="team-name">{{ team.name }}</td>
-                <td class="username">{{ team.username }}</td>
-                <td class="password">
-                  <span v-if="!visiblePasswords[team.id]">••••••••</span>
-                  <span v-else>{{ team.password }}</span>
-                  <button @click="togglePasswordVisibility(team.id)" class="toggle-password"
-                    :title="visiblePasswords[team.id] ? 'Ocultar contraseña' : 'Mostrar contraseña'">
-                    {{ visiblePasswords[team.id] ? '👁️' : '👁️‍🗨️' }}
-                  </button>
+                <td class="team-name">
+                  <div class="team-info">
+                    <img v-if="team.logoPath" :src="team.logoPath" alt="Logo" class="team-logo" />
+                    <span class="team-name-text">{{ team.name }}</span>
+                  </div>
                 </td>
-                <td class="category">
-                  <span class="category-badge" :class="team.category">
-                    {{ getCategoryName(team.category) }}
-                  </span>
-                </td>
+                <td class="captain">{{ team.user.name }}</td>
+                <td class="email">{{ team.user.email }}</td>
                 <td class="tournaments">
                   <div class="tournaments-list">
                     <span v-if="team.tournaments.length === 0" class="no-tournaments">Sin torneos</span>
-                    <span v-else v-for="tournamentId in team.tournaments" :key="tournamentId" class="tournament-badge"
-                      :title="getTournamentName(tournamentId)">
-                      {{ getTournamentName(tournamentId) }}
+                    <span v-else v-for="tournament in team.tournaments" :key="tournament.id" class="tournament-badge"
+                      :title="tournament.name">
+                      {{ tournament.name }}
                     </span>
                   </div>
                 </td>
@@ -142,10 +77,11 @@
                 </td>
                 <td class="date">{{ formatDate(team.createdAt) }}</td>
                 <td class="actions">
-                  <button @click="toggleTeamStatus(team)" class="btn-action"
-                    :class="team.isActive ? 'deactivate' : 'activate'"
-                    :title="team.isActive ? 'Desactivar equipo' : 'Activar equipo'">
-                    {{ team.isActive ? 'Desactivar' : 'Activar' }}
+                  <button @click="openEditModal(team)" class="btn-action edit" title="Editar equipo">
+                    Editar
+                  </button>
+                  <button @click="confirmDelete(team)" class="btn-action delete" title="Eliminar equipo">
+                    Eliminar
                   </button>
                 </td>
               </tr>
@@ -160,31 +96,14 @@
       </div>
     </div>
 
-    <!-- Modal de confirmación -->
-    <div v-if="showSuccessModal" class="modal-overlay" @click="closeSuccessModal">
-      <div class="modal success-modal" @click.stop>
-        <div class="modal-header">
-          <h3>¡Equipo Creado!</h3>
-          <button @click="closeSuccessModal" class="close-btn">×</button>
-        </div>
-        <div class="modal-body">
-          <div class="success-icon">✅</div>
-          <p><strong>{{ createdTeam?.name }}</strong> ha sido creado exitosamente.</p>
-          <div class="credentials">
-            <div class="credential-item">
-              <strong>Usuario:</strong> {{ createdTeam?.username }}
-            </div>
-            <div class="credential-item">
-              <strong>Contraseña:</strong> {{ createdTeam?.password }}
-            </div>
-          </div>
-          <p class="note">Guarda estas credenciales para el equipo.</p>
-        </div>
-        <div class="modal-actions">
-          <button @click="closeSuccessModal" class="btn-primary">Entendido</button>
-        </div>
-      </div>
-    </div>
+    <!-- Modal para crear/editar equipo --> <!-- Modal de confirmación para eliminar -->
+    <ConfirmationModal v-if="showDeleteModal" :title="'Eliminar Equipo'"
+      :message="`¿Estás seguro de que deseas eliminar el equipo '${teamToDelete?.name}'?`" :confirmText="'Eliminar'"
+      :cancelText="'Cancelar'" @confirm="handleDelete" @cancel="closeDeleteModal" />
+
+    <!-- Modal para crear/editar equipo -->
+    <UpsertTeamPopup v-if="showUpsertModal" :team-data="selectedTeam" :mode="modalMode" @close="closeUpsertModal"
+      @save="handleTeamSave" />
 
     <Spinner v-if="loading" />
   </main>
@@ -195,125 +114,102 @@ import { ref, onMounted, computed } from 'vue'
 import type { Team, CreateTeamRequest } from '@/types/TeamType'
 import type { Category } from '@/types/CategoryType'
 import type { Tournament } from '@/types/TournamentType'
-import teamService from '@/utils/teamService'
+import { useTeams } from '@/composables/useTeams'
 import { useCategories } from '@/composables/useCategories'
+import { useTournaments } from '@/composables/useTournaments'
 import Spinner from '@/components/Spinner.vue'
+import ConfirmationModal from '@/components/ConfirmationModal.vue'
+import UpsertTeamPopup from '@/components/UpsertTeamPopup.vue'
 
 defineOptions({
   name: 'AdminTeamsView',
 })
 
-// Estado del formulario
-const newTeam = ref<CreateTeamRequest>({
-  name: '',
-  category: '',
-  tournaments: []
-})
-
 // Estado de la aplicación
-const teams = ref<Team[]>([])
+const { teams, loadTeams, createTeam, updateTeam, deleteTeam, loading } = useTeams()
 const { categories, loadCategories } = useCategories()
-const loading = ref(false)
-const errors = ref<Record<string, string>>({})
+const { tournaments, loadTournaments } = useTournaments()
 const selectedCategoryFilter = ref<string>('')
-const visiblePasswords = ref<Record<string, boolean>>({})
 
-// TODO: Implementar torneos cuando estén disponibles
-// const tournaments = ref<Tournament[]>([])
+// Modal de creación/edición
+const showUpsertModal = ref(false)
+const selectedTeam = ref<Team | null>(null)
+const modalMode = ref<'create' | 'edit'>('create')
 
-// Modal de éxito
-const showSuccessModal = ref(false)
-const createdTeam = ref<Team | null>(null)
+// Modal de eliminación
+const showDeleteModal = ref(false)
+const teamToDelete = ref<Team | null>(null)
 
 // Computed properties
 const filteredTeams = computed(() => {
   if (!selectedCategoryFilter.value) {
     return teams.value
   }
-  return teams.value.filter(team => team.category === selectedCategoryFilter.value)
+  // TODO: Filtrar por categoría cuando implementemos categorías en teams
+  return teams.value
 })
 
-// TODO: Implementar cuando el servicio de torneos esté disponible
-const availableTournaments = computed((): Tournament[] => {
-  // Por ahora retornar array vacío hasta que implementemos torneos
-  return []
-  // if (!newTeam.value.category) {
-  //   return tournaments.value
-  // }
-  // return tournaments.value.filter(tournament =>
-  //   tournament.tournamentCategories?.some(tc =>
-  //     tc.categoryId.toString() === newTeam.value.category
-  //   )
-  // )
+const availableTournaments = computed(() => {
+  return tournaments.value || []
 })
 
 // Funciones
-const loadData = () => {
-  teams.value = teamService.getAllTeams()
-  loadCategories()
-  // TODO: Cargar torneos cuando el servicio esté disponible
-  // tournaments.value = tournamentService.getAllTournaments()
+const loadData = async () => {
+  await Promise.all([
+    loadTeams(),
+    loadCategories(),
+    loadTournaments()
+  ])
 }
 
-const clearError = (field: string) => {
-  delete errors.value[field]
+const openCreateModal = () => {
+  selectedTeam.value = null
+  modalMode.value = 'create'
+  showUpsertModal.value = true
 }
 
-const resetForm = () => {
-  newTeam.value = {
-    name: '',
-    category: '',
-    tournaments: []
-  }
-  errors.value = {}
+const openEditModal = (team: Team) => {
+  selectedTeam.value = { ...team }
+  modalMode.value = 'edit'
+  showUpsertModal.value = true
 }
 
-const handleCreateTeam = async () => {
-  loading.value = true
-  errors.value = {}
+const closeUpsertModal = () => {
+  showUpsertModal.value = false
+  selectedTeam.value = null
+}
+
+const handleTeamSave = async () => {
+  await loadData() // Recargar la lista
+  closeUpsertModal()
+}
+
+const confirmDelete = (team: Team) => {
+  teamToDelete.value = team
+  showDeleteModal.value = true
+}
+
+const closeDeleteModal = () => {
+  showDeleteModal.value = false
+  teamToDelete.value = null
+}
+
+const handleDelete = async () => {
+  if (!teamToDelete.value) return
 
   try {
-    const result = teamService.createTeam(newTeam.value)
-
-    if (result.success && result.team) {
-      createdTeam.value = result.team
-      showSuccessModal.value = true
-      loadData() // Recargar la lista
-      resetForm()
+    const result = await deleteTeam(teamToDelete.value.id)
+    if (result.success) {
+      console.log('Equipo eliminado exitosamente')
     } else {
-      errors.value.general = result.error || 'Error al crear el equipo'
+      alert('Error al eliminar el equipo: ' + result.message)
     }
-  } catch {
-    errors.value.general = 'Error interno del sistema'
+  } catch (error) {
+    console.error('Error deleting team:', error)
+    alert('Error interno al eliminar el equipo')
   } finally {
-    loading.value = false
+    closeDeleteModal()
   }
-}
-
-const togglePasswordVisibility = (teamId: string) => {
-  visiblePasswords.value[teamId] = !visiblePasswords.value[teamId]
-}
-
-const toggleTeamStatus = (team: Team) => {
-  const success = team.isActive
-    ? teamService.deactivateTeam(team.id)
-    : teamService.activateTeam(team.id)
-
-  if (success) {
-    loadData() // Recargar datos
-  }
-}
-
-const getCategoryName = (categoryId: string): string => {
-  const category = categories.value.find((cat: Category) => cat.id.toString() === categoryId);
-  return category?.name || categoryId;
-};
-
-const getTournamentName = (tournamentId: string): string => {
-  // TODO: Implementar cuando el servicio de torneos esté disponible
-  return tournamentId; // Por ahora solo retornar el ID
-  // const tournament = tournaments.value.find(t => t.id === tournamentId)
-  // return tournament?.name || tournamentId
 }
 
 const formatDate = (dateString: string): string => {
@@ -323,11 +219,6 @@ const formatDate = (dateString: string): string => {
     month: 'short',
     day: 'numeric'
   })
-}
-
-const closeSuccessModal = () => {
-  showSuccessModal.value = false
-  createdTeam.value = null
 }
 
 onMounted(() => {
@@ -388,6 +279,33 @@ onMounted(() => {
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--app-text-primary);
+}
+
+.actions-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.btn-primary {
+  background: var(--primary-blue);
+  color: var(--white);
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary:hover {
+  background: var(--tertiary-blue);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-light);
 }
 
 .section-icon {
@@ -882,6 +800,54 @@ onMounted(() => {
   color: var(--app-text-secondary);
   font-style: italic;
   font-size: 0.8rem;
+}
+
+.team-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.team-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--border-radius-sm);
+  object-fit: cover;
+  border: 1px solid var(--app-border-color);
+}
+
+.team-name-text {
+  font-weight: 600;
+  color: var(--app-text-primary);
+}
+
+.btn-action.delete {
+  background: var(--danger);
+  color: var(--white);
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.btn-action.delete:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-light);
+}
+
+.btn-action.edit {
+  background: var(--secondary-purple);
+  color: white;
+}
+
+.btn-action.edit:hover {
+  background: #6f42c1;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-light);
 }
 
 /* Responsive */
