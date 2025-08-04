@@ -35,26 +35,26 @@
 
       <div class="tournament-card">
         <div class="tournament-image">
-          <img src="/public/images/torneo_encurso_F.jpg" alt="Torneo Juvenil">
-          <div class="tournament-status">Proximamente</div>
+          <img src="/images/torneo_encurso_F.jpg" alt="Torneo Juvenil">
+          <div class="tournament-status">En curso</div>
         </div>
         <div class="tournament-content">
           <h3>F.7 - Rama Femenina 2025</h3>
           <div class="tournament-info">
             <div class="info-item">
               <i class="fas fa-users"></i>
-              <span>18 equipos Aprox</span>
+              <span>6 equipos</span>
             </div>
             <div class="info-item">
               <i class="fas fa-calendar"></i>
-              <span>Nov 2025</span>
+              <span>Ene 2025</span>
             </div>
           </div>
           <div class="tournament-progress">
             <div class="progress-bar">
-              <div class="progress" style="width: 0%"></div>
+              <div class="progress" style="width: 60%"></div>
             </div>
-            <span class="progress-text">-</span>
+            <span class="progress-text">Fase final</span>
           </div>
           <button class="view-details">Ver detalles</button>
         </div>
@@ -62,7 +62,7 @@
 
       <div class="tournament-card">
         <div class="tournament-image">
-          <img src="/public/images/torneo_encurso_I.jpg" alt="Liga Femenina">
+          <img src="/images/torneo_encurso_I.jpg" alt="Liga Femenina">
           <div class="tournament-status">En curso</div>
         </div>
         <div class="tournament-content">
@@ -235,11 +235,11 @@ defineOptions({
   .tournaments-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .section-header h2 {
     font-size: 2rem;
   }
-  
+
   .tournaments-section {
     padding: 40px 20px;
   }

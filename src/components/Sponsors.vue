@@ -1,24 +1,24 @@
 <template>
-    <section class="sponsors-wrapper">
-        <h2 class="sponsors-title">Nuestros Patrocinadores</h2>
-        <div class="offerings" :style="{ '--duration': `${duration}s` }">
-            <!-- Primer conjunto de logos -->
-            <div class="brand" :style="{'--bg': 'url(/public/images/hooky_1.jpg)'}">
-                <img src="/public/images/hooky.jpg" alt="Hooky">
-            </div>
-            <div class="brand" :style="{'--bg': 'url(/public/images/as_botin.jpg)'}">
-                <img src="/public/images/as.jpg" alt="As">
-            </div>
-            <div class="brand" :style="{'--bg': 'url(/public/images/kiger_1.jpg)'}">
-                <img src="/public/images/kiger.jpg" alt="Kiger">
-            </div>
-            
-        </div>
-        <div class="sponsors-cta">
-            <h3>Únete a Nosotros</h3>
-            <p>Contáctanos</p>
-        </div>
-    </section>
+  <section class="sponsors-wrapper">
+    <h2 class="sponsors-title">Nuestros Patrocinadores</h2>
+    <div class="offerings" :style="{ '--duration': `${duration}s` }">
+      <!-- Primer conjunto de logos -->
+      <div class="brand" :style="{ '--bg': 'url(/images/hooky_1.jpg)' }">
+        <img src="/images/hooky.jpg" alt="Hooky">
+      </div>
+      <div class="brand" :style="{ '--bg': 'url(/images/as_botin.jpg)' }">
+        <img src="/images/as.jpg" alt="As">
+      </div>
+      <div class="brand" :style="{ '--bg': 'url(/images/kiger_1.jpg)' }">
+        <img src="/images/kiger.jpg" alt="Kiger">
+      </div>
+
+    </div>
+    <div class="sponsors-cta">
+      <h3>Únete a Nosotros</h3>
+      <p>Contáctanos</p>
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">
@@ -66,7 +66,7 @@ const duration = 15;
   position: relative;
   overflow: hidden;
   background: white;
-  box-shadow: 0 0 20px rgba(0,0,0,0.05);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
 .sponsors-track {
@@ -95,7 +95,7 @@ const duration = 15;
 
 .sponsor-item:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .sponsor-item img {
@@ -115,9 +115,11 @@ const duration = 15;
   0% {
     transform: translateX(0);
   }
+
   50% {
     transform: translateX(calc(-50% - 15px));
   }
+
   100% {
     transform: translateX(0);
   }
@@ -137,7 +139,7 @@ const duration = 15;
     flex: 0 0 150px;
     height: 80px;
   }
-  
+
   .sponsors-section {
     padding: 2rem 0;
   }
@@ -158,8 +160,8 @@ const duration = 15;
 .brand {
   flex: 1;
   position: relative;
-  background: 
-    linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.9) 80%),
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.9) 80%),
     var(--bg) center/cover no-repeat;
   display: flex;
   justify-content: center;
@@ -168,19 +170,19 @@ const duration = 15;
   min-height: 400px;
   border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .brand:hover {
   transform: translateY(-10px);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
 }
 
 .brand img {
   width: 150px;
   z-index: 1;
-  filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
   transition: transform 0.3s ease;
   border-radius: 50%;
 }
@@ -197,7 +199,7 @@ const duration = 15;
   font-size: 2.5rem;
   font-weight: 600;
   color: white;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .sponsors-cta p {

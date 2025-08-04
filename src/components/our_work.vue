@@ -5,49 +5,49 @@
       <div class="carousel-container">
         <button class="nav-button prev" @click="scrollLeft">&lt;</button>
         <div class="carousel-track" ref="track">
-          <div class="news-card" @click="openLightbox('/public/images/mainCarrousel2.jpg')">
-            <img src="/public/images/mainCarrousel2.jpg" alt="Noticia 1">
+          <div class="news-card" @click="openLightbox('/images/mainCarrousel2.jpg')">
+            <img src="/images/mainCarrousel2.jpg" alt="Noticia 1">
             <div class="news-overlay">
               <p>Cómo impulsamos el fútbol femenino</p>
             </div>
           </div>
-        <div class="news-card" @click="openLightbox('/public/images/mainCarrousel1.jpg')">
-          <img src="/public/images/mainCarrousel1.jpg" alt="Noticia 2">
-          <div class="news-overlay">
-            <p>Cómo promovemos la igualdad de género en el deporte</p>
+          <div class="news-card" @click="openLightbox('/images/mainCarrousel1.jpg')">
+            <img src="/images/mainCarrousel1.jpg" alt="Noticia 2">
+            <div class="news-overlay">
+              <p>Cómo promovemos la igualdad de género en el deporte</p>
+            </div>
           </div>
-        </div>
-        <div class="news-card" @click="openLightbox('/public/images/mainCarrousel1.jpg')">
-          <img src="/public/images/mainCarrousel1.jpg" alt="Noticia 3">
-          <div class="news-overlay">
-            <p>Cómo fomentamos el juego limpio</p>
+          <div class="news-card" @click="openLightbox('/images/mainCarrousel1.jpg')">
+            <img src="/images/mainCarrousel1.jpg" alt="Noticia 3">
+            <div class="news-overlay">
+              <p>Cómo fomentamos el juego limpio</p>
+            </div>
           </div>
-        </div>
-        <div class="news-card" @click="openLightbox('/public/images/mainCarrousel1.jpg')">
-          <img src="/public/images/mainCarrousel1.jpg" alt="Noticia 4">
-          <div class="news-overlay">
-            <p>El Aragón gana la Copa de las Regiones</p>
+          <div class="news-card" @click="openLightbox('/images/mainCarrousel1.jpg')">
+            <img src="/images/mainCarrousel1.jpg" alt="Noticia 4">
+            <div class="news-overlay">
+              <p>El Aragón gana la Copa de las Regiones</p>
+            </div>
           </div>
-        </div>
-        
+
         </div>
         <button class="nav-button next" @click="scrollRight">&gt;</button>
       </div>
-       </div>
-      <div class="carousel-navigation">
+    </div>
+    <div class="carousel-navigation">
       <button class="nav-dot" :class="{ active: currentIndex === 0 }" @click="scrollToIndex(0)"></button>
       <button class="nav-dot" :class="{ active: currentIndex === 1 }" @click="scrollToIndex(1)"></button>
       <button class="nav-dot" :class="{ active: currentIndex === 2 }" @click="scrollToIndex(2)"></button>
       <button class="nav-dot" :class="{ active: currentIndex === 3 }" @click="scrollToIndex(3)"></button>
     </div>
-   
-</section>
 
-<!-- Lightbox Modal -->
-<div id="lightbox" class="lightbox" onclick="closeLightbox()">
-  <span class="close">&times;</span>
-  <img class="lightbox-content" id="lightbox-img">
-</div>
+  </section>
+
+  <!-- Lightbox Modal -->
+  <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <span class="close">&times;</span>
+    <img class="lightbox-content" id="lightbox-img">
+  </div>
 
 </template>
 
@@ -64,7 +64,7 @@ let scrollPosition: number;
 const scrollToIndex = (index: number) => {
   const container = track.value?.parentElement;
   if (!container) return;
-  
+
   const cardWidth = 300; // ancho de la tarjeta + gap
   container.scrollTo({
     left: index * cardWidth,
@@ -142,7 +142,8 @@ onMounted(() => {
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #002366; /* Azul oscuro */
+  background: #002366;
+  /* Azul oscuro */
   color: #fff;
 }
 
@@ -159,7 +160,7 @@ body {
   color: #fff;
   text-transform: uppercase;
   letter-spacing: 2px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .carousel-wrapper {
@@ -196,7 +197,7 @@ body {
 
 .nav-button:hover {
   background: white;
-  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
 .nav-button.prev {
@@ -254,7 +255,7 @@ body {
   width: 280px;
   flex: 0 0 auto;
   background: #fff;
-  box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
 }
@@ -266,7 +267,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 100%);
   opacity: 0;
   transition: opacity 0.4s ease;
   z-index: 1;
@@ -312,7 +313,7 @@ body {
   font-weight: 500;
   margin: 0;
   line-height: 1.4;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Lightbox styles */
@@ -326,7 +327,7 @@ body {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0,0,0,0.9);
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 .lightbox-content {
@@ -345,5 +346,4 @@ body {
   font-weight: bold;
   cursor: pointer;
 }
-
 </style>
