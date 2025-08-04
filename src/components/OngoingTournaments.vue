@@ -5,83 +5,54 @@
       <p class="section-subtitle">Descubre los torneos activos, proximos y sé parte de la competencia</p>
     </div>
 
-    <div class="tournaments-grid">
-      <div class="tournament-card">
-        <div class="tournament-image">
-          <img src="/images/torneo_encurso_M.jpg" alt="Torneo Regional">
-          <div class="tournament-status">En curso</div>
-        </div>
-        <div class="tournament-content">
-          <h3>F.7 - Rama masculina 2025</h3>
-          <div class="tournament-info">
-            <div class="info-item">
-              <i class="fas fa-users"></i>
-              <span>27 equipos</span>
-            </div>
-            <div class="info-item">
-              <i class="fas fa-calendar"></i>
-              <span>Jul - Oct 2025</span>
-            </div>
-          </div>
-          <div class="tournament-progress">
-            <div class="progress-bar">
-              <div class="progress" style="width: 15%"></div>
-            </div>
-            <span class="progress-text">Fase de grupos</span>
-          </div>
-          <button class="view-details">Ver detalles</button>
-        </div>
-      </div>
+    <!-- Spinner de carga -->
+    <div v-if="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Cargando torneos...</p>
+    </div>
 
-      <div class="tournament-card">
-        <div class="tournament-image">
-          <img src="/images/torneo_encurso_F.jpg" alt="Torneo Juvenil">
-          <div class="tournament-status">En curso</div>
-        </div>
-        <div class="tournament-content">
-          <h3>F.7 - Rama Femenina 2025</h3>
-          <div class="tournament-info">
-            <div class="info-item">
-              <i class="fas fa-users"></i>
-              <span>6 equipos</span>
-            </div>
-            <div class="info-item">
-              <i class="fas fa-calendar"></i>
-              <span>Ene 2025</span>
-            </div>
-          </div>
-          <div class="tournament-progress">
-            <div class="progress-bar">
-              <div class="progress" style="width: 60%"></div>
-            </div>
-            <span class="progress-text">Fase final</span>
-          </div>
-          <button class="view-details">Ver detalles</button>
-        </div>
-      </div>
+    <!-- Mensaje de error -->
+    <div v-else-if="error" class="error-container">
+      <p>{{ error }}</p>
+      <button @click="loadTournaments" class="retry-button">Reintentar</button>
+    </div>
 
-      <div class="tournament-card">
+    <!-- Mensaje cuando no hay torneos activos -->
+    <div v-else-if="activeTournaments.length === 0" class="no-tournaments">
+      <p>No hay torneos activos en este momento</p>
+    </div>
+
+    <!-- Grid de torneos activos -->
+    <div v-else class="tournaments-grid">
+      <div
+        v-for="tournament in activeTournaments"
+        :key="tournament.id"
+        class="tournament-card"
+      >
         <div class="tournament-image">
-          <img src="/images/torneo_encurso_I.jpg" alt="Liga Femenina">
+          <img
+            :src="getTournamentImage(tournament)"
+            :alt="tournament.name"
+          >
           <div class="tournament-status">En curso</div>
         </div>
         <div class="tournament-content">
-          <h3>F.7 - Rama Infantil 2025</h3>
+          <h3>{{ tournament.name }}</h3>
           <div class="tournament-info">
             <div class="info-item">
               <i class="fas fa-users"></i>
-              <span>8 equipos</span>
+              <span>{{ tournament.maxTeams }} equipos max</span>
             </div>
             <div class="info-item">
               <i class="fas fa-calendar"></i>
-              <span>Dic 2025</span>
+              <span>{{ formatDateRange(tournament.startDate, tournament.endDate) }}</span>
             </div>
           </div>
           <div class="tournament-progress">
             <div class="progress-bar">
-              <div class="progress" style="width: 0%"></div>
+              <div class="progress" :style="{ width: getTournamentProgress(tournament) + '%' }"></div>
             </div>
-            <span class="progress-text">-</span>
+            <span class="progress-text">{{ getTournamentPhase(tournament) }}</span>
           </div>
           <button class="view-details">Ver detalles</button>
         </div>
@@ -91,9 +62,94 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted } from 'vue'
+import { useTournaments } from '@/composables/useTournaments'
+import type { Tournament } from '@/types/TournamentType'
+
 defineOptions({
-  name: 'CurrentTournaments'
+  name: 'OngoingTournaments'
 });
+
+// Composable para gestión de torneos
+const { tournaments, loading, error, loadTournaments } = useTournaments()
+
+// Computed para filtrar solo torneos activos
+const activeTournaments = computed(() => {
+  return tournaments.value.filter(tournament => tournament.isActive)
+})
+
+// Función para obtener la imagen del torneo
+const getTournamentImage = (tournament: Tournament): string => {
+  // Mapeo básico de imágenes basado en categorías o nombre del torneo
+  const name = tournament.name.toLowerCase()
+
+  if (name.includes('masculina') || name.includes('masculino')) {
+    return '/images/torneo_encurso_M.jpg'
+  } else if (name.includes('femenina') || name.includes('femenino')) {
+    return '/images/torneo_encurso_F.jpg'
+  } else if (name.includes('infantil') || name.includes('niños')) {
+    return '/images/torneo_encurso_I.jpg'
+  }
+
+  // Imagen por defecto
+  return '/images/torneo_encurso_M.jpg'
+}
+
+// Función para formatear el rango de fechas
+const formatDateRange = (startDate: string, endDate: string): string => {
+  const start = new Date(startDate)
+  const end = new Date(endDate)
+
+  const startMonth = start.toLocaleDateString('es-ES', { month: 'short' })
+  const endMonth = end.toLocaleDateString('es-ES', { month: 'short' })
+  const year = end.getFullYear()
+
+  if (startMonth === endMonth) {
+    return `${startMonth} ${year}`
+  }
+
+  return `${startMonth} - ${endMonth} ${year}`
+}
+
+// Función para calcular el progreso del torneo
+const getTournamentProgress = (tournament: Tournament): number => {
+  const now = new Date()
+  const start = new Date(tournament.startDate)
+  const end = new Date(tournament.endDate)
+
+  if (now < start) {
+    return 0 // No ha comenzado
+  } else if (now > end) {
+    return 100 // Ha terminado
+  } else {
+    // Calcular progreso basado en fechas
+    const totalDuration = end.getTime() - start.getTime()
+    const elapsed = now.getTime() - start.getTime()
+    return Math.round((elapsed / totalDuration) * 100)
+  }
+}
+
+// Función para determinar la fase del torneo
+const getTournamentPhase = (tournament: Tournament): string => {
+  const progress = getTournamentProgress(tournament)
+
+  if (progress === 0) {
+    return 'Por comenzar'
+  } else if (progress < 30) {
+    return 'Fase de grupos'
+  } else if (progress < 70) {
+    return 'Fase intermedia'
+  } else if (progress < 100) {
+    return 'Fase final'
+  } else {
+    return 'Finalizado'
+  }
+}
+
+// Cargar torneos al montar el componente
+onMounted(() => {
+  loadTournaments()
+})
 </script>
 
 <style scoped>
@@ -223,6 +279,56 @@ defineOptions({
 
 .view-details:hover {
   background: #1976D2;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 4rem 0;
+  color: #ccc;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top: 4px solid #1E88E5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-container {
+  text-align: center;
+  padding: 4rem 0;
+  color: #ff6b6b;
+}
+
+.retry-button {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #1E88E5;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.retry-button:hover {
+  background: #1976D2;
+}
+
+.no-tournaments {
+  text-align: center;
+  padding: 4rem 0;
+  color: #ccc;
+  font-size: 1.1rem;
 }
 
 @media (max-width: 1024px) {
