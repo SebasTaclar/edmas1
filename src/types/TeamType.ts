@@ -3,7 +3,7 @@ export interface Team {
   name: string
   username: string
   password: string
-  category: TeamCategory
+  category: string // Ahora usar string para IDs de categoría
   tournaments: string[] // IDs de torneos asociados
   createdAt: string
   isActive: boolean
@@ -19,17 +19,8 @@ export interface TeamStats {
   points: number
 }
 
-export interface Category {
-  id: string
-  name: string
-  description: string
-}
-
-export type TeamCategory = 'adultos_masculino' | 'adultos_femenino' | 'infantil'
-
 export interface TeamsDatabase {
   teams: Team[]
-  categories: Category[]
   metadata: {
     lastTeamId: number
     totalTeams: number
@@ -39,7 +30,7 @@ export interface TeamsDatabase {
 
 export interface CreateTeamRequest {
   name: string
-  category: TeamCategory
+  category: string
   tournaments: string[] // IDs de torneos asociados
 }
 

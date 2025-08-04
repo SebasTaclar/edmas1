@@ -192,10 +192,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import type { Team, TeamCategory, CreateTeamRequest, Category } from '@/types/TeamType'
+import type { Team, CreateTeamRequest } from '@/types/TeamType'
+import type { Category } from '@/types/CategoryType'
 import type { Tournament } from '@/types/TournamentType'
 import teamService from '@/utils/teamService'
 import tournamentService from '@/utils/tournamentService'
+import { useCategories } from '@/composables/useCategories'
 import Spinner from '@/components/Spinner.vue'
 
 defineOptions({
@@ -205,13 +207,13 @@ defineOptions({
 // Estado del formulario
 const newTeam = ref<CreateTeamRequest>({
   name: '',
-  category: '' as TeamCategory,
+  category: '',
   tournaments: []
 })
 
 // Estado de la aplicación
 const teams = ref<Team[]>([])
-const categories = ref<Category[]>([])
+const { categories, loadCategories } = useCategories()
 const tournaments = ref<Tournament[]>([])
 const loading = ref(false)
 const errors = ref<Record<string, string>>({})
@@ -242,7 +244,7 @@ const availableTournaments = computed(() => {
 // Funciones
 const loadData = () => {
   teams.value = teamService.getAllTeams()
-  categories.value = teamService.getCategories()
+  loadCategories()
   tournaments.value = tournamentService.getAllTournaments()
 }
 
@@ -253,7 +255,7 @@ const clearError = (field: string) => {
 const resetForm = () => {
   newTeam.value = {
     name: '',
-    category: '' as TeamCategory,
+    category: '',
     tournaments: []
   }
   errors.value = {}
@@ -274,7 +276,7 @@ const handleCreateTeam = async () => {
     } else {
       errors.value.general = result.error || 'Error al crear el equipo'
     }
-  } catch (error) {
+  } catch {
     errors.value.general = 'Error interno del sistema'
   } finally {
     loading.value = false
@@ -295,21 +297,14 @@ const toggleTeamStatus = (team: Team) => {
   }
 }
 
-const getCategoryName = (categoryId: TeamCategory): string => {
-  const category = categories.value.find(cat => cat.id === categoryId)
-  return category?.name || categoryId
-}
+const getCategoryName = (categoryId: string): string => {
+  const category = categories.value.find((cat: Category) => cat.id.toString() === categoryId);
+  return category?.name || categoryId;
+};
 
 const getTournamentName = (tournamentId: string): string => {
   const tournament = tournaments.value.find(t => t.id === tournamentId)
   return tournament?.name || tournamentId
-}
-
-const getTournamentNames = (tournamentIds: string[]): string => {
-  if (!tournamentIds || tournamentIds.length === 0) {
-    return 'Sin torneos'
-  }
-  return tournamentIds.map(id => getTournamentName(id)).join(', ')
 }
 
 const formatDate = (dateString: string): string => {

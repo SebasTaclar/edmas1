@@ -95,13 +95,6 @@ function openLightbox(src: string): void {
   }
 }
 
-function closeLightbox(): void {
-  const lightbox = document.getElementById("lightbox");
-  if (lightbox) {
-    lightbox.style.display = "none";
-  }
-}
-
 onMounted(() => {
   const trackElement = track.value;
   if (!trackElement) return;

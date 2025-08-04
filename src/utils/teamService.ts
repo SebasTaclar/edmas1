@@ -1,10 +1,4 @@
-import type {
-  Team,
-  TeamCategory,
-  CreateTeamRequest,
-  CreateTeamResponse,
-  TeamsDatabase,
-} from '@/types/TeamType'
+import type { Team, CreateTeamRequest, CreateTeamResponse, TeamsDatabase } from '@/types/TeamType'
 import teamsData from '@/data/teams.json'
 
 class TeamService {
@@ -20,15 +14,8 @@ class TeamService {
   /**
    * Obtiene equipos por categoría
    */
-  getTeamsByCategory(category: TeamCategory): Team[] {
+  getTeamsByCategory(category: string): Team[] {
     return this.teams.teams.filter((team) => team.category === category)
-  }
-
-  /**
-   * Obtiene todas las categorías disponibles
-   */
-  getCategories() {
-    return this.teams.categories
   }
 
   /**
@@ -150,7 +137,7 @@ class TeamService {
         success: true,
         team: newTeam,
       }
-    } catch (error) {
+    } catch {
       return {
         success: false,
         error: 'Error interno del sistema',
