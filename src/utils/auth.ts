@@ -1,76 +1,22 @@
-// Demo users in memory
-const DEMO_USERS = [
-  {
-    email: 'ingeniero.mec.sebastian@gmail.com',
-    password: 'sebas123',
-    role: 'admin',
-    name: 'Sebastian',
-  },
-  {
-    email: 'bustostejedor@gmail.com',
-    password: 'miguel123',
-    role: 'admin',
-    name: 'Miguel',
-  },
-  {
-    email: 'felipe.acosta9403@gmail.com',
-    password: 'felipe123',
-    role: 'admin',
-    name: 'Felipe',
-  },
-  {
-    email: 'jhonbustos@gmail.com',
-    password: 'Jhon123',
-    role: 'admin',
-    name: 'Jhon Bustos',
-  },
-  {
-    email: 'supervisor1@fodiservices.com',
-    password: 'super123',
-    role: 'supervisor',
-    name: 'Ana García',
-  },
-  {
-    email: 'supervisor2@fodiservices.com',
-    password: 'super456',
-    role: 'supervisor',
-    name: 'Carlos López',
-  },
-  {
-    email: 'empleado1@fodiservices.com',
-    password: 'emp123',
-    role: 'employ',
-    name: 'María Rodríguez',
-  },
-  {
-    email: 'empleado2@fodiservices.com',
-    password: 'emp456',
-    role: 'employ',
-    name: 'José Martínez',
-  },
-]
+import { authService } from '@/services/api'
 
-// Demo authentication function
-export const authenticateUser = (email: string, password: string) => {
-  const user = DEMO_USERS.find((u) => u.email === email && u.password === password)
-  if (user) {
-    // Create a mock JWT token
-    const token = btoa(
-      JSON.stringify({
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60, // 24 hours
-      }),
-    )
-    sessionStorage.setItem('token', token)
-    return { success: true, user }
+// Función de autenticación que ahora usa el servicio real
+export const authenticateUser = async (email: string, password: string) => {
+  try {
+    const response = await authService.login({ email, password })
+    if (response.success) {
+      return { success: true, user: authService.getCurrentUser() }
+    } else {
+      return { success: false, message: response.message }
+    }
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error de conexión'
+    return { success: false, message: errorMessage }
   }
-  return { success: false, message: 'Credenciales inválidas' }
 }
 
 export const getToken = (): string | null => {
-  return sessionStorage.getItem('token')
+  return authService.getToken()
 }
 
 interface TokenData {
@@ -81,42 +27,32 @@ interface TokenData {
 }
 
 export const getTokenData = (): TokenData | null => {
-  const token = getToken()
-  if (!token) return null
+  const userInfo = authService.getUserInfo()
+  if (!userInfo) return null
 
-  try {
-    return JSON.parse(atob(token)) as TokenData
-  } catch (error) {
-    console.error('Failed to decode token:', error)
-    return null
+  return {
+    email: userInfo.email,
+    name: userInfo.name,
+    role: userInfo.role,
+    exp: userInfo.exp,
   }
 }
 
 export const getTokenName = (): string | null => {
-  const tokenData = getTokenData()
-  return tokenData?.name || null
+  const userInfo = authService.getCurrentUser()
+  return userInfo?.name || null
 }
 
 export const getUserRole = (): string | null => {
-  const tokenData = getTokenData()
-  return tokenData?.role || null
+  return authService.getUserRole()
 }
 
 export const isTokenValid = (): boolean => {
-  const tokenData = getTokenData()
-  if (!tokenData) return false
-
-  try {
-    const currentTime = Date.now() / 1000
-    return tokenData.exp > currentTime
-  } catch (error) {
-    console.error('Failed to decode token:', error)
-    return false
-  }
+  return authService.isAuthenticated()
 }
 
 export const userHasAdminRole = (): boolean => {
-  return getUserRole() === 'admin'
+  return authService.isAdmin()
 }
 
 export const userHasSupervisorRole = (): boolean => {
@@ -147,5 +83,5 @@ export const canAccessRecursosHumanos = (): boolean => {
 }
 
 export const logout = (): void => {
-  sessionStorage.removeItem('token')
+  authService.logout()
 }

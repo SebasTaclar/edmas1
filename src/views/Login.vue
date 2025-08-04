@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { authenticateUser } from '@/utils/auth';
+import { authService, type LoginCredentials } from '@/services/api';
 import Spinner from '@/components/Spinner.vue';
 
 defineOptions({
@@ -47,18 +47,30 @@ const router = useRouter();
 const handleLogin = async () => {
   loading.value = true;
   try {
-    // Use demo authentication
-    const result = authenticateUser(email.value, password.value);
+    const credentials: LoginCredentials = {
+      email: email.value,
+      password: password.value,
+    };
 
-    if (result.success) {
-      console.log('Login successful:', result.user);
-      router.push('/');
+    const response = await authService.login(credentials);
+
+    if (response.success) {
+      console.log('Login successful:', response.message);
+      // Redirigir según el rol del usuario
+      const userInfo = authService.getCurrentUser();
+
+      if (userInfo?.role === 'admin') {
+        router.push('/admin');
+      } else {
+        router.push('/');
+      }
     } else {
-      alert(result.message || 'Credenciales inválidas');
+      alert(response.message || 'Credenciales inválidas');
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Login error:', error);
-    alert('Error en el login: ' + (error as Error).message);
+    const errorMessage = error instanceof Error ? error.message : 'Error en el servidor. Intente nuevamente.';
+    alert('Error en el login: ' + errorMessage);
   } finally {
     loading.value = false;
   }

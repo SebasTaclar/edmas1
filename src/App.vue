@@ -49,53 +49,50 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView, useRoute } from 'vue-router'
-import {
-  getTokenName,
-  isTokenValid,
-  logout as authLogout
-} from '@/utils/auth'
-import { onMounted, ref, watch } from 'vue'
-import router from './router'
-import ThemeToggle from '@/components/ThemeToggle.vue'
+import { RouterLink, RouterView, useRoute } from 'vue-router';
+import { authService } from '@/services/api';
+import { onMounted, ref, watch } from 'vue';
+import router from './router';
+import ThemeToggle from '@/components/ThemeToggle.vue';
 
-const isLoggedIn = ref(false)
-const username = ref('')
-const isMobileMenuOpen = ref(false)
+const isLoggedIn = ref(false);
+const username = ref('');
+const isMobileMenuOpen = ref(false);
 
 // Funciones para el menú hamburguesa
 const toggleMobileMenu = () => {
-  isMobileMenuOpen.value = !isMobileMenuOpen.value
-}
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
+};
 
 const closeMobileMenu = () => {
-  isMobileMenuOpen.value = false
-}
+  isMobileMenuOpen.value = false;
+};
 
 const checkAuthStatus = () => {
-  isLoggedIn.value = isTokenValid()
+  isLoggedIn.value = authService.isAuthenticated();
   if (isLoggedIn.value) {
-    username.value = getTokenName() || ''
+    const currentUser = authService.getCurrentUser();
+    username.value = currentUser?.name || '';
   } else {
-    username.value = ''
+    username.value = '';
   }
-}
+};
 
 const logout = () => {
-  authLogout()
-  isLoggedIn.value = false
-  username.value = ''
-  router.push('/')
-}
+  authService.logout();
+  isLoggedIn.value = false;
+  username.value = '';
+  router.push('/');
+};
 
 onMounted(() => {
-  checkAuthStatus()
-})
+  checkAuthStatus();
+});
 
-const route = useRoute()
+const route = useRoute();
 watch(route, () => {
-  checkAuthStatus()
-})
+  checkAuthStatus();
+});
 </script>
 
 <style scoped>
