@@ -126,7 +126,7 @@ defineOptions({
 })
 
 // Estado de la aplicación
-const { teams, loadTeams, createTeam, updateTeam, deleteTeam, loading } = useTeams()
+const { teams, loadTeams, createTeam, updateTeam, deleteTeam, deleteTeamLogo, loading } = useTeams()
 const { categories, loadCategories } = useCategories()
 const { tournaments, loadTournaments } = useTournaments()
 const selectedCategoryFilter = ref<string>('')
@@ -198,6 +198,18 @@ const handleDelete = async () => {
   if (!teamToDelete.value) return
 
   try {
+    // Primero intentar eliminar el logo si existe
+    if (teamToDelete.value.logoPath) {
+      try {
+        console.log('Eliminando logo del equipo...')
+        await deleteTeamLogo(teamToDelete.value.id)
+      } catch (logoError) {
+        console.warn('No se pudo eliminar el logo del equipo:', logoError)
+        // Continuamos con la eliminación del equipo aunque falle el logo
+      }
+    }
+
+    // Luego eliminar el equipo
     const result = await deleteTeam(teamToDelete.value.id)
     if (result.success) {
       console.log('Equipo eliminado exitosamente')

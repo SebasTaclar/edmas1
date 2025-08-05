@@ -30,7 +30,7 @@ export interface Team {
   isActive: boolean
   createdAt: string
   updatedAt: string
-  logoPath: string
+  logoPath: string | null
   user: TeamUser
   teamTournaments: TeamTournamentRelation[]
   tournaments: TeamTournament[]

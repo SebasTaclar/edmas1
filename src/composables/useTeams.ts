@@ -146,6 +146,74 @@ export function useTeams() {
   const activeTeams = computed(() => teams.value.filter((team) => team.isActive))
 
   /**
+   * Sube el logo de un equipo
+   */
+  const uploadTeamLogo = async (teamId: number, file: File) => {
+    try {
+      loading.value = true
+      error.value = null
+
+      const response = await teamService.uploadTeamLogo(teamId, file)
+
+      if (response.success) {
+        // Actualizar el equipo en el estado local con la nueva URL del logo
+        const teamIndex = teams.value.findIndex((team) => team.id === teamId)
+        if (teamIndex !== -1) {
+          teams.value[teamIndex] = {
+            ...teams.value[teamIndex],
+            logoPath: response.data.logoUrl,
+          }
+        }
+        return { success: true, message: response.message, data: response.data }
+      } else {
+        error.value = response.message
+        return { success: false, message: response.message }
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error al subir logo'
+      error.value = errorMessage
+      console.error('Error uploading logo:', err)
+      return { success: false, message: errorMessage }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
+   * Elimina el logo de un equipo
+   */
+  const deleteTeamLogo = async (teamId: number) => {
+    try {
+      loading.value = true
+      error.value = null
+
+      const response = await teamService.deleteTeamLogo(teamId)
+
+      if (response.success) {
+        // Actualizar el equipo en el estado local para remover la URL del logo
+        const teamIndex = teams.value.findIndex((team) => team.id === teamId)
+        if (teamIndex !== -1) {
+          teams.value[teamIndex] = {
+            ...teams.value[teamIndex],
+            logoPath: null,
+          }
+        }
+        return { success: true, message: response.message }
+      } else {
+        error.value = response.message
+        return { success: false, message: response.message }
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error al eliminar logo'
+      error.value = errorMessage
+      console.error('Error deleting logo:', err)
+      return { success: false, message: errorMessage }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
    * Limpia el error
    */
   const clearError = () => {
@@ -166,6 +234,8 @@ export function useTeams() {
     deleteTeam,
     getTeamById,
     getTeamsByTournament,
+    uploadTeamLogo,
+    deleteTeamLogo,
     clearError,
   }
 }
