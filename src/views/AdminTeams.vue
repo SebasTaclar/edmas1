@@ -821,11 +821,12 @@ onMounted(() => {
 }
 
 .team-logo {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--border-radius-sm);
+  width: 64px;
+  height: 64px;
+  border-radius: var(--border-radius-md);
   object-fit: cover;
-  border: 1px solid var(--app-border-color);
+  border: 2px solid var(--app-border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .team-name-text {
