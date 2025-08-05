@@ -54,7 +54,7 @@
             </div>
             <span class="progress-text">{{ getTournamentPhase(tournament) }}</span>
           </div>
-          <button class="view-details">Ver detalles</button>
+          <button class="view-details" @click="openBracket">Ver detalles</button>
         </div>
       </div>
     </div>
@@ -94,6 +94,55 @@ const getTournamentImage = (tournament: Tournament): string => {
   // Imagen por defecto
   return '/images/torneo_encurso_M.jpg'
 }
+
+// Función para abrir el bracket en una nueva pestaña
+const openBracket = () => {
+  // Crear una nueva ventana con el bracket
+  const bracketWindow = window.open('', '_blank');
+  if (bracketWindow) {
+    bracketWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Bracket del Torneo</title>
+          <style>
+            body {
+              margin: 0;
+              padding: 20px;
+              font-family: Arial, sans-serif;
+              background-color: #f5f5f5;
+            }
+            .bracket-container {
+              max-width: 1200px;
+              margin: 0 auto;
+              background: white;
+              padding: 20px;
+              border-radius: 8px;
+              box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            h1 {
+              text-align: center;
+              color: #333;
+              margin-bottom: 30px;
+            }
+            .bracket-content {
+              width: 100%;
+              height: auto;
+              display: block;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="bracket-container">
+            <h1>Bracket del Torneo</h1>
+            <img src="/path/to/your/bracket/image.jpg" alt="Bracket del torneo" class="bracket-content">
+          </div>
+        </body>
+      </html>
+    `);
+    bracketWindow.document.close();
+  }
+};
 
 // Función para formatear el rango de fechas
 const formatDateRange = (startDate: string, endDate: string): string => {

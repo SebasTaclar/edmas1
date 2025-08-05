@@ -13,12 +13,6 @@
       <our_work />
     </section>
     <section class="section offset">
-      <About />
-    </section>
-    <section class="section offset">
-      <Contact />
-    </section>
-    <section class="section offset">
       <Sponsors />
     </section>
     <section class="section offset">
@@ -32,11 +26,8 @@ import MainBanner from '@/components/MainBanner.vue';
 import TopPlayers from '@/components/TopPlayers.vue';
 import OngoingTournaments from '@/components/OngoingTournaments.vue';
 import our_work from '@/components/our_work.vue';
-import About from '@/components/About.vue';
-import Contact from '@/components/Contact.vue';
 import Sponsors from '@/components/Sponsors.vue';
 import Footer_ from "@/components/Footer_.vue";
-
 
 defineOptions({
   name: 'HomeView',
