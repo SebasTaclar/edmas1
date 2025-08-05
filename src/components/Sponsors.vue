@@ -1,22 +1,33 @@
 <template>
-  <section class="sponsors-wrapper">
-    <h2 class="sponsors-title">Nuestros Patrocinadores</h2>
-    <div class="offerings" :style="{ '--duration': `${duration}s` }">
-      <!-- Primer conjunto de logos -->
-      <div class="brand" :style="{ '--bg': 'url(/images/hooky_1.jpg)' }">
-        <img src="/images/hooky.jpg" alt="Hooky">
+    <section class="sponsors-wrapper">
+    <div class="sponsors-header">
+      <h2 class="sponsors-title">Nuestros Patrocinadores</h2>
+      <p class="sponsors-subtitle">Orgullosos de contar con el apoyo de marcas líderes en el deporte</p>
+    </div>
+    
+    <div class="sponsors-container">
+      <div class="sponsors-track">
+        <div class="sponsors-content">
+          <div class="sponsor-item">
+            <div class="sponsor-inner">
+              <img src="/images/hooky.jpg" alt="Hooky" class="sponsor-image">
+            </div>
+          </div>
+          <div class="sponsor-item">
+            <div class="sponsor-inner">
+              <img src="/images/as.jpg" alt="As" class="sponsor-image">
+            </div>
+          </div>
+          <div class="sponsor-item">
+            <div class="sponsor-inner">
+              <img src="/images/kiger.jpg" alt="Kiger" class="sponsor-image">
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="brand" :style="{ '--bg': 'url(/images/as_botin.jpg)' }">
-        <img src="/images/as.jpg" alt="As">
-      </div>
-      <div class="brand" :style="{ '--bg': 'url(/images/kiger_1.jpg)' }">
-        <img src="/images/kiger.jpg" alt="Kiger">
-      </div>
-
     </div>
     <div class="sponsors-cta">
       <h3>Únete a Nosotros</h3>
-      <p>Contáctanos</p>
     </div>
   </section>
 </template>
@@ -26,27 +37,56 @@ defineOptions({
   name: 'SponsorsComponent',
 });
 
-// Duración de la animación en segundos
-const duration = 15;
+// Duración de la animación en segundos (más lenta para mejor efecto)
+const duration = 30;
 </script>
 
 <style scoped>
 .sponsors-wrapper {
-  background: var(--bg-color);
-  padding: 3rem 0;
+  background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+  padding: 1rem 0;
   overflow: hidden;
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
 }
 
+.sponsors-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.1), transparent);
+}
+
+.sponsors-header {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+  padding: 0 1rem;
+}
 
 .sponsors-title {
-  text-align: center;
   font-size: 2.5rem;
   font-weight: 700;
-  color: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-  margin-bottom: 3rem;
+  color: #031633;
+  margin-bottom: 1rem;
   text-transform: uppercase;
   letter-spacing: 2px;
+  background: linear-gradient(135deg, #031633, #1a365d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   position: relative;
+  display: inline-block;
+}
+
+.sponsors-subtitle {
+  color: #666;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0;
 }
 
 .sponsors-title::after {
@@ -65,37 +105,117 @@ const duration = 15;
   width: 100%;
   position: relative;
   overflow: hidden;
-  background: white;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  background: transparent;
+  padding: 1rem 0;
+  margin: 0 auto;
 }
 
 .sponsors-track {
-  width: 100%;
   display: flex;
+  width: 100%;
   position: relative;
+  justify-content: center;
 }
 
 .sponsors-content {
   display: flex;
-  animation: scroll var(--duration) linear infinite;
-  gap: 2rem;
+  gap: 4rem;
+  padding: 1rem 0;
+  justify-content: center;
 }
 
 .sponsor-item {
-  flex: 0 0 300px;
-  height: 180px;
+  flex: 0 0 200px;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
-  background: white;
-  transition: all 0.3s ease;
-  margin: 0 1rem;
+  position: relative;
 }
 
-.sponsor-item:hover {
+.sponsor-inner {
+  width: 100%;
+  border-radius: 50%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1;
+}
+
+.sponsor-inner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.7), transparent 70%);
+  transform: translateX(-100%);
+}
+
+.sponsor-inner:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.sponsor-inner:hover::after {
+  transform: translateX(100%);
+}
+
+.sponsor-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+  border-radius: 50%;
+  object-position: center;
+  transform: scale(1.02); /* Asegura que no haya bordes blancos */
+}
+
+.sponsor-inner:hover .sponsor-image {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .sponsor-item {
+    flex: 0 0 120px;
+    height: 120px;
+  }
+  
+  .sponsor-inner {
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    width: 70%;
+  }
+
+  .sponsor-image {
+    padding: 0;
+    object-position: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .sponsor-item {
+    flex: 0 0 70px;
+    height: 70px;
+  }
+  
+  .sponsor-inner {
+    border-width: 1px;
+  }
+
+  .sponsors-cta {
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .sponsors-cta h3 {
+    font-size: 1.6rem;
+  }
+
+  .sponsors-cta p {
+    font-size: 1rem;
+    padding: 0.4rem 1.2rem;
+  }
 }
 
 .sponsor-item img {
@@ -136,14 +256,21 @@ const duration = 15;
 
 @media (max-width: 768px) {
   .sponsor-item {
-    flex: 0 0 150px;
+    flex: 0 0 130px;
     height: 80px;
   }
 
   .sponsors-section {
     padding: 2rem 0;
   }
+
+.sponsors-content{
+  padding: 1.5rem 0;
+      gap: 0.5rem;
 }
+
+}
+
 
 
 .offerings {
@@ -193,29 +320,41 @@ const duration = 15;
 
 .sponsors-cta {
   text-align: center;
+  margin-top: 3rem;
+  padding: 2rem;
+ 
+  border-radius: 12px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .sponsors-cta h3 {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 600;
-  color: white;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  color: black;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .sponsors-cta p {
-  font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+  color: #FFA500;
   margin: 0;
   cursor: pointer;
   display: inline-block;
-  padding: 0.5rem 1rem;
-  border-bottom: 2px solid transparent;
+  padding: 0.5rem 1.5rem;
+  border: 2px solid #FFA500;
+  border-radius: 25px;
   transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 .sponsors-cta p:hover {
-  color: #ff4d4d;
-  border-bottom-color: #ff4d4d;
+  background: #FFA500;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
 }
 
 @media (max-width: 1024px) {
@@ -229,7 +368,7 @@ const duration = 15;
   }
 
   .sponsors-title {
-    font-size: 2.5rem;
+    font-size: 2.0rem;
   }
 
   .sponsors-cta h3 {

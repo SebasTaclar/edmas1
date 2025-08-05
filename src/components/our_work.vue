@@ -1,211 +1,179 @@
 <template>
-  <section class="news-section">
-    <h2 class="section-title">Nuestro Trabajo</h2>
-    <div class="carousel-wrapper">
-      <div class="carousel-container">
-        <button class="nav-button prev" @click="scrollLeft">&lt;</button>
-        <div class="carousel-track" ref="track">
-          <div class="news-card" @click="openLightbox('/images/mainCarrousel2.jpg')">
-            <img src="/images/mainCarrousel2.jpg" alt="Noticia 1">
-            <div class="news-overlay">
-              <p>Cómo impulsamos el fútbol femenino</p>
-            </div>
+  <section class="events-section">
+    <div class="events-header">
+      <div class="icon-box">
+        <i class="fas fa-calendar"></i>
+      </div>
+      <h2 class="section-title">Historial de Eventos</h2>
+    </div>
+
+    <div class="events-timeline">
+      <div class="event-card">
+        <div class="event-icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <div class="event-content">
+          <h3>Final Copa Verano 2025</h3>
+          <div class="event-date">15 de Febrero 2025</div>
+          <p class="event-description">
+            Tigres FC se coronó campeón tras vencer 4-2 a Real Madrid en una final épica. 
+            Más de 200 espectadores presenciaron el encuentro.
+          </p>
+          <div class="event-tags">
+            <span class="tag champion">🏆 Campeón: Tigres FC</span>
+            <span class="tag scorer">⚽ Goleador: Carlos Mendez (3 goles)</span>
           </div>
-          <div class="news-card" @click="openLightbox('/images/mainCarrousel1.jpg')">
-            <img src="/images/mainCarrousel1.jpg" alt="Noticia 2">
-            <div class="news-overlay">
-              <p>Cómo promovemos la igualdad de género en el deporte</p>
-            </div>
-          </div>
-          <div class="news-card" @click="openLightbox('/images/mainCarrousel1.jpg')">
-            <img src="/images/mainCarrousel1.jpg" alt="Noticia 3">
-            <div class="news-overlay">
-              <p>Cómo fomentamos el juego limpio</p>
-            </div>
-          </div>
-          <div class="news-card" @click="openLightbox('/images/mainCarrousel1.jpg')">
-            <img src="/images/mainCarrousel1.jpg" alt="Noticia 4">
-            <div class="news-overlay">
-              <p>El Aragón gana la Copa de las Regiones</p>
-            </div>
-          </div>
+        </div>
+      </div>
+         
+         
 
         </div>
         <button class="nav-button next" @click="scrollRight">&gt;</button>
+    
+    
+      <div class="event-card">
+        <div class="event-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="event-content">
+          <h3>Torneo Apertura 2025</h3>
+          <div class="event-date">10 de Enero - 28 de Febrero 2025</div>
+          <p class="event-description">
+            16 equipos participaron en el torneo más competitivo del año. 
+            Barcelona 7 sorprendió llegando a semifinales como revelación.
+          </p>
+          <div class="event-tags">
+            <span class="tag teams">🏃 16 equipos</span>
+            <span class="tag matches">⚽ 45 partidos</span>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="carousel-navigation">
-      <button class="nav-dot" :class="{ active: currentIndex === 0 }" @click="scrollToIndex(0)"></button>
-      <button class="nav-dot" :class="{ active: currentIndex === 1 }" @click="scrollToIndex(1)"></button>
-      <button class="nav-dot" :class="{ active: currentIndex === 2 }" @click="scrollToIndex(2)"></button>
-      <button class="nav-dot" :class="{ active: currentIndex === 3 }" @click="scrollToIndex(3)"></button>
-    </div>
-
+   
   </section>
-
-  <!-- Lightbox Modal -->
-  <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-    <span class="close">&times;</span>
-    <img class="lightbox-content" id="lightbox-img">
-  </div>
 
 </template>
 
 <script setup lang="ts">
-
-import { ref, onMounted } from 'vue';
-
-const track = ref<HTMLElement | null>(null);
-const currentIndex = ref(0);
-let isDown = false;
-let startX: number;
-let scrollPosition: number;
-
-const scrollToIndex = (index: number) => {
-  const container = track.value?.parentElement;
-  if (!container) return;
-
-  const cardWidth = 300; // ancho de la tarjeta + gap
-  container.scrollTo({
-    left: index * cardWidth,
-    behavior: 'smooth'
-  });
-  currentIndex.value = index;
+const openLightbox = (imagePath: string) => {
+  // Add lightbox functionality here
+  console.log('Opening lightbox for:', imagePath);
 };
 
 const scrollRight = () => {
-  if (currentIndex.value < 3) {
-    scrollToIndex(currentIndex.value + 1);
+  const container = document.querySelector('.carousel-track');
+  if (container) {
+    container.scrollLeft += 300;
   }
 };
-
-const scrollLeft = () => {
-  if (currentIndex.value > 0) {
-    scrollToIndex(currentIndex.value - 1);
-  }
-};
-
-function openLightbox(src: string): void {
-  const lightbox = document.getElementById("lightbox");
-  const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement;
-
-  if (lightbox && lightboxImg) {
-    lightbox.style.display = "block";
-    lightboxImg.src = src;
-  }
-}
-
-onMounted(() => {
-  const trackElement = track.value;
-  if (!trackElement) return;
-
-  trackElement.addEventListener('mousedown', (e: MouseEvent) => {
-    isDown = true;
-    trackElement.style.cursor = 'grabbing';
-    startX = e.pageX - trackElement.offsetLeft;
-    scrollPosition = trackElement.parentElement?.scrollLeft || 0;
-  });
-
-  trackElement.addEventListener('mouseleave', () => {
-    isDown = false;
-    trackElement.style.cursor = 'grab';
-  });
-
-  trackElement.addEventListener('mouseup', () => {
-    isDown = false;
-    trackElement.style.cursor = 'grab';
-  });
-
-  trackElement.addEventListener('mousemove', (e: MouseEvent) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - trackElement.offsetLeft;
-    const walk = (x - startX) * 2;
-    if (trackElement.parentElement) {
-      trackElement.parentElement.scrollLeft = scrollPosition - walk;
-    }
-  });
-});
-
-
-
 </script>
 
 <style scoped>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #002366;
-  /* Azul oscuro */
-  color: #fff;
+.events-section {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #1a2c38;
+  border-radius: 15px;
 }
 
-.news-section {
-  padding: 40px;
-  text-align: center;
-  overflow: hidden;
+.events-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 3rem;
+  gap: 1rem;
+}
+
+.icon-box {
+  background-color: #00ff9d;
+  padding: 1rem;
+  border-radius: 12px;
+  color: #1a2c38;
 }
 
 .section-title {
   font-size: 2.5rem;
   font-weight: 700;
-  margin-bottom: 2rem;
-  color: #fff;
+  color: #00ff9d;
   text-transform: uppercase;
   letter-spacing: 2px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.carousel-wrapper {
-  max-width: 1000px;
-  margin: 0 auto;
-  position: relative;
-}
-
-.carousel-container {
-  width: 100%;
-  margin: 0 auto;
-  padding: 20px;
-  overflow-x: hidden;
-  position: relative;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.nav-button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  cursor: pointer;
-  font-size: 20px;
-  color: #002366;
-  z-index: 2;
-  transition: all 0.3s ease;
-}
-
-.nav-button:hover {
-  background: white;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-}
-
-.nav-button.prev {
-  left: 10px;
-}
-
-.nav-button.next {
-  right: 10px;
-}
-
-.carousel-navigation {
+.events-timeline {
   display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.event-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  border-left: 4px solid #00ff9d;
+}
+
+.event-icon {
+  background-color: #00ff9d;
+  color: #1a2c38;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
+  flex-shrink: 0;
+}
+
+.event-content {
+  flex: 1;
+}
+
+.event-content h3 {
+  font-size: 1.5rem;
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+}
+
+.event-date {
+  color: #00ff9d;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.event-description {
+  color: #a0aec0;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.event-tags {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tag.champion {
+  background-color: rgba(0, 255, 157, 0.1);
+  color: #00ff9d;
+  border: 1px solid rgba(0, 255, 157, 0.2);
+}
+
+.tag.scorer {
+  background-color: rgba(255, 171, 0, 0.1);
+  color: #ffab00;
+  border: 1px solid rgba(255, 171, 0, 0.2);
 }
 
 .nav-dot {
