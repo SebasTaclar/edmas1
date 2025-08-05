@@ -93,6 +93,10 @@ export class ApiClient {
   async delete<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'DELETE' })
   }
+
+  getBaseUrl(): string {
+    return this.baseURL
+  }
 }
 
 // Instancia singleton del cliente API

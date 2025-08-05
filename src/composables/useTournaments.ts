@@ -126,6 +126,74 @@ export function useTournaments() {
     error.value = null
   }
 
+  /**
+   * Subir banner del torneo
+   */
+  const uploadTournamentBanner = async (
+    tournamentId: number,
+    bannerFile: File,
+  ): Promise<{ success: boolean; bannerUrl?: string; message: string }> => {
+    try {
+      loading.value = true
+      error.value = null
+
+      const result = await tournamentService.uploadTournamentBanner(tournamentId, bannerFile)
+
+      if (result.success) {
+        // Actualizar el torneo en la lista local con la nueva bannerPath
+        const tournamentIndex = tournaments.value.findIndex((t) => t.id === tournamentId)
+        if (tournamentIndex !== -1) {
+          tournaments.value[tournamentIndex].bannerPath = result.bannerUrl
+        }
+      }
+
+      return {
+        success: result.success,
+        bannerUrl: result.bannerUrl,
+        message: result.message,
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido al subir banner'
+      error.value = errorMessage
+      console.error('Error al subir banner del torneo:', err)
+      return { success: false, message: errorMessage }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
+   * Eliminar banner del torneo
+   */
+  const deleteTournamentBanner = async (
+    tournamentId: number,
+  ): Promise<{ success: boolean; message: string }> => {
+    try {
+      loading.value = true
+      error.value = null
+
+      const result = await tournamentService.deleteTournamentBanner(tournamentId)
+
+      if (result.success) {
+        // Actualizar el torneo en la lista local eliminando la bannerPath
+        const tournamentIndex = tournaments.value.findIndex((t) => t.id === tournamentId)
+        if (tournamentIndex !== -1) {
+          tournaments.value[tournamentIndex].bannerPath = null
+        }
+      }
+
+      return result
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Error desconocido al eliminar banner'
+      error.value = errorMessage
+      console.error('Error al eliminar banner del torneo:', err)
+      return { success: false, message: errorMessage }
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     // Estados reactivos
     tournaments,
@@ -137,6 +205,8 @@ export function useTournaments() {
     createTournament,
     updateTournament,
     deleteTournament,
+    uploadTournamentBanner,
+    deleteTournamentBanner,
     clearError,
   }
 }

@@ -63,6 +63,65 @@
           </div>
         </div>
 
+        <!-- Sección de Banner del Torneo -->
+        <div class="form-row">
+          <div class="input-group full-width">
+            <label>Banner del Torneo</label>
+
+            <!-- Input de archivo oculto -->
+            <input ref="fileInput" type="file" accept="image/*" @change="handleFileSelect" class="hidden-file-input"
+              autocomplete="off" />
+
+            <div class="banner-upload-zone">
+              <!-- Mostrar banner existente (modo edición) -->
+              <div v-if="mode === 'edit' && currentBanner && !selectedFile" class="existing-banner-section">
+                <div class="existing-banner">
+                  <img :src="currentBanner" alt="Banner actual" class="current-banner-image" />
+                  <div class="banner-actions">
+                    <button type="button" @click="triggerFileInput" class="btn-change-banner">
+                      <span class="icon">📷</span>
+                      Cambiar Banner
+                    </button>
+                    <button type="button" @click="handleDeleteBanner" class="btn-delete-banner">
+                      <span class="icon">🗑️</span>
+                      Eliminar Banner
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Zona de subida (modo creación o sin banner) -->
+              <div v-else-if="!selectedFile" class="upload-section">
+                <div class="upload-area" @click="triggerFileInput" @dragover.prevent @drop.prevent="handleFileDrop">
+                  <div class="upload-icon">📷</div>
+                  <p class="upload-text-primary">Sube el banner del torneo</p>
+                  <p class="upload-text-secondary">Arrastra y suelta una imagen aquí, o haz clic para seleccionar</p>
+                  <span class="upload-button">Seleccionar Banner</span>
+                </div>
+              </div>
+
+              <!-- Archivo seleccionado -->
+              <div v-if="selectedFile" class="file-selected-section">
+                <div class="preview-container">
+                  <img :src="previewUrl" alt="Vista previa" class="preview-image-enhanced" />
+                  <div class="preview-overlay">
+                    <button type="button" @click="removeSelectedFile" class="btn-remove-file">
+                      <span class="icon">❌</span>
+                    </button>
+                    <button type="button" @click="triggerFileInput" class="btn-change-file">
+                      <span class="icon">🔄</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="file-info">
+                  <p class="file-name-enhanced">{{ selectedFile.name }}</p>
+                  <p class="file-size">{{ formatFileSize(selectedFile.size) }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="form-row">
           <div class="input-group">
             <label for="maxTeams">Máximo de Equipos</label>
@@ -120,10 +179,16 @@ const formData = ref<CreateTournamentRequest>({
 
 // Estado de la aplicación
 const { categories, loadCategories } = useCategories()
-const { createTournament, updateTournament } = useTournaments()
+const { createTournament, updateTournament, uploadTournamentBanner, deleteTournamentBanner } = useTournaments()
 const loading = ref(false)
 const errors = ref<Record<string, string>>({})
 const showConfirmation = ref(false)
+
+// Estado del banner
+const selectedFile = ref<File | null>(null)
+const previewUrl = ref<string>('')
+const currentBanner = ref<string | null>(null)
+const fileInput = ref<HTMLInputElement | null>(null)
 
 // Estado inicial del formulario para detectar cambios
 const initialFormData = ref<string>('')
@@ -146,6 +211,9 @@ const initializeForm = () => {
       categoryIds: categoryIds,
       maxTeams: tournamentData.maxTeams || 16
     }
+
+    // Inicializar banner existente
+    currentBanner.value = tournamentData.bannerPath || null
   } else {
     // Valores por defecto para crear
     const today = new Date()
@@ -160,7 +228,14 @@ const initializeForm = () => {
       categoryIds: [],
       maxTeams: 16 // Valor por defecto
     }
+
+    // Limpiar banner
+    currentBanner.value = null
   }
+
+  // Limpiar archivo seleccionado
+  selectedFile.value = null
+  previewUrl.value = ''
 
   // Guardar estado inicial
   initialFormData.value = JSON.stringify(formData.value)
@@ -237,6 +312,21 @@ const handleSubmit = async () => {
     }
 
     if (result.success) {
+      // Si hay un archivo seleccionado, subirlo
+      if (selectedFile.value && result.tournament?.id) {
+        try {
+          const bannerResult = await uploadTournamentBanner(result.tournament.id, selectedFile.value)
+          if (bannerResult.success) {
+            console.log('Banner subido exitosamente')
+          } else {
+            console.warn('Error al subir banner:', bannerResult.message)
+          }
+        } catch (bannerError) {
+          console.warn('Error al subir banner:', bannerError)
+          // No detenemos el flujo si falla la subida del banner
+        }
+      }
+
       emit('save')
     } else {
       errors.value.general = result.message || 'Error al guardar el torneo'
@@ -264,6 +354,80 @@ const confirmClose = () => {
 
 const cancelClose = () => {
   showConfirmation.value = false
+}
+
+// ===== FUNCIONES DEL BANNER =====
+
+const triggerFileInput = () => {
+  fileInput.value?.click()
+}
+
+const handleFileSelect = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    processFile(file)
+  }
+}
+
+const handleFileDrop = (event: DragEvent) => {
+  event.preventDefault()
+  const file = event.dataTransfer?.files[0]
+  if (file && file.type.startsWith('image/')) {
+    processFile(file)
+  }
+}
+
+const processFile = (file: File) => {
+  selectedFile.value = file
+
+  // Crear URL de previsualización
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    previewUrl.value = e.target?.result as string
+  }
+  reader.readAsDataURL(file)
+
+  // Limpiar input
+  if (fileInput.value) {
+    fileInput.value.value = ''
+  }
+}
+
+const removeSelectedFile = () => {
+  selectedFile.value = null
+  previewUrl.value = ''
+  if (fileInput.value) {
+    fileInput.value.value = ''
+  }
+}
+
+const handleDeleteBanner = async () => {
+  if (!tournamentData?.id) return
+
+  try {
+    loading.value = true
+    const result = await deleteTournamentBanner(tournamentData.id)
+
+    if (result.success) {
+      currentBanner.value = null
+      console.log('Banner eliminado exitosamente')
+    } else {
+      console.error('Error al eliminar banner:', result.message)
+    }
+  } catch (error) {
+    console.error('Error al eliminar banner:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return '0 Bytes'
+  const k = 1024
+  const sizes = ['Bytes', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
 
 onMounted(() => {
@@ -531,6 +695,247 @@ onMounted(() => {
   border-color: var(--primary-blue);
 }
 
+/* =================================================
+   ESTILOS PARA CARGA DE BANNER
+   ================================================= */
+
+/* Input oculto */
+.hidden-file-input {
+  display: none;
+}
+
+/* Zona principal de carga */
+.banner-upload-zone {
+  margin-top: 0.5rem;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+/* Sección de banner existente (modo edición) */
+.existing-banner-section {
+  background: var(--app-input-bg);
+  border: 2px solid var(--app-border-color);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+}
+
+.existing-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.current-banner-image {
+  max-width: 300px;
+  max-height: 200px;
+  width: auto;
+  height: auto;
+  object-fit: cover;
+  border-radius: var(--border-radius-md);
+  border: 3px solid var(--app-border-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.banner-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-delete-banner,
+.btn-change-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.btn-delete-banner {
+  background: rgba(220, 53, 69, 0.1);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.btn-delete-banner:hover:not(:disabled) {
+  background: var(--danger);
+  color: var(--white);
+  transform: translateY(-1px);
+}
+
+.btn-change-banner {
+  background: var(--primary-blue);
+  color: var(--white);
+}
+
+.btn-change-banner:hover {
+  background: var(--tertiary-blue);
+  transform: translateY(-1px);
+}
+
+/* Zona de subida */
+.upload-section {
+  min-height: 200px;
+}
+
+.upload-area {
+  background: var(--app-input-bg);
+  border: 2px dashed var(--app-border-color);
+  border-radius: var(--border-radius-md);
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.upload-area:hover {
+  border-color: var(--primary-blue);
+  background: rgba(0, 94, 180, 0.05);
+  transform: translateY(-2px);
+}
+
+.upload-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.upload-text-primary {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--app-text-primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.upload-text-secondary {
+  font-size: 0.9rem;
+  color: var(--app-text-secondary);
+  margin: 0 0 1.5rem 0;
+}
+
+.upload-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--primary-blue);
+  color: var(--white);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  transition: all var(--transition-normal);
+}
+
+.upload-button:hover {
+  background: var(--tertiary-blue);
+  transform: translateY(-1px);
+}
+
+/* Sección de archivo seleccionado */
+.file-selected-section {
+  background: var(--app-input-bg);
+  border: 2px solid var(--primary-blue);
+  border-radius: var(--border-radius-md);
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.preview-container {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.preview-image-enhanced {
+  max-width: 200px;
+  max-height: 150px;
+  width: auto;
+  height: auto;
+  object-fit: cover;
+  border-radius: var(--border-radius-md);
+  border: 3px solid var(--primary-blue);
+  box-shadow: 0 4px 12px rgba(0, 94, 180, 0.2);
+}
+
+.preview-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.preview-container:hover .preview-overlay {
+  opacity: 1;
+}
+
+.btn-remove-file,
+.btn-change-file {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.btn-remove-file:hover {
+  background: rgba(220, 53, 69, 0.8);
+}
+
+.btn-change-file:hover {
+  background: rgba(0, 94, 180, 0.8);
+}
+
+.file-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.file-name-enhanced {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--app-text-primary);
+  margin: 0;
+  word-break: break-all;
+}
+
+.file-size {
+  font-size: 0.9rem;
+  color: var(--app-text-secondary);
+  margin: 0;
+}
+
+.icon {
+  font-size: 1em;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .modal-overlay {
@@ -557,6 +962,30 @@ onMounted(() => {
 
   .form-actions {
     flex-direction: column;
+  }
+
+  .file-selected-section {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .banner-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-delete-banner,
+  .btn-change-banner {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .upload-area {
+    padding: 1.5rem 1rem;
+  }
+
+  .upload-text-primary {
+    font-size: 1rem;
   }
 }
 </style>

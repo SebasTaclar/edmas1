@@ -20,6 +20,7 @@ export interface Tournament {
   endDate: string
   maxTeams: number
   isActive: boolean
+  bannerPath: string | null
   createdAt: string
   updatedAt: string
   tournamentCategories: TournamentCategory[]
@@ -42,6 +43,7 @@ export interface CreateTournamentResponse {
   endDate: string
   maxTeams: number
   isActive: boolean
+  bannerPath: string | null
   createdAt: string
   updatedAt: string
   tournamentCategories: TournamentCategory[]

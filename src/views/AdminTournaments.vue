@@ -118,7 +118,7 @@
             <div class="no-tournaments-icon">🏆</div>
             <p>No hay torneos registrados {{ selectedStatusFilter
               || selectedCategoryFilter ? ' con los filtros aplicados' : ''
-              }}</p>
+            }}</p>
           </div>
         </div>
       </div>
@@ -152,7 +152,7 @@ defineOptions({
 })
 
 // Estado de la aplicación
-const { tournaments, loadTournaments, deleteTournament } = useTournaments()
+const { tournaments, loadTournaments, deleteTournament, deleteTournamentBanner } = useTournaments()
 const { categories, loadCategories } = useCategories()
 const loading = ref(false)
 const selectedStatusFilter = ref<string>('')
@@ -236,6 +236,19 @@ const handleDelete = async () => {
 
   try {
     loading.value = true
+
+    // Primero intentar eliminar el banner si existe
+    if (tournamentToDelete.value.bannerPath) {
+      try {
+        console.log('Eliminando banner del torneo...')
+        await deleteTournamentBanner(tournamentToDelete.value.id)
+      } catch (bannerError) {
+        console.warn('No se pudo eliminar el banner del torneo:', bannerError)
+        // Continuamos con la eliminación del torneo aunque falle el banner
+      }
+    }
+
+    // Luego eliminar el torneo
     await deleteTournament(tournamentToDelete.value.id)
     closeDeleteModal()
     await loadData() // Recargar la lista
