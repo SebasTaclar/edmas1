@@ -48,13 +48,10 @@ class PlayerService {
     photoFile: File,
   ): Promise<ApiResponse<{ photoUrl: string }>> {
     const formData = new FormData()
-    formData.append('photo', photoFile)
+    formData.append('photoFile', photoFile) // Cambiar 'photo' por 'photoFile'
 
-    return await apiClient.post<{ photoUrl: string }>(`/players/${playerId}/photo`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
+    // El ApiClient ahora maneja FormData correctamente
+    return await apiClient.post<{ photoUrl: string }>(`/players/${playerId}/photo`, formData)
   }
 
   /**

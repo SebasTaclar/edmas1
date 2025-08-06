@@ -305,33 +305,47 @@ const handleSubmit = async () => {
 
     if (result.success && result.data) {
       // Manejar foto si es necesario
-      await handlePhotoOperations(result.data.id)
+      const photoResult = await handlePhotoOperations(result.data.id)
 
-      emit('save', playerData)
+      // Solo emitir save si todo fue exitoso
+      if (photoResult.success) {
+        emit('save', playerData)
+      } else {
+        errors.value.photo = photoResult.message
+      }
     } else {
-      console.error('Error al guardar jugador:', result.message)
+      errors.value.general = result.message || 'Error al guardar el jugador'
     }
   } catch (err) {
-    console.error('Error en handleSubmit:', err)
+    errors.value.general = 'Error inesperado al guardar el jugador'
   }
 }
 
 /**
  * Manejar operaciones de foto
  */
-const handlePhotoOperations = async (playerId: number) => {
+const handlePhotoOperations = async (playerId: number): Promise<{ success: boolean; message: string }> => {
   try {
     // Si se marcó para eliminar la foto actual
-    if (photoToDelete.value && currentPhotoUrl.value) {
-      await deletePlayerPhoto(playerId)
+    if (photoToDelete.value && props.player?.profilePhotoPath) {
+      const deleteResult = await deletePlayerPhoto(playerId)
+      if (!deleteResult.success) {
+        return { success: false, message: `Error al eliminar foto: ${deleteResult.message}` }
+      }
     }
 
     // Si hay una nueva foto para subir
     if (newPhotoFile.value) {
-      await uploadPlayerPhoto(playerId, newPhotoFile.value)
+      const uploadResult = await uploadPlayerPhoto(playerId, newPhotoFile.value)
+      if (!uploadResult.success) {
+        return { success: false, message: `Error al subir foto: ${uploadResult.message}` }
+      }
     }
+
+    return { success: true, message: 'Operaciones de foto completadas exitosamente' }
   } catch (err) {
-    console.error('Error al manejar foto:', err)
+    const errorMessage = err instanceof Error ? err.message : 'Error desconocido en operaciones de foto'
+    return { success: false, message: errorMessage }
   }
 }
 
