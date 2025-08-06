@@ -17,19 +17,14 @@ export function usePlayers() {
       loading.value = true
       error.value = null
 
-      console.log('DEBUG - usePlayers: Loading players for teamId:', teamId)
       const response = await playerService.getPlayersByTeam(teamId)
-      console.log('DEBUG - usePlayers: Response:', response)
-
       players.value = response.data
-      console.log('DEBUG - usePlayers: Players loaded:', players.value.length)
 
       return { success: true, message: 'Jugadores cargados exitosamente' }
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Error desconocido al cargar jugadores'
       error.value = errorMessage
-      console.error('Error al cargar jugadores:', err)
       return { success: false, message: errorMessage }
     } finally {
       loading.value = false
@@ -94,7 +89,6 @@ export function usePlayers() {
       const errorMessage =
         err instanceof Error ? err.message : 'Error desconocido al actualizar jugador'
       error.value = errorMessage
-      console.error('Error al actualizar jugador:', err)
       return { success: false, message: errorMessage }
     } finally {
       loading.value = false
@@ -119,7 +113,6 @@ export function usePlayers() {
       const errorMessage =
         err instanceof Error ? err.message : 'Error desconocido al eliminar jugador'
       error.value = errorMessage
-      console.error('Error al eliminar jugador:', err)
       return { success: false, message: errorMessage }
     } finally {
       loading.value = false
@@ -153,7 +146,6 @@ export function usePlayers() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido al subir foto'
       error.value = errorMessage
-      console.error('Error al subir foto del jugador:', err)
       return { success: false, message: errorMessage }
     } finally {
       loading.value = false
@@ -182,7 +174,6 @@ export function usePlayers() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido al eliminar foto'
       error.value = errorMessage
-      console.error('Error al eliminar foto del jugador:', err)
       return { success: false, message: errorMessage }
     } finally {
       loading.value = false

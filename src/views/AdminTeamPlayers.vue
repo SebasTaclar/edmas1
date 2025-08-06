@@ -123,7 +123,6 @@ const { teams, loadTeams } = useTeams()
 
 // Estados locales
 const selectedPlayer = ref<Player | null>(null)
-const selectedTeam = ref<Team | null>(null)
 const showPlayerModal = ref(false)
 const showDeleteModal = ref(false)
 const playerToDelete = ref<Player | null>(null)
@@ -132,31 +131,9 @@ const selectedPlayerPhoto = ref<Player | null>(null)
 
 // Computed para obtener el equipo del usuario
 const userTeam = computed(() => {
-  let teamId = getUserTeamId()
-
-  // TEMPORAL: Si no hay teamId, usar el mock
-  if (!teamId) {
-    const userInfo = localStorage.getItem('userInfo')
-    if (userInfo) {
-      try {
-        const parsed = JSON.parse(userInfo)
-        teamId = parsed.teamId
-      } catch (e) {
-        console.error('Error parsing userInfo:', e)
-      }
-    }
-  }
-
+  const teamId = getUserTeamId()
   return teamId ? teams.value.find(team => team.id === teamId) : null
 })
-
-// Computed para verificar si el usuario puede crear jugadores
-// Función para cargar jugadores del equipo seleccionado
-const loadPlayers = async () => {
-  if (selectedTeam.value?.id) {
-    await loadPlayersByTeam(selectedTeam.value.id)
-  }
-}
 
 // Computed para verificar si el usuario puede crear jugadores
 const canCreatePlayers = computed(() => {
@@ -165,66 +142,22 @@ const canCreatePlayers = computed(() => {
 })
 
 const getCurrentTeamId = () => {
-  // Si hay un userTeam, usar su ID
-  if (userTeam.value?.id) {
-    return userTeam.value.id
-  }
-
-  // Si no hay userTeam pero hay selectedTeam, usar ese
-  if (selectedTeam.value?.id) {
-    return selectedTeam.value.id
-  }
-
-  // Como fallback, intentar obtener el primer equipo disponible
-  if (teams.value.length > 0) {
-    return teams.value[0].id
-  }
-
-  return null
+  return getUserTeamId() || userTeam.value?.id || null
 }
 
 /**
  * Inicializar datos
  */
 onMounted(async () => {
-  await loadTeams()
-
   const userRole = getUserRole()
-  let teamId = getUserTeamId()
+  const teamId = getUserTeamId()
 
-  console.log('DEBUG - UserRole:', userRole)
-  console.log('DEBUG - TeamId:', teamId)
-
-  // Si el usuario tiene rol 'team', cargar automáticamente sus jugadores
-  if (userRole === 'team' && userTeam.value) {
-    selectedTeam.value = userTeam.value
-    await loadPlayers()
-  }  // TEMPORAL: Si no hay usuario de equipo logueado, simular uno para pruebas
-  if (!userRole || userRole !== 'team' || !teamId) {
-    console.log('DEBUG - Simulating team user for testing')
-    // Simular usuario de equipo logueado
-    const mockUserInfo = {
-      id: 1,
-      email: 'team1@test.com',
-      name: 'Equipo 1',
-      role: 'team',
-      membershipPaid: true,
-      teamId: 1,
-      exp: Math.floor(Date.now() / 1000) + 3600 // Expira en 1 hora
-    }
-    localStorage.setItem('userInfo', JSON.stringify(mockUserInfo))
-    teamId = 1
-  }
-
-  // Cargar equipos para obtener información del equipo del usuario
+  // Solo cargar equipos una vez
   await loadTeams()
 
-  // Cargar jugadores del equipo del usuario
-  if (teamId) {
-    console.log('DEBUG - Loading players for team:', teamId)
+  // Si el usuario tiene rol 'team' y un teamId válido, cargar jugadores
+  if (userRole === 'team' && teamId) {
     await loadPlayersByTeam(teamId)
-  } else {
-    console.warn('DEBUG - No teamId found for user')
   }
 })
 
@@ -270,26 +203,10 @@ const closePlayerModal = () => {
  * Manejar guardado de jugador
  */
 const handlePlayerSave = async () => {
-  // La lógica de guardado se maneja en el componente UpsertPlayerPopup
-  // Este método se llama cuando se completa el guardado exitosamente
   closePlayerModal()
 
   // Recargar jugadores para mostrar los cambios
-  let teamId = getUserTeamId()
-
-  // TEMPORAL: Si no hay teamId, usar el mock
-  if (!teamId) {
-    const userInfo = localStorage.getItem('userInfo')
-    if (userInfo) {
-      try {
-        const parsed = JSON.parse(userInfo)
-        teamId = parsed.teamId
-      } catch (e) {
-        console.error('Error parsing userInfo:', e)
-      }
-    }
-  }
-
+  const teamId = getCurrentTeamId()
   if (teamId) {
     await loadPlayersByTeam(teamId)
   }
@@ -320,11 +237,11 @@ const handleDeletePlayer = async () => {
   const result = await deletePlayer(playerToDelete.value.id)
 
   if (result.success) {
-    // Mostrar mensaje de éxito (podrías usar una notificación aquí)
-    console.log('Jugador eliminado exitosamente')
-  } else {
-    // Mostrar mensaje de error
-    console.error('Error al eliminar jugador:', result.message)
+    // Recargar jugadores después de eliminar
+    const teamId = getCurrentTeamId()
+    if (teamId) {
+      await loadPlayersByTeam(teamId)
+    }
   }
 
   closeDeleteModal()
