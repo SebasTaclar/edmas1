@@ -64,6 +64,11 @@ const router = createRouter({
       },
     },
     {
+      path: '/tournament/:id',
+      name: 'tournament-detail',
+      component: () => import('../views/TournamentDetail.vue'),
+    },
+    {
       path: '/admin/team-players',
       name: 'admin-team-players',
       component: () => import('../views/AdminTeamPlayers.vue'),

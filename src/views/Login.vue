@@ -102,6 +102,33 @@ const clearCustomValidityMessage = (event: Event) => {
   transition: all 0.3s ease;
 }
 
+/* Estilos específicos para modo oscuro */
+:root[data-theme='dark'] .login-main {
+  background: linear-gradient(135deg, #001122 0%, #002244 50%, #001833 100%);
+}
+
+:root[data-theme='dark'] .login-container {
+  background: rgba(0, 30, 60, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Bordes blancos para inputs en modo oscuro */
+:root[data-theme='dark'] .form-input {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+:root[data-theme='dark'] .form-input:focus {
+  border-color: rgba(255, 255, 255, 0.7);
+  background: rgba(0, 40, 80, 0.6);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+}
+
+:root[data-theme='dark'] .form-input:invalid {
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
 .login-main::before {
   content: '';
   position: absolute;
@@ -196,7 +223,8 @@ const clearCustomValidityMessage = (event: Event) => {
 }
 
 .form-input:invalid {
-  border-color: rgba(239, 68, 68, 0.6);
+  border-color: rgba(0, 94, 180, 0.6);
+  box-shadow: 0 0 8px rgba(0, 94, 180, 0.2);
 }
 
 .btn-primary {
