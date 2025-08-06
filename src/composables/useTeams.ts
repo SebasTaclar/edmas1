@@ -28,7 +28,6 @@ export function useTeams() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al cargar equipos'
       error.value = errorMessage
-      console.error('Error loading teams:', err)
       return { success: false, message: errorMessage }
     } finally {
       loading.value = false
@@ -56,7 +55,6 @@ export function useTeams() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al crear equipo'
       error.value = errorMessage
-      console.error('Error creating team:', err)
       return { success: false, message: errorMessage }
     } finally {
       loading.value = false
@@ -87,7 +85,6 @@ export function useTeams() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al actualizar equipo'
       error.value = errorMessage
-      console.error('Error updating team:', err)
       return { success: false, message: errorMessage }
     } finally {
       loading.value = false
@@ -115,7 +112,6 @@ export function useTeams() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al eliminar equipo'
       error.value = errorMessage
-      console.error('Error deleting team:', err)
       return { success: false, message: errorMessage }
     } finally {
       loading.value = false
@@ -172,7 +168,6 @@ export function useTeams() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al subir logo'
       error.value = errorMessage
-      console.error('Error uploading logo:', err)
       return { success: false, message: errorMessage }
     } finally {
       loading.value = false
@@ -206,7 +201,6 @@ export function useTeams() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al eliminar logo'
       error.value = errorMessage
-      console.error('Error deleting logo:', err)
       return { success: false, message: errorMessage }
     } finally {
       loading.value = false

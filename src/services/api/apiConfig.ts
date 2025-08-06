@@ -46,10 +46,18 @@ export class ApiClient {
     // Obtener token del localStorage si existe
     const token = localStorage.getItem('authToken')
 
+    // Preparar headers
+    let headers = { ...this.defaultHeaders }
+
+    // Si el body es FormData, no incluir Content-Type por defecto
+    if (options.body instanceof FormData) {
+      headers = {} // No incluir Content-Type para FormData
+    }
+
     const config: RequestInit = {
       ...options,
       headers: {
-        ...this.defaultHeaders,
+        ...headers,
         ...(token && { Authorization: `Bearer ${token}` }),
         ...options.headers,
       },
@@ -75,19 +83,47 @@ export class ApiClient {
   }
 
   async post<T>(endpoint: string, body?: unknown, options?: RequestInit): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, {
+    const requestOptions: RequestInit = {
       ...options,
       method: 'POST',
-      body: body ? JSON.stringify(body) : undefined,
-    })
+    }
+
+    // Si el body es FormData, no lo serialices ni pongas Content-Type
+    if (body instanceof FormData) {
+      requestOptions.body = body
+      // Remover Content-Type de los headers para FormData
+      if (requestOptions.headers) {
+        const headers = { ...requestOptions.headers }
+        delete (headers as Record<string, string>)['Content-Type']
+        requestOptions.headers = headers
+      }
+    } else if (body) {
+      requestOptions.body = JSON.stringify(body)
+    }
+
+    return this.request<T>(endpoint, requestOptions)
   }
 
   async put<T>(endpoint: string, body?: unknown, options?: RequestInit): Promise<ApiResponse<T>> {
-    return this.request<T>(endpoint, {
+    const requestOptions: RequestInit = {
       ...options,
       method: 'PUT',
-      body: body ? JSON.stringify(body) : undefined,
-    })
+    }
+
+    // Si el body es FormData, no lo serialices ni pongas Content-Type
+    if (body instanceof FormData) {
+      requestOptions.body = body
+      // Remover Content-Type de los headers para FormData
+      if (requestOptions.headers) {
+        const headers = { ...requestOptions.headers }
+        delete (headers as Record<string, string>)['Content-Type']
+        requestOptions.headers = headers
+      }
+    } else if (body) {
+      requestOptions.body = JSON.stringify(body)
+    }
+
+    return this.request<T>(endpoint, requestOptions)
   }
 
   async delete<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {

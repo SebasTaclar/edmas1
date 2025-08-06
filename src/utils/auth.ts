@@ -47,6 +47,11 @@ export const getUserRole = (): string | null => {
   return authService.getUserRole()
 }
 
+export const getUserTeamId = (): number | null => {
+  const userInfo = authService.getCurrentUser()
+  return userInfo?.teamId || null
+}
+
 export const isTokenValid = (): boolean => {
   return authService.isAuthenticated()
 }
