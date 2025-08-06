@@ -3,8 +3,11 @@
     <section class="section">
       <MainBanner />
     </section>
-        <section class="section offset">
+    <section class="section offset">
       <TopPlayers />
+    </section>
+    <section class="section offset">
+      <CategoriesSection />
     </section>
     <section id="ongoing_tournaments" class="section offset">
       <OngoingTournaments />

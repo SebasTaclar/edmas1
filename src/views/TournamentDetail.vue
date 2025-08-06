@@ -1,0 +1,2262 @@
+<template>
+  <div class="tournament-detail">
+    <!-- Header principal con imagen mejorada -->
+    <header class="tournament-hero">
+      <div class="hero-background">
+        <img
+          :src="selectedTournament?.bannerPath ?? '/images/torneo_encurso_M.jpg'"
+          :alt="selectedTournament?.name"
+          @error="handleImageError"
+        >
+        <div class="hero-overlay"></div>
+      </div>
+      <div class="hero-content">
+        <div class="tournament-logo-hero">
+          <img
+            :src="selectedTournament?.bannerPath ?? '/images/torneo_encurso_M.jpg'"
+            :alt="selectedTournament?.name"
+            @error="handleImageError"
+          >
+          <div class="logo-badge">
+            <span>2ª ED.</span>
+          </div>
+        </div>
+        <div class="tournament-info-hero">
+          <div class="status-badge live">
+            <span class="status-dot"></span>
+            <span>EN VIVO</span>
+          </div>
+          <h1>{{ selectedTournament?.name }}</h1>
+          <div class="tournament-meta-hero">
+            <div class="meta-item">
+              <span class="meta-icon">👥</span>
+              <span>{{ selectedTournament?.maxTeams || 16 }} equipos</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">📅</span>
+              <span>{{ formatDateRange(selectedTournament?.startDate, selectedTournament?.endDate) }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">⏱️</span>
+              <span>{{ getTournamentPhase(selectedTournament) }}</span>
+            </div>
+          </div>
+          <div class="progress-hero">
+            <div class="progress-info">
+              <span>Progreso del torneo</span>
+              <span>{{ getTournamentProgress(selectedTournament) }}%</span>
+            </div>
+            <div class="progress-bar-hero">
+              <div
+                class="progress-fill"
+                :style="{ width: getTournamentProgress(selectedTournament) + '%' }"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navegación horizontal moderna -->
+    <nav class="tournament-navigation">
+      <div class="nav-cards-container">
+        <div class="nav-cards-scroll">
+          <div
+            v-for="section in navigationSections"
+            :key="section.id"
+            :class="['nav-card', { active: activeSection === section.id }]"
+            @click="setActiveSection(section.id)"
+          >
+            <div class="nav-card-glow"></div>
+            <div class="nav-card-icon">
+              <span>{{ section.icon }}</span>
+            </div>
+            <div class="nav-card-content">
+              <h3>{{ section.label }}</h3>
+              <p>{{ getNavigationDescription(section.id) }}</p>
+            </div>
+            <div class="nav-card-indicator"></div>
+          </div>
+        </div>
+
+        <!-- Controles de navegación -->
+        <div class="nav-scroll-controls">
+          <button
+            class="nav-scroll-btn nav-scroll-left"
+            @click="scrollNavLeft"
+            :disabled="isNavScrollAtStart"
+          >
+            <span>←</span>
+          </button>
+          <button
+            class="nav-scroll-btn nav-scroll-right"
+            @click="scrollNavRight"
+            :disabled="isNavScrollAtEnd"
+          >
+            <span>→</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="tournament-main">
+      <!-- Contenido dinámico según la sección -->
+      <section class="content-section">
+        <div class="container">
+          <!-- Sección: Inicio -->
+          <div v-if="activeSection === 'inicio'" class="section-content">
+            <div class="inicio-layout">
+              <!-- Sección Acerca de - Centrada -->
+              <div class="about-section">
+                <div class="section-header-centered">
+                  <h2>📋 Acerca del Torneo</h2>
+                  <p class="section-description">Información general y detalles del torneo</p>
+                </div>
+
+                <div class="about-content-stacked">
+                  <div class="about-card-main">
+                    <div class="about-header">
+                      <span class="about-icon">⚽</span>
+                      <h3>F7 - Rama masculina</h3>
+                    </div>
+                    <div class="about-details">
+                      <div class="detail-item">
+                        <span class="detail-icon">📅</span>
+                        <div class="detail-content">
+                          <span class="detail-label">Duración</span>
+                          <span class="detail-value">{{ formatDateRange(selectedTournament?.startDate, selectedTournament?.endDate) }}</span>
+                        </div>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-icon">👥</span>
+                        <div class="detail-content">
+                          <span class="detail-label">Equipos participantes</span>
+                          <span class="detail-value">{{ selectedTournament?.maxTeams || 16 }} equipos</span>
+                        </div>
+                      </div>
+                      <div class="detail-item">
+                        <span class="detail-icon">⏱️</span>
+                        <div class="detail-content">
+                          <span class="detail-label">Estado actual</span>
+                          <span class="detail-value">{{ getTournamentPhase(selectedTournament) }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="contact-card">
+                    <div class="contact-header">
+                      <span class="contact-icon">📞</span>
+                      <h3>Contacto</h3>
+                    </div>
+                    <div class="contact-list">
+                      <div class="contact-item">
+                        <span class="contact-phone">� +1 7635767660</span>
+                      </div>
+                      <div class="contact-item">
+                        <span class="contact-phone">� +502464521</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sección Equipos - Centrada -->
+              <div class="teams-section">
+                <div class="section-header-centered">
+                  <h2>👥 Equipos Participantes</h2>
+                  <p class="section-description">Todos los equipos registrados en el torneo</p>
+                </div>
+
+                <div v-if="loading" class="loading-state-centered">
+                  <div class="spinner"></div>
+                  <p>Cargando equipos...</p>
+                </div>
+
+                <div v-else-if="error" class="error-state-centered">
+                  <span>⚠️</span>
+                  <p>{{ error }}</p>
+                </div>
+
+                <div v-else class="teams-grid-centered">
+                  <div
+                    v-for="team in tournamentTeams"
+                    :key="team.id"
+                    class="team-card-modern"
+                  >
+                    <div class="team-logo-modern">
+                      <img
+                        :src="team.logoPath ?? '/images/logo.png'"
+                        :alt="team.name"
+                        @error="handleTeamImageError"
+                      >
+                    </div>
+                    <h3 class="team-name-modern">{{ team.name }}</h3>
+                    <div class="team-stats">
+                      <div class="stat-mini">
+                        <span class="stat-label">PJ</span>
+                        <span class="stat-value">3</span>
+                      </div>
+                      <div class="stat-mini">
+                        <span class="stat-label">PTS</span>
+                        <span class="stat-value">6</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <!-- Sección: Cronograma -->
+        <div v-else-if="activeSection === 'cronograma'" class="section-content">
+          <div class="section-header">
+            <h2>📅 Cronograma</h2>
+            <p class="section-description">Calendario completo de partidos y fechas importantes</p>
+          </div>
+
+          <div class="schedule-container">
+            <!-- Filtros de cronograma -->
+            <div class="schedule-filters">
+              <button class="filter-btn active">Todos</button>
+              <button class="filter-btn">Esta semana</button>
+              <button class="filter-btn">Próximos</button>
+              <button class="filter-btn">Finalizados</button>
+            </div>
+
+            <!-- Timeline de partidos -->
+            <div class="schedule-timeline">
+              <div class="match-day">
+                <div class="day-header">
+                  <h3>Jornada 1</h3>
+                  <span class="day-date">15 de Agosto, 2025</span>
+                </div>
+                <div class="matches-list">
+                  <div class="match-card">
+                    <div class="match-time">14:00</div>
+                    <div class="match-teams">
+                      <div class="team">
+                        <img src="/images/logo.png" alt="Drink Team" @error="handleTeamImageError">
+                        <span>Drink Team</span>
+                      </div>
+                      <div class="vs">VS</div>
+                      <div class="team">
+                        <img src="/images/logo.png" alt="Tecno Stop" @error="handleTeamImageError">
+                        <span>Tecno Stop</span>
+                      </div>
+                    </div>
+                    <div class="match-status pending">Por jugar</div>
+                  </div>
+
+                  <div class="match-card">
+                    <div class="match-time">16:00</div>
+                    <div class="match-teams">
+                      <div class="team">
+                        <img src="/images/logo.png" alt="Olympia FC" @error="handleTeamImageError">
+                        <span>Olympia FC</span>
+                      </div>
+                      <div class="vs">VS</div>
+                      <div class="team">
+                        <img src="/images/logo.png" alt="La Fábrica" @error="handleTeamImageError">
+                        <span>La Fábrica</span>
+                      </div>
+                    </div>
+                    <div class="match-status pending">Por jugar</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección: Resultados -->
+        <div v-else-if="activeSection === 'resultados'" class="section-content">
+          <div class="section-header">
+            <h2>⚽ Resultados</h2>
+            <p class="section-description">Resultados de todos los partidos disputados</p>
+          </div>
+
+          <div class="results-container">
+            <!-- Estadísticas generales -->
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon">⚽</div>
+                <div class="stat-content">
+                  <span class="stat-number">24</span>
+                  <span class="stat-label">Goles totales</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">🥅</div>
+                <div class="stat-content">
+                  <span class="stat-number">8</span>
+                  <span class="stat-label">Partidos jugados</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">👤</div>
+                <div class="stat-content">
+                  <span class="stat-number">12</span>
+                  <span class="stat-label">Goleadores</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">🟨</div>
+                <div class="stat-content">
+                  <span class="stat-number">5</span>
+                  <span class="stat-label">Tarjetas amarillas</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Resultados recientes -->
+            <div class="recent-results">
+              <h3>Resultados recientes</h3>
+              <div class="results-list">
+                <div class="result-card">
+                  <div class="match-info">
+                    <span class="match-date">10 Ago</span>
+                    <span class="match-round">Jornada 1</span>
+                  </div>
+                  <div class="match-result">
+                    <div class="team-result">
+                      <img src="/images/logo.png" alt="Drink Team" @error="handleTeamImageError">
+                      <span class="team-name">Drink Team</span>
+                      <span class="team-score winner">3</span>
+                    </div>
+                    <div class="result-separator">-</div>
+                    <div class="team-result">
+                      <span class="team-score">1</span>
+                      <span class="team-name">Tecno Stop</span>
+                      <img src="/images/logo.png" alt="Tecno Stop" @error="handleTeamImageError">
+                    </div>
+                  </div>
+                  <div class="match-actions">
+                    <button class="action-btn">Ver detalles</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección: Clasificación -->
+        <div v-else-if="activeSection === 'clasificacion'" class="section-content">
+          <div class="section-header">
+            <h2>🏆 Tabla de Clasificación</h2>
+            <p class="section-description">Posiciones actuales de todos los equipos</p>
+          </div>
+
+          <div class="classification-container">
+            <!-- Leyenda -->
+            <div class="classification-legend">
+              <div class="legend-item qualify">
+                <span class="legend-color"></span>
+                <span>Clasifican a playoff</span>
+              </div>
+              <div class="legend-item elimination">
+                <span class="legend-color"></span>
+                <span>Zona de eliminación</span>
+              </div>
+            </div>
+
+            <!-- Tabla de posiciones -->
+            <div class="classification-table">
+              <div class="table-header">
+                <div class="pos">#</div>
+                <div class="team">Equipo</div>
+                <div class="games">PJ</div>
+                <div class="wins">PG</div>
+                <div class="draws">PE</div>
+                <div class="losses">PP</div>
+                <div class="goals-for">GF</div>
+                <div class="goals-against">GC</div>
+                <div class="goal-diff">DG</div>
+                <div class="points">PTS</div>
+              </div>
+
+              <div class="table-body">
+                <div class="table-row qualify">
+                  <div class="pos">1</div>
+                  <div class="team">
+                    <img src="/images/logo.png" alt="Drink Team" @error="handleTeamImageError">
+                    <span>Drink Team</span>
+                  </div>
+                  <div class="games">3</div>
+                  <div class="wins">3</div>
+                  <div class="draws">0</div>
+                  <div class="losses">0</div>
+                  <div class="goals-for">8</div>
+                  <div class="goals-against">2</div>
+                  <div class="goal-diff">+6</div>
+                  <div class="points">9</div>
+                </div>
+
+                <div class="table-row qualify">
+                  <div class="pos">2</div>
+                  <div class="team">
+                    <img src="/images/logo.png" alt="Olympia FC" @error="handleTeamImageError">
+                    <span>Olympia FC</span>
+                  </div>
+                  <div class="games">3</div>
+                  <div class="wins">2</div>
+                  <div class="draws">1</div>
+                  <div class="losses">0</div>
+                  <div class="goals-for">6</div>
+                  <div class="goals-against">3</div>
+                  <div class="goal-diff">+3</div>
+                  <div class="points">7</div>
+                </div>
+
+                <div class="table-row">
+                  <div class="pos">3</div>
+                  <div class="team">
+                    <img src="/images/logo.png" alt="La Fábrica" @error="handleTeamImageError">
+                    <span>La Fábrica</span>
+                  </div>
+                  <div class="games">3</div>
+                  <div class="wins">2</div>
+                  <div class="draws">0</div>
+                  <div class="losses">1</div>
+                  <div class="goals-for">5</div>
+                  <div class="goals-against">4</div>
+                  <div class="goal-diff">+1</div>
+                  <div class="points">6</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección: Rankings y encuestas -->
+        <div v-else-if="activeSection === 'rankings'" class="section-content">
+          <div class="section-header">
+            <h2>Rankings y encuestas</h2>
+          </div>
+          <div class="coming-soon">
+            <span>📊</span>
+            <h3>Próximamente</h3>
+            <p>Los rankings y encuestas estarán disponibles durante el torneo</p>
+          </div>
+        </div>
+
+        <!-- Sección: Fotos, videos y noticias -->
+        <div v-else-if="activeSection === 'fotos'" class="section-content">
+          <div class="section-header">
+            <h2>Fotos, videos y noticias</h2>
+          </div>
+          <div class="coming-soon">
+            <span>📸</span>
+            <h3>Próximamente</h3>
+            <p>Las fotos, videos y noticias del torneo se publicarán aquí</p>
+          </div>
+        </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useTournaments } from '@/composables/useTournaments'
+import type { Tournament } from '@/types/TournamentType'
+
+// Definir el tipo de Team
+interface Team {
+  id: number
+  name: string
+  logoPath?: string
+}
+
+const route = useRoute()
+const router = useRouter()
+const { tournaments, loading, error, loadTournaments } = useTournaments()
+
+// Estado reactivo
+const activeSection = ref('inicio')
+const tournamentTeams = ref<Team[]>([])
+const selectedTournament = ref<Tournament | null>(null)
+const isNavScrollAtStart = ref(true)
+const isNavScrollAtEnd = ref(false)
+
+// Secciones de navegación
+const navigationSections = [
+  { id: 'inicio', label: 'Inicio', icon: '🏠' },
+  { id: 'cronograma', label: 'Cronograma', icon: '📅' },
+  { id: 'resultados', label: 'Resultados', icon: '⚽' },
+  { id: 'clasificacion', label: 'Clasificación', icon: '🏆' },
+  { id: 'rankings', label: 'Rankings y encuestas', icon: '📊' },
+  { id: 'fotos', label: 'Fotos, vídeos y noticias', icon: '📸' }
+]
+
+// Función para cambiar sección activa
+const setActiveSection = (sectionId: string) => {
+  activeSection.value = sectionId
+}
+
+// Función para obtener descripción de navegación
+const getNavigationDescription = (sectionId: string): string => {
+  const descriptions: { [key: string]: string } = {
+    'inicio': 'Información general y equipos',
+    'cronograma': 'Calendario de partidos',
+    'resultados': 'Marcadores y estadísticas',
+    'clasificacion': 'Tabla de posiciones',
+    'rankings': 'Estadísticas y encuestas',
+    'fotos': 'Multimedia y noticias'
+  }
+  return descriptions[sectionId] || 'Información del torneo'
+}
+
+// Funciones de scroll para navegación
+const scrollNavLeft = () => {
+  const container = document.querySelector('.nav-cards-scroll') as HTMLElement
+  if (container) {
+    // Calcular el ancho de desplazamiento basado en el ancho de una card (260px + gap)
+    const scrollAmount = 276 // 260px card + 16px gap
+    container.scrollBy({ left: -scrollAmount, behavior: 'smooth' })
+    // Actualizar estado después del scroll
+    setTimeout(updateScrollButtons, 300)
+  }
+}
+
+const scrollNavRight = () => {
+  const container = document.querySelector('.nav-cards-scroll') as HTMLElement
+  if (container) {
+    // Calcular el ancho de desplazamiento basado en el ancho de una card (260px + gap)
+    const scrollAmount = 276 // 260px card + 16px gap
+    container.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+    // Actualizar estado después del scroll
+    setTimeout(updateScrollButtons, 300)
+  }
+}
+
+// Función para actualizar el estado de los botones de scroll
+const updateScrollButtons = () => {
+  const container = document.querySelector('.nav-cards-scroll') as HTMLElement
+  if (container) {
+    isNavScrollAtStart.value = container.scrollLeft <= 0
+    isNavScrollAtEnd.value = container.scrollLeft >= container.scrollWidth - container.clientWidth
+  }
+}
+
+// Inicializar scroll listeners cuando el componente se monta
+onMounted(() => {
+  const container = document.querySelector('.nav-cards-scroll') as HTMLElement
+  if (container) {
+    // Configurar scroll listener
+    container.addEventListener('scroll', updateScrollButtons)
+    // Inicializar estado
+    setTimeout(updateScrollButtons, 100)
+  }
+})
+
+// Función para formatear rango de fechas
+const formatDateRange = (startDate?: string, endDate?: string): string => {
+  if (!startDate || !endDate) return ''
+
+  const start = new Date(startDate)
+  const end = new Date(endDate)
+
+  const startMonth = start.toLocaleDateString('es-ES', { month: 'short' })
+  const endMonth = end.toLocaleDateString('es-ES', { month: 'short' })
+  const year = end.getFullYear()
+
+  if (startMonth === endMonth) {
+    return `${startMonth} ${year}`
+  }
+
+  return `${startMonth} - ${endMonth} ${year}`
+}
+
+// Función para determinar la fase del torneo
+const getTournamentPhase = (tournament?: Tournament | null): string => {
+  if (!tournament) return ''
+
+  const now = new Date()
+  const start = new Date(tournament.startDate)
+  const end = new Date(tournament.endDate)
+
+  if (now < start) {
+    return 'Por comenzar'
+  } else if (now > end) {
+    return 'Finalizado'
+  } else {
+    const totalDuration = end.getTime() - start.getTime()
+    const elapsed = now.getTime() - start.getTime()
+    const progress = Math.round((elapsed / totalDuration) * 100)
+
+    if (progress < 30) {
+      return 'Fase de grupos'
+    } else if (progress < 70) {
+      return 'Fase intermedia'
+    } else {
+      return 'Fase final'
+    }
+  }
+}
+
+// Función para calcular el progreso del torneo
+const getTournamentProgress = (tournament?: Tournament | null): number => {
+  if (!tournament) return 0
+
+  const now = new Date()
+  const start = new Date(tournament.startDate)
+  const end = new Date(tournament.endDate)
+
+  if (now < start) {
+    return 0 // No ha comenzado
+  } else if (now > end) {
+    return 100 // Ha terminado
+  } else {
+    // Calcular progreso basado en fechas
+    const totalDuration = end.getTime() - start.getTime()
+    const elapsed = now.getTime() - start.getTime()
+    return Math.round((elapsed / totalDuration) * 100)
+  }
+}
+
+// Funciones para manejar errores de imagen
+const handleImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  img.src = '/images/torneo_encurso_M.jpg'
+}
+
+const handleTeamImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  img.src = '/images/logo.png'
+}
+
+// Cargar datos del torneo
+const loadTournamentData = async () => {
+  const tournamentId = route.params.id
+
+  if (!tournamentId) {
+    router.push('/')
+    return
+  }
+
+  // Buscar el torneo específico
+  const tournament = tournaments.value.find(t => t.id.toString() === tournamentId)
+
+  if (tournament) {
+    selectedTournament.value = tournament
+    // Aquí cargarías los equipos del torneo desde tu API
+    // Por ahora, usamos datos de ejemplo
+    loadMockTeams()
+  } else {
+    // Si no se encuentra el torneo, redirigir al home
+    router.push('/')
+  }
+}
+
+// Cargar equipos de ejemplo (reemplazar con llamada real a la API)
+const loadMockTeams = () => {
+  tournamentTeams.value = [
+    { id: 1, name: 'Drink Team', logoPath: '/images/logo.png' },
+    { id: 2, name: 'Tecno Stop', logoPath: '/images/logo.png' },
+    { id: 3, name: 'Olympia FC', logoPath: '/images/logo.png' },
+    { id: 4, name: 'La Fábrica', logoPath: '/images/logo.png' },
+    { id: 5, name: 'La 12', logoPath: '/images/logo.png' },
+    { id: 6, name: 'Vodka Juniors', logoPath: '/images/logo.png' },
+    { id: 7, name: 'Torre Fuerte', logoPath: '/images/logo.png' },
+    { id: 8, name: 'Legion FC', logoPath: '/images/logo.png' },
+    { id: 9, name: 'Furano', logoPath: '/images/logo.png' }
+  ]
+}
+
+// Montar componente
+onMounted(async () => {
+  await loadTournaments()
+  await loadTournamentData()
+})
+</script>
+
+<style scoped>
+.tournament-detail {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+/* Hero Section Mejorado */
+.tournament-hero {
+  position: relative;
+  height: 400px;
+  overflow: hidden;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.hero-background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.4);
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 17, 34, 0.8) 0%,
+    rgba(0, 34, 68, 0.6) 50%,
+    rgba(0, 17, 34, 0.8) 100%
+  );
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  gap: 3rem;
+}
+
+.tournament-logo-hero {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 4px solid #FFC107;
+  box-shadow: 0 10px 30px rgba(255, 193, 7, 0.4);
+}
+
+.tournament-logo-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(1);
+}
+
+.logo-badge {
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  background: #FFC107;
+  color: #001122;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tournament-info-hero {
+  flex: 1;
+  color: white;
+}
+
+.status-badge.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(220, 53, 69, 0.9);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.tournament-info-hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  line-height: 1.2;
+}
+
+.tournament-meta-hero {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.meta-icon {
+  font-size: 1.2rem;
+}
+
+.progress-hero {
+  max-width: 400px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.progress-bar-hero {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FFC107, #FFD54F);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+  position: relative;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 2s infinite;
+}
+
+/* Navegación Horizontal Moderna */
+.tournament-navigation {
+  background: white;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  overflow: visible;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-cards-container {
+  position: relative;
+  padding: 2rem 0;
+  max-width: 100vw;
+  margin: 0 auto;
+  width: 100%;
+  overflow: visible;
+}
+
+.nav-cards-scroll {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0.5rem 3rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  min-width: 100%;
+}
+
+.nav-cards-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Cards de Navegación */
+.nav-card {
+  position: relative;
+  min-width: 260px;
+  max-width: 260px;
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 16px;
+  padding: 1.75rem;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.nav-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 123, 255, 0.15);
+  border-color: rgba(0, 123, 255, 0.2);
+}
+
+.nav-card.active {
+  background: linear-gradient(145deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 123, 255, 0.3);
+  border-color: #007bff;
+}
+
+.nav-card-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 16px;
+  background: linear-gradient(45deg, #007bff, #FFC107);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  filter: blur(20px);
+  transform: scale(1.1);
+}
+
+.nav-card:hover .nav-card-glow {
+  opacity: 0.1;
+}
+
+.nav-card.active .nav-card-glow {
+  opacity: 0.2;
+}
+
+.nav-card-icon {
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 123, 255, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  transition: all 0.3s ease;
+}
+
+.nav-card.active .nav-card-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-card:hover .nav-card-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.nav-card-content h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+  color: #212529;
+  line-height: 1.3;
+}
+
+.nav-card.active .nav-card-content h3 {
+  color: white;
+}
+
+.nav-card-content p {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.nav-card.active .nav-card-content p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.nav-card-indicator {
+  width: 100%;
+  height: 3px;
+  background: #e9ecef;
+  border-radius: 2px;
+  margin-top: auto;
+  transition: all 0.3s ease;
+}
+
+.nav-card.active .nav-card-indicator {
+  background: #FFC107;
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+}
+
+/* Controles de scroll de navegación */
+.nav-scroll-controls {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.nav-scroll-btn {
+  width: 44px;
+  height: 44px;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  pointer-events: all;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-size: 1.1rem;
+  color: #007bff;
+}
+
+.nav-scroll-btn:hover:not(:disabled) {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+}
+
+.nav-scroll-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.nav-scroll-left {
+  margin-left: 10px;
+}
+
+.nav-scroll-right {
+  margin-right: 10px;
+}
+
+/* Contenido principal */
+.tournament-main {
+  flex: 1;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.content-section {
+  padding-top: 3rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* Contenido de secciones */
+.content-section {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.section-content {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Layout centrado para sección inicio */
+.inicio-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  align-items: center;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.section-header-centered {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.section-header-centered h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #212529;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-header-centered .section-description {
+  font-size: 1.1rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+/* Sección Acerca de */
+.about-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.about-content-stacked {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  max-width: 800px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.about-card-main, .contact-card-below {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-card:hover, .contact-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 123, 255, 0.15);
+}
+
+.about-header, .contact-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f8f9fa;
+}
+
+.about-icon, .contact-icon {
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border-radius: 10px;
+  color: white;
+}
+
+.about-header h3, .contact-header h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #212529;
+  margin: 0;
+}
+
+.about-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.detail-item:hover {
+  background: #e9ecef;
+}
+
+.detail-icon {
+  font-size: 1.2rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.detail-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.detail-label {
+  font-size: 0.85rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 1rem;
+  color: #212529;
+  font-weight: 600;
+}
+
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.contact-item:hover {
+  background: #e9ecef;
+  transform: translateX(5px);
+}
+
+.contact-phone {
+  font-size: 1rem;
+  color: #212529;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* Estilos para layout horizontal de contactos */
+.contact-list-horizontal {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.contact-list-horizontal .contact-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  min-width: 200px;
+  justify-content: center;
+}
+
+.contact-list-horizontal .contact-item:hover {
+  background: #e9ecef;
+  transform: translateY(-2px);
+  border-color: #007bff;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.1);
+}
+
+/* Sección Equipos */
+.teams-section {
+  width: 100%;
+}
+
+.loading-state-centered, .error-state-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.teams-grid-centered {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.team-card-modern {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.team-card-modern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.team-card-modern:hover::before {
+  opacity: 1;
+}
+
+.team-card-modern:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(0, 123, 255, 0.15);
+}
+
+.team-logo-modern {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1rem auto;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #f8f9fa;
+  transition: border-color 0.3s ease;
+}
+
+.team-card-modern:hover .team-logo-modern {
+  border-color: #007bff;
+}
+
+.team-logo-modern img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.team-name-modern {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #212529;
+  margin: 0 0 1rem 0;
+}
+
+.team-stats {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.stat-mini {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  min-width: 50px;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 1rem;
+  color: #007bff;
+  font-weight: 700;
+}
+
+.section-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.section-header h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #212529;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-description {
+  font-size: 1.1rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+/* Estilos para Cronograma */
+.schedule-container {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.schedule-filters {
+  display: flex;
+  gap: 1rem;
+  padding: 2rem 2rem 0;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 12px 24px;
+  border: 2px solid #e9ecef;
+  background: white;
+  border-radius: 25px;
+  color: #6c757d;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border-color: #007bff;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+}
+
+.schedule-timeline {
+  padding: 2rem;
+}
+
+.match-day {
+  margin-bottom: 2rem;
+}
+
+.day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f8f9fa;
+}
+
+.day-header h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #212529;
+  margin: 0;
+}
+
+.day-date {
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.matches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.match-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 2rem;
+  align-items: center;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 15px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.match-card:hover {
+  border-color: #007bff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.1);
+}
+
+.match-time {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #007bff;
+  min-width: 60px;
+}
+
+.match-teams {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 150px;
+}
+
+.team img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.team span {
+  font-weight: 600;
+  color: #212529;
+}
+
+.vs {
+  font-weight: 700;
+  color: #6c757d;
+  padding: 0 1rem;
+}
+
+.match-status {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  min-width: 100px;
+  text-align: center;
+}
+
+.match-status.pending {
+  background: #FFC107;
+  color: #212529;
+}
+
+.match-status.live {
+  background: #dc3545;
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+.match-status.finished {
+  background: #28a745;
+  color: white;
+}
+
+/* Estilos para Resultados */
+.results-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  border-color: #007bff;
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 123, 255, 0.2);
+}
+
+.stat-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #212529;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.recent-results {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.recent-results h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #212529;
+  margin: 0 0 1.5rem 0;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.result-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 2rem;
+  align-items: center;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 15px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.result-card:hover {
+  border-color: #007bff;
+  transform: translateY(-2px);
+}
+
+.match-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 80px;
+}
+
+.match-date {
+  font-weight: 700;
+  color: #007bff;
+}
+
+.match-round {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.match-result {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.team-result {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.team-result img {
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.team-name {
+  font-weight: 600;
+  color: #212529;
+  min-width: 120px;
+}
+
+.team-score {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #6c757d;
+  min-width: 30px;
+  text-align: center;
+}
+
+.team-score.winner {
+  color: #007bff;
+}
+
+.result-separator {
+  font-weight: 700;
+  color: #6c757d;
+  padding: 0 1rem;
+}
+
+.match-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+/* Estilos para Clasificación */
+.classification-container {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.classification-legend {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem 2rem 1rem;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+}
+
+.legend-item.qualify .legend-color {
+  background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.legend-item.elimination .legend-color {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.classification-table {
+  overflow-x: auto;
+}
+
+.table-header,
+.table-row {
+  display: grid;
+  grid-template-columns: 50px 1fr 60px 60px 60px 60px 60px 60px 80px 80px;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 2rem;
+  font-size: 0.9rem;
+}
+
+.table-header {
+  background: #f8f9fa;
+  font-weight: 700;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.table-row {
+  border-bottom: 1px solid #f1f3f4;
+  transition: all 0.3s ease;
+}
+
+.table-row:hover {
+  background: #f8f9fa;
+}
+
+.table-row.qualify {
+  border-left: 4px solid #28a745;
+  background: rgba(40, 167, 69, 0.05);
+}
+
+.table-row.elimination {
+  border-left: 4px solid #dc3545;
+  background: rgba(220, 53, 69, 0.05);
+}
+
+.pos {
+  font-weight: 700;
+  color: #007bff;
+  text-align: center;
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  color: #212529;
+}
+
+.team img {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.games, .wins, .draws, .losses, .goals-for, .goals-against, .goal-diff, .points {
+  text-align: center;
+  font-weight: 600;
+}
+
+.points {
+  color: #007bff;
+  font-size: 1.1rem;
+}
+
+.about-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.about-text p {
+  font-size: 1.1rem;
+  color: #495057;
+  margin-bottom: 2rem;
+}
+
+.contact-info h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 1rem;
+}
+
+.contact-info p {
+  font-size: 1rem;
+  color: #6c757d;
+  margin: 0.5rem 0;
+}
+
+/* Grid de equipos */
+.teams-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.team-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.team-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.team-logo {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1rem;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.team-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.team-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #212529;
+  margin: 0;
+}
+
+/* Estados de carga y error */
+.loading-state, .error-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #6c757d;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e9ecef;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-state span {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+/* Coming soon */
+.coming-soon {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.coming-soon span {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.coming-soon h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.coming-soon p {
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .hero-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+    padding: 2rem 1rem;
+  }
+
+  .tournament-info-hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .tournament-meta-hero {
+    justify-content: center;
+  }
+
+  .nav-card {
+    min-width: 200px;
+    max-width: 200px;
+    padding: 1.25rem;
+  }
+
+  .nav-scroll-controls {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .tournament-hero {
+    height: 300px;
+  }
+
+  .hero-content {
+    padding: 1.5rem 1rem;
+  }
+
+  .tournament-logo-hero {
+    width: 80px;
+    height: 80px;
+  }
+
+  .tournament-info-hero h1 {
+    font-size: 2rem;
+  }
+
+  /* Responsividad para el nuevo diseño centrado */
+  .about-content-stacked {
+    max-width: 100%;
+    gap: 1.5rem;
+  }
+
+  .contact-list-horizontal {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .contact-list-horizontal .contact-item {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .section-header-centered h2 {
+    font-size: 1.8rem;
+  }
+
+  .about-card-main, .contact-card-below {
+    padding: 1.5rem;
+  }
+
+  .teams-grid-centered {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .team-card-modern {
+    padding: 1.25rem;
+  }
+
+  .inicio-layout {
+    gap: 2.5rem;
+  }
+
+  .tournament-meta-hero {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .nav-cards-container {
+    padding: 1.5rem 0.25rem;
+    max-width: 100vw;
+  }
+
+  .nav-cards-scroll {
+    padding: 0.5rem 2rem;
+  }
+
+  .nav-card {
+    min-width: 200px;
+    max-width: 200px;
+    padding: 1.25rem;
+  }
+
+  .nav-card-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+  }
+
+  .nav-card-content h3 {
+    font-size: 1rem;
+  }
+
+  .nav-card-content p {
+    font-size: 0.8rem;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .match-card {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .match-teams {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .team {
+    justify-content: center;
+    min-width: auto;
+  }
+
+  .result-card {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .match-result {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .team-result {
+    justify-content: center;
+  }
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 40px 1fr 50px 50px 50px 50px 50px 50px 60px 60px;
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tournament-hero {
+    height: 250px;
+  }
+
+  .hero-content {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .tournament-logo-hero {
+    width: 60px;
+    height: 60px;
+  }
+
+  .tournament-info-hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .status-badge.live {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+  }
+
+  .nav-cards-container {
+    padding: 1rem 0;
+  }
+
+  .nav-card {
+    min-width: 160px;
+    max-width: 160px;
+    padding: 0.875rem;
+  }
+
+  .nav-card-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 1.125rem;
+  }
+
+  .nav-card-content h3 {
+    font-size: 0.9rem;
+  }
+
+  .nav-card-content p {
+    font-size: 0.75rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .stat-card {
+    padding: 1.5rem;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+
+  .schedule-timeline,
+  .recent-results {
+    padding: 1rem;
+  }
+
+  .match-card,
+  .result-card {
+    padding: 1rem;
+  }
+
+  .team img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .table-header,
+  .table-row {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .classification-legend {
+    padding: 1rem;
+    gap: 1rem;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+</style>

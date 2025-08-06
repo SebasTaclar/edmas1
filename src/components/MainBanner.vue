@@ -38,20 +38,20 @@
                   <span class="tournament-league">Conoce nuestros torneos</span>
                 </div>
                 <div class="tournament-info">
-                  <span class="tournament-time">4 ago • 6:00</span>
-                  <h4 class="tournament-name">Sorteo de los play-offs</h4>
+                  <span class="tournament-time">Accede a las estadisticas</span>
+                  <h4 class="tournament-name">Los mejores equipos, la mejor organizacion</h4>
                 </div>
-                <button class="tournament-btn">Ver más detalles</button>
+                <button class="tournament-btn" @click="scrollToTournaments">Ver más detalles</button>
               </div>
 
               <div class="tournament-card">
                 <div class="tournament-badge">
                   <span class="tournament-icon">🏆</span>
-                  <span class="tournament-league">UEFA Conference League</span>
+                  <span class="tournament-league">Revisa las estadisticas</span>
                 </div>
                 <div class="tournament-info">
-                  <span class="tournament-time">4 ago • 7:00</span>
-                  <h4 class="tournament-name">Sorteo de los play-offs</h4>
+                  <span class="tournament-time">ver detalles de los partidos</span>
+                  <h4 class="tournament-name">Los mejores equipos, jugadores y porteros</h4>
                 </div>
                 <button class="tournament-btn">Ver más detalles</button>
               </div>
@@ -260,6 +260,17 @@ const stopAutoPlay = () => {
   if (intervalId) {
     clearInterval(intervalId)
     intervalId = null
+  }
+}
+
+// Función para hacer scroll a la sección de torneos
+const scrollToTournaments = () => {
+  const tournamentsSection = document.getElementById('ongoing_tournaments')
+  if (tournamentsSection) {
+    tournamentsSection.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    })
   }
 }
 

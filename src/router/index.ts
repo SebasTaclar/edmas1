@@ -54,6 +54,11 @@ const router = createRouter({
         requiredRole: 'admin',
       },
     },
+    {
+      path: '/tournament/:id',
+      name: 'tournament-detail',
+      component: () => import('../views/TournamentDetail.vue'),
+    },
     // Catch-all route - debe ir al final
     {
       path: '/:pathMatch(.*)*',
