@@ -78,6 +78,13 @@
                 placeholder="Número de identificación" :class="{ 'error': errors.identificationNumber }" />
               <span v-if="errors.identificationNumber" class="error-text">{{ errors.identificationNumber }}</span>
             </div>
+
+            <div class="form-group">
+              <label for="epsProvider">EPS (Entidad Promotora de Salud)</label>
+              <input id="epsProvider" v-model="formData.epsProvider" type="text" placeholder="Nombre de la EPS"
+                :class="{ 'error': errors.epsProvider }" />
+              <span v-if="errors.epsProvider" class="error-text">{{ errors.epsProvider }}</span>
+            </div>
           </div>
 
           <!-- Foto del jugador -->
@@ -178,6 +185,7 @@ const formData = ref({
   jerseyNumber: 1,
   dateOfBirth: '',
   identificationNumber: '',
+  epsProvider: '',
   teamId: props.teamId || 0
 })
 
@@ -213,6 +221,7 @@ onMounted(() => {
       jerseyNumber: props.player.jerseyNumber,
       dateOfBirth: props.player.dateOfBirth.split('T')[0], // Convertir a formato de fecha
       identificationNumber: props.player.identificationNumber || '',
+      epsProvider: props.player.epsProvider || '',
       teamId: props.teamId || props.player.teamId || 0
     }
     currentPhotoUrl.value = props.player.profilePhotoPath
@@ -292,6 +301,7 @@ const handleSubmit = async () => {
       jerseyNumber: formData.value.jerseyNumber,
       dateOfBirth: formData.value.dateOfBirth,
       identificationNumber: formData.value.identificationNumber.trim() || undefined,
+      epsProvider: formData.value.epsProvider.trim() || undefined,
       teamId: formData.value.teamId
     }
 

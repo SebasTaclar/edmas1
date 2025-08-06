@@ -37,6 +37,7 @@ export interface CreatePlayerRequest {
   teamId: number
   // Campos opcionales para compatibilidad
   identificationNumber?: string
+  epsProvider?: string
 }
 
 // Interfaz para actualizar un jugador
@@ -50,6 +51,7 @@ export interface UpdatePlayerRequest {
   jerseyNumber?: number
   // Campos opcionales para compatibilidad
   identificationNumber?: string
+  epsProvider?: string
 }
 
 // Interfaz para la respuesta de crear jugador
