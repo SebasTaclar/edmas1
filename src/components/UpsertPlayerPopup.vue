@@ -9,6 +9,15 @@
       </div>
 
       <div class="modal-body">
+        <!-- Área de errores generales -->
+        <div v-if="errors.general" class="error-banner">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>{{ errors.general }}</span>
+          <button type="button" @click="errors.general = ''" class="error-close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
         <form @submit.prevent="handleSubmit" class="player-form">
           <!-- Información básica -->
           <div class="form-section">
@@ -290,6 +299,9 @@ const validateForm = (): boolean => {
 const handleSubmit = async () => {
   if (!validateForm()) return
 
+  // Limpiar errores anteriores
+  errors.value.general = ''
+
   try {
     let result
     const playerData = {
@@ -321,13 +333,27 @@ const handleSubmit = async () => {
       if (photoResult.success) {
         emit('save', playerData)
       } else {
-        errors.value.photo = photoResult.message
+        errors.value.general = photoResult.message
       }
     } else {
+      // Mostrar mensaje específico del backend
       errors.value.general = result.message || 'Error al guardar el jugador'
     }
-  } catch (err) {
-    errors.value.general = 'Error inesperado al guardar el jugador'
+  } catch (err: any) {
+    // Capturar diferentes tipos de errores del backend
+    let errorMessage = 'Error inesperado al guardar el jugador'
+
+    if (err?.response?.data?.message) {
+      errorMessage = err.response.data.message
+    } else if (err?.response?.data?.error) {
+      errorMessage = err.response.data.error
+    } else if (err?.message) {
+      errorMessage = err.message
+    } else if (typeof err === 'string') {
+      errorMessage = err
+    }
+
+    errors.value.general = errorMessage
   }
 }
 
@@ -353,8 +379,20 @@ const handlePhotoOperations = async (playerId: number): Promise<{ success: boole
     }
 
     return { success: true, message: 'Operaciones de foto completadas exitosamente' }
-  } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : 'Error desconocido en operaciones de foto'
+  } catch (err: any) {
+    // Capturar diferentes tipos de errores del backend para fotos
+    let errorMessage = 'Error desconocido en operaciones de foto'
+
+    if (err?.response?.data?.message) {
+      errorMessage = err.response.data.message
+    } else if (err?.response?.data?.error) {
+      errorMessage = err.response.data.error
+    } else if (err?.message) {
+      errorMessage = err.message
+    } else if (typeof err === 'string') {
+      errorMessage = err
+    }
+
     return { success: false, message: errorMessage }
   }
 }
@@ -508,6 +546,60 @@ const handleBackdropClick = () => {
 
 .modal-body {
   padding: 24px;
+}
+
+/* Banner de error general */
+.error-banner {
+  background: var(--app-error-bg, #fee);
+  border: 1px solid var(--app-error, #dc3545);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--app-error, #dc3545);
+  animation: slideDown 0.3s ease-out;
+}
+
+.error-banner i:first-child {
+  font-size: 1.2em;
+  color: var(--app-error, #dc3545);
+}
+
+.error-banner span {
+  flex: 1;
+  font-weight: 500;
+}
+
+.error-close {
+  background: none;
+  border: none;
+  color: var(--app-error, #dc3545);
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.error-close:hover {
+  background: rgba(220, 53, 69, 0.1);
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .player-form {
@@ -769,11 +861,30 @@ const handleBackdropClick = () => {
   background: var(--app-surface-elevated);
   border-color: var(--app-border);
   color: var(--app-text-primary);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
 }
 
 :root[data-theme='dark'] .form-group select option {
   background: var(--app-surface-elevated);
   color: var(--app-text-primary);
+  border: none;
+  padding: 8px 12px;
+}
+
+:root[data-theme='dark'] .form-group select option:checked {
+  background: var(--app-primary);
+  color: white;
+}
+
+:root[data-theme='dark'] .form-group select option:hover {
+  background: var(--app-hover-bg);
 }
 
 :root[data-theme='dark'] .form-group select:focus {
@@ -802,14 +913,30 @@ const handleBackdropClick = () => {
 }
 
 /* Estilos para el select en Safari y otros navegadores */
-:root[data-theme='dark'] .form-group select {
+.form-group select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 16px;
   padding-right: 40px;
+}
+
+/* Modo oscuro para el banner de errores */
+:root[data-theme='dark'] .error-banner {
+  background: var(--app-error-bg, rgba(220, 53, 69, 0.1));
+  border-color: var(--app-error, #dc3545);
+  color: var(--app-error, #ff6b7a);
+}
+
+:root[data-theme='dark'] .error-banner i:first-child,
+:root[data-theme='dark'] .error-close {
+  color: var(--app-error, #ff6b7a);
+}
+
+:root[data-theme='dark'] .error-close:hover {
+  background: rgba(220, 53, 69, 0.2);
 }
 </style>
