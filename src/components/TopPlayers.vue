@@ -31,47 +31,47 @@ const topPlayers = ref([
   },
   {
     name: 'Luis Suárez',
-    image: '/images/players/player2.jpg',
+    image: '',
     stats: '12 Goles • 10 Asistencias'
   },
   {
     name: 'Lionel Messi',
-    image: '/images/players/player3.jpg',
+    image: '',
     stats: '18 Goles • 15 Asistencias'
   },
   {
     name: 'Cristiano Ronaldo',
-    image: '/images/players/player4.jpg',
+    image: '',
     stats: '16 Goles • 6 Asistencias'
   },
   {
     name: 'Neymar Jr',
-    image: '/images/players/player5.jpg',
+    image: '',
     stats: '14 Goles • 12 Asistencias'
   },
   {
     name: 'Robert Lewandowski',
-    image: '/images/players/player6.jpg',
+    image: '',
     stats: '20 Goles • 5 Asistencias'
   },
   {
     name: 'Kevin De Bruyne',
-    image: '/images/players/player7.jpg',
+    image: '',
     stats: '8 Goles • 20 Asistencias'
   },
   {
     name: 'Kylian Mbappé',
-    image: '/images/players/player8.jpg',
+    image: '',
     stats: '17 Goles • 9 Asistencias'
   },
   {
     name: 'Erling Haaland',
-    image: '/images/players/player9.jpg',
+    image: '',
     stats: '22 Goles • 4 Asistencias'
   },
   {
     name: 'Mohamed Salah',
-    image: '/images/players/player10.jpg',
+    image: '',
     stats: '19 Goles • 7 Asistencias'
   }
 ])
@@ -159,11 +159,9 @@ const topPlayers = ref([
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.4) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.4) 100%);
 }
 
 .player-info {
