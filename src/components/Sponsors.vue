@@ -9,19 +9,37 @@
       <div class="sponsors-track">
         <div class="sponsors-content">
           <div class="sponsor-item">
-            <div class="sponsor-inner">
-              <img src="/images/hooky.jpg" alt="Hooky" class="sponsor-image">
-            </div>
+            <a href="https://www.instagram.com/hookymoficial?igsh=cTdxemRsdzE4dzB5" target="_blank" rel="noopener noreferrer" class="sponsor-link">
+              <div class="sponsor-inner">
+                <img src="/images/hooky.jpg" alt="Hooky" class="sponsor-image">
+                <div class="sponsor-overlay">
+                  <i class="fas fa-external-link-alt"></i>
+                  <span>Visitar Hooky</span>
+                </div>
+              </div>
+            </a>
           </div>
           <div class="sponsor-item">
-            <div class="sponsor-inner">
-              <img src="/images/as.jpg" alt="As" class="sponsor-image">
-            </div>
+            <a href="https://www.instagram.com/guayosas?igsh=dmk2N2o3bnFnaWQx" target="_blank" rel="noopener noreferrer" class="sponsor-link">
+              <div class="sponsor-inner">
+                <img src="/images/as.jpg" alt="As Sneakers" class="sponsor-image">
+                <div class="sponsor-overlay">
+                  <i class="fas fa-external-link-alt"></i>
+                  <span>Visitar AS</span>
+                </div>
+              </div>
+            </a>
           </div>
           <div class="sponsor-item">
-            <div class="sponsor-inner">
-              <img src="/images/kiger.jpg" alt="Kiger" class="sponsor-image">
-            </div>
+            <a href="https://www.instagram.com/kigerdogs/" target="_blank" rel="noopener noreferrer" class="sponsor-link">
+              <div class="sponsor-inner">
+                <img src="/images/kiger.jpg" alt="Kiger" class="sponsor-image">
+                <div class="sponsor-overlay">
+                  <i class="fas fa-external-link-alt"></i>
+                  <span>Visitar Kiger</span>
+                </div>
+              </div>
+            </a>
           </div>
         </div>
       </div>
@@ -43,8 +61,8 @@ const duration = 30;
 
 <style scoped>
 .sponsors-wrapper {
-  background: linear-gradient(to bottom, #f8f9fa, #ffffff);
-  padding: 1rem 0;
+  background: linear-gradient(135deg, #a1b4d8 0%, #a1b4d8 50%, #002366 100%);
+  padding: 4rem 0;
   overflow: hidden;
   position: relative;
   margin: 0 auto;
@@ -57,8 +75,48 @@ const duration = 30;
   top: 0;
   left: 0;
   right: 0;
-  height: 1px;
-  background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.1), transparent);
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 15% 25%, rgba(255, 165, 0, 0.15) 0%, transparent 45%),
+    radial-gradient(circle at 85% 75%, rgba(255, 165, 0, 0.12) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 60%),
+    linear-gradient(45deg, transparent 30%, rgba(255, 165, 0, 0.05) 50%, transparent 70%);
+  pointer-events: none;
+  animation: backgroundShift 15s ease-in-out infinite;
+}
+
+@keyframes backgroundShift {
+  0%, 100% { 
+    background: 
+      radial-gradient(circle at 15% 25%, rgba(255, 165, 0, 0.15) 0%, transparent 45%),
+      radial-gradient(circle at 85% 75%, rgba(255, 165, 0, 0.12) 0%, transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 60%),
+      linear-gradient(45deg, transparent 30%, rgba(255, 165, 0, 0.05) 50%, transparent 70%);
+  }
+  50% { 
+    background: 
+      radial-gradient(circle at 85% 25%, rgba(255, 165, 0, 0.12) 0%, transparent 45%),
+      radial-gradient(circle at 15% 75%, rgba(255, 165, 0, 0.15) 0%, transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 60%),
+      linear-gradient(-45deg, transparent 30%, rgba(255, 165, 0, 0.05) 50%, transparent 70%);
+  }
+}
+
+.sponsors-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(to right, 
+    transparent, 
+    rgba(255, 165, 0, 0.3), 
+    #FFA500, 
+    rgba(255, 165, 0, 0.3), 
+    transparent
+  );
+  box-shadow: 0 3px 15px rgba(255, 165, 0, 0.3);
 }
 
 .sponsors-header {
@@ -70,23 +128,23 @@ const duration = 30;
 
 .sponsors-title {
   font-size: 2.5rem;
-  font-weight: 700;
-  color: #031633;
+  font-weight: 800;
+  color: #002366;
   margin-bottom: 1rem;
   text-transform: uppercase;
   letter-spacing: 2px;
-  background: linear-gradient(135deg, #031633, #1a365d);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.3);
   position: relative;
   display: inline-block;
 }
 
 .sponsors-subtitle {
-  color: #666;
+  color: #002366;
   font-size: 1.1rem;
   line-height: 1.6;
   margin: 0;
+  font-weight: 500;
+  text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.2);
 }
 
 .sponsors-title::after {
@@ -97,17 +155,23 @@ const duration = 30;
   transform: translateX(-50%);
   width: 80px;
   height: 4px;
-  background: linear-gradient(90deg, #ff4d4d, #ff8533);
+  background: linear-gradient(90deg, #FFA500, #FF8533);
   border-radius: 2px;
+  box-shadow: 0 2px 10px rgba(255, 165, 0, 0.3);
 }
 
 .sponsors-container {
   width: 100%;
+  max-width: 1200px;
   position: relative;
-  overflow: hidden;
-  background: transparent;
-  padding: 1rem 0;
-  margin: 0 auto;
+  overflow: visible;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  margin: 2rem auto;
+  border: 2px solid rgba(255, 165, 0, 0.4);
+  box-shadow: 0 15px 40px rgba(0, 35, 102, 0.3);
 }
 
 .sponsors-track {
@@ -115,6 +179,7 @@ const duration = 30;
   width: 100%;
   position: relative;
   justify-content: center;
+  align-items: center;
 }
 
 .sponsors-content {
@@ -122,6 +187,8 @@ const duration = 30;
   gap: 4rem;
   padding: 1rem 0;
   justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .sponsor-item {
@@ -133,13 +200,59 @@ const duration = 30;
   position: relative;
 }
 
+.sponsor-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
 .sponsor-inner {
   width: 100%;
   border-radius: 50%;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 12px 35px rgba(0, 35, 102, 0.3);
   position: relative;
   overflow: hidden;
   aspect-ratio: 1;
+  border: 4px solid #FFA500;
+  transition: all 0.4s ease;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.sponsor-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 35, 102, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+  color: #ffffff;
+  font-weight: 700;
+  gap: 0.5rem;
+}
+
+.sponsor-overlay i {
+  font-size: 1.5rem;
+  color: #FFA500;
+}
+
+.sponsor-overlay span {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.sponsor-link:hover .sponsor-overlay {
+  opacity: 1;
 }
 
 .sponsor-inner::after {
@@ -149,16 +262,27 @@ const duration = 30;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.7), transparent 70%);
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 165, 0, 0.3), transparent 70%);
   transform: translateX(-100%);
+  transition: transform 0.6s ease;
 }
 
 .sponsor-inner:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-15px);
+  box-shadow: 0 20px 50px rgba(0, 35, 102, 0.4);
+  border-color: #FF8533;
+  background: rgba(255, 255, 255, 1);
 }
 
-.sponsor-inner:hover::after {
+.sponsor-link:hover .sponsor-inner {
+  transform: translateY(-15px);
+  box-shadow: 0 20px 50px rgba(0, 35, 102, 0.4);
+  border-color: #FF8533;
+  background: rgba(255, 255, 255, 1);
+}
+
+.sponsor-inner:hover::after,
+.sponsor-link:hover .sponsor-inner::after {
   transform: translateX(100%);
 }
 
@@ -172,35 +296,120 @@ const duration = 30;
   transform: scale(1.02); /* Asegura que no haya bordes blancos */
 }
 
-.sponsor-inner:hover .sponsor-image {
+.sponsor-inner:hover .sponsor-image,
+.sponsor-link:hover .sponsor-image {
   transform: scale(1.05);
 }
 
 @media (max-width: 768px) {
+  .sponsors-wrapper {
+    padding: 3rem 1rem;
+  }
+
+  .sponsors-container {
+    padding: 2rem 1rem;
+    margin: 1.5rem auto;
+    border-radius: 15px;
+  }
+
+  .sponsors-content {
+    gap: 2rem;
+    padding: 1.5rem 0;
+  }
+
   .sponsor-item {
-    flex: 0 0 120px;
-    height: 120px;
+    flex: 0 0 150px;
+    height: 150px;
   }
   
   .sponsor-inner {
-    border: 2px solid rgba(0, 0, 0, 0.1);
-    width: 70%;
+    border: 3px solid #FFA500;
+    width: 100%;
+    box-shadow: 0 8px 25px rgba(0, 35, 102, 0.25);
+    background: rgba(255, 255, 255, 0.95);
   }
 
   .sponsor-image {
     padding: 0;
     object-position: center;
+    transform: scale(1.0);
+  }
+
+  .sponsor-overlay {
+    gap: 0.4rem;
+  }
+
+  .sponsor-overlay i {
+    font-size: 1.3rem;
+  }
+
+  .sponsor-overlay span {
+    font-size: 0.85rem;
+  }
+
+  .sponsors-title {
+    font-size: 2rem;
+    color: #002366;
+  }
+
+  .sponsors-subtitle {
+    font-size: 1rem;
+    color: #002366;
   }
 }
 
 @media (max-width: 480px) {
+  .sponsors-wrapper {
+    padding: 2.5rem 0.5rem;
+  }
+
+  .sponsors-container {
+    padding: 1.5rem 0.5rem;
+    margin: 1rem auto;
+    border-radius: 12px;
+  }
+
+  .sponsors-content {
+    gap: 1.5rem;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
   .sponsor-item {
-    flex: 0 0 70px;
-    height: 70px;
+    flex: 0 0 100px;
+    height: 100px;
   }
   
   .sponsor-inner {
-    border-width: 1px;
+    border-width: 3px;
+    border-color: #FFA500;
+    width: 100%;
+    box-shadow: 0 6px 20px rgba(0, 35, 102, 0.2);
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .sponsor-image {
+    transform: scale(1.0);
+  }
+
+  .sponsor-overlay i {
+    font-size: 1.1rem;
+  }
+
+  .sponsor-overlay span {
+    font-size: 0.75rem;
+  }
+
+  .sponsors-title {
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+    color: #002366;
+  }
+
+  .sponsors-subtitle {
+    font-size: 0.95rem;
+    color: #002366;
   }
 
   .sponsors-cta {
@@ -322,7 +531,7 @@ const duration = 30;
   text-align: center;
   margin-top: 3rem;
   padding: 2rem;
- 
+  backdrop-filter: blur(10px);
   border-radius: 12px;
   max-width: 600px;
   margin-left: auto;
@@ -331,10 +540,10 @@ const duration = 30;
 
 .sponsors-cta h3 {
   font-size: 2rem;
-  font-weight: 600;
-  color: black;
+  font-weight: 700;
+  color: #002366;
   margin-bottom: 1rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.3);
 }
 
 .sponsors-cta p {

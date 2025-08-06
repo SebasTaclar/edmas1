@@ -1,310 +1,445 @@
 <template>
-  <section class="events-section">
-    <div class="events-header">
-      <div class="icon-box">
-        <i class="fas fa-calendar"></i>
+  <section class="tournaments-section">
+    <div class="tournaments-header">
+      <div class="header-content">
+        
+        <div class="header-text">
+          <h2 class="section-title">Torneos Finalizados</h2>
+          <p class="section-subtitle">Celebrando nuestros campeones y momentos épicos</p>
+        </div>
       </div>
-      <h2 class="section-title">Historial de Eventos</h2>
     </div>
 
-    <div class="events-timeline">
-      <div class="event-card">
-        <div class="event-icon">
-          <i class="fas fa-trophy"></i>
+    <div class="tournaments-grid">
+      <div class="tournament-card featured">
+        <div class="card-background">
+          <div class="trophy-bg">🏆</div>
         </div>
-        <div class="event-content">
-          <h3>Final Copa Verano 2025</h3>
-          <div class="event-date">15 de Febrero 2025</div>
-          <p class="event-description">
-            Tigres FC se coronó campeón tras vencer 4-2 a Real Madrid en una final épica. 
-            Más de 200 espectadores presenciaron el encuentro.
+        <div class="card-content">
+          <div class="tournament-status">
+            <span class="status-badge completed">Finalizado</span>
+            <div class="tournament-date">15 Feb 2025</div>
+          </div>
+          <h3 class="tournament-title">Final Copa Verano 2025</h3>
+          <p class="tournament-description">
+            Una final épica donde Parcelona FC se coronó campeón.
           </p>
-          <div class="event-tags">
-            <span class="tag champion">🏆 Campeón: Tigres FC</span>
-            <span class="tag scorer">⚽ Goleador: Carlos Mendez (3 goles)</span>
+          <div class="tournament-stats">
+            <div class="stat-item">
+              <div class="stat-number">200+</div>
+              <div class="stat-label">Espectadores</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">8</div>
+              <div class="stat-label">Equipos</div>
+            </div>
+          </div>
+          <div class="tournament-highlights">
+            <div class="highlight champion">
+              <i class="fas fa-crown"></i>
+              <span>Campeón: Tigres FC</span>
+            </div>
+            <div class="highlight scorer">
+              <i class="fas fa-futbol"></i>
+              <span>Goleador: Carlos Mendez (3 goles)</span>
+            </div>
           </div>
         </div>
       </div>
-         
-         
 
+      <div class="tournament-card">
+        <div class="card-background">
+          <div class="trophy-bg">⚽</div>
         </div>
-        <button class="nav-button next" @click="scrollRight">&gt;</button>
-    
-    
-      <div class="event-card">
-        <div class="event-icon">
-          <i class="fas fa-users"></i>
-        </div>
-        <div class="event-content">
-          <h3>Torneo Apertura 2025</h3>
-          <div class="event-date">10 de Enero - 28 de Febrero 2025</div>
-          <p class="event-description">
-            16 equipos participaron en el torneo más competitivo del año. 
-            Barcelona 7 sorprendió llegando a semifinales como revelación.
+        <div class="card-content">
+          <div class="tournament-status">
+            <span class="status-badge completed">Finalizado</span>
+            <div class="tournament-date">28 Feb 2025</div>
+          </div>
+          <h3 class="tournament-title">Torneo Apertura 2025</h3>
+          <p class="tournament-description">
+            El torneo más competitivo del año con 16 equipos luchando por la gloria.
           </p>
-          <div class="event-tags">
-            <span class="tag teams">🏃 16 equipos</span>
-            <span class="tag matches">⚽ 45 partidos</span>
+          <div class="tournament-stats">
+            <div class="stat-item">
+              <div class="stat-number">16</div>
+              <div class="stat-label">Equipos</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">45</div>
+              <div class="stat-label">Partidos</div>
+            </div>
+          </div>
+          <div class="tournament-highlights">
+            <div class="highlight revelation">
+              <i class="fas fa-star"></i>
+              <span>Revelación: Barcelona 7</span>
+            </div>
+            <div class="highlight duration">
+              <i class="fas fa-calendar"></i>
+              <span>2 meses de competencia</span>
+            </div>
           </div>
         </div>
       </div>
-   
+
+      <div class="tournament-card">
+        <div class="card-background">
+          <div class="trophy-bg">🥇</div>
+        </div>
+        <div class="card-content">
+          <div class="tournament-status">
+            <span class="status-badge completed">Finalizado</span>
+            <div class="tournament-date">Dic 2024</div>
+          </div>
+          <h3 class="tournament-title">Copa de Navidad 2024</h3>
+          <p class="tournament-description">
+            Torneo especial navideño que reunió a las mejores promesas del fútbol local.
+          </p>
+          <div class="tournament-stats">
+            <div class="stat-item">
+              <div class="stat-number">12</div>
+              <div class="stat-label">Equipos</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">150</div>
+              <div class="stat-label">Asistentes</div>
+            </div>
+          </div>
+          <div class="tournament-highlights">
+            <div class="highlight special">
+              <i class="fas fa-gift"></i>
+              <span>Evento especial</span>
+            </div>
+            <div class="highlight family">
+              <i class="fas fa-heart"></i>
+              <span>Torneo familiar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
-
 </template>
 
 <script setup lang="ts">
-const openLightbox = (imagePath: string) => {
-  // Add lightbox functionality here
-  console.log('Opening lightbox for:', imagePath);
-};
-
-const scrollRight = () => {
-  const container = document.querySelector('.carousel-track');
-  if (container) {
-    container.scrollLeft += 300;
-  }
-};
+// Componente de torneos finalizados
+defineOptions({
+  name: 'TournamentsFinished'
+})
 </script>
 
 <style scoped>
-.events-section {
-  padding: 40px;
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: #1a2c38;
-  border-radius: 15px;
-}
-
-.events-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 3rem;
-  gap: 1rem;
-}
-
-.icon-box {
-  background-color: #00ff9d;
-  padding: 1rem;
-  border-radius: 12px;
-  color: #1a2c38;
-}
-
-.section-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #00ff9d;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.events-timeline {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.event-card {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 1.5rem;
-  display: flex;
-  gap: 1.5rem;
-  border-left: 4px solid #00ff9d;
-}
-
-.event-icon {
-  background-color: #00ff9d;
-  color: #1a2c38;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.event-content {
-  flex: 1;
-}
-
-.event-content h3 {
-  font-size: 1.5rem;
-  color: #ffffff;
-  margin: 0 0 0.5rem 0;
-}
-
-.event-date {
-  color: #00ff9d;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-}
-
-.event-description {
-  color: #a0aec0;
-  line-height: 1.6;
-  margin-bottom: 1rem;
-}
-
-.event-tags {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.tag {
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.tag.champion {
-  background-color: rgba(0, 255, 157, 0.1);
-  color: #00ff9d;
-  border: 1px solid rgba(0, 255, 157, 0.2);
-}
-
-.tag.scorer {
-  background-color: rgba(255, 171, 0, 0.1);
-  color: #ffab00;
-  border: 1px solid rgba(255, 171, 0, 0.2);
-}
-
-.nav-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.3);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.nav-dot:hover {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.nav-dot.active {
-  background: white;
-  transform: scale(1.2);
-}
-
-.carousel-container::-webkit-scrollbar {
-  display: none;
-}
-
-.carousel-track {
-  display: flex;
-  gap: 20px;
-  padding: 20px;
-  width: max-content;
-}
-
-.news-card {
+.tournaments-section {
+  padding: 5rem 2rem;
+  width: 100%;
+  background: linear-gradient(135deg, #002366 0%, #031633 50%, #002366 100%);
   position: relative;
-  cursor: pointer;
-  border-radius: 15px;
   overflow: hidden;
-  transition: all 0.4s ease;
-  height: 300px;
-  width: 280px;
-  flex: 0 0 auto;
-  background: #fff;
-  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
 }
 
-.news-card::before {
+.tournaments-section::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 100%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  z-index: 1;
-}
-
-.news-card:hover {
-  transform: translateY(-10px);
-}
-
-.news-card:hover::before {
-  opacity: 1;
-}
-
-.news-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
-.news-card:hover img {
-  transform: scale(1.1);
-}
-
-.news-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
   right: 0;
-  padding: 25px;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(255, 165, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 165, 0, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.tournaments-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  position: relative;
   z-index: 2;
-  transform: translateY(20px);
-  transition: transform 0.4s ease;
 }
 
-.news-card:hover .news-overlay {
-  transform: translateY(0);
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
 }
 
-.news-overlay p {
-  color: #fff;
+.icon-box {
+  background: linear-gradient(135deg, #FFA500, #FF8533);
+  padding: 1.5rem;
+  border-radius: 50%;
+  color: #002366;
+  font-size: 2rem;
+  box-shadow: 0 10px 30px rgba(255, 165, 0, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.header-text {
+  text-align: center;
+}
+
+.section-title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #ffffff, #FFA500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-subtitle {
   font-size: 1.2rem;
-  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
   margin: 0;
-  line-height: 1.4;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* Lightbox styles */
-.lightbox {
-  display: none;
-  position: fixed;
-  z-index: 999;
-  padding-top: 60px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.9);
+.tournaments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
 }
 
-.lightbox-content {
-  margin: auto;
-  display: block;
-  max-width: 80%;
-  max-height: 80%;
-}
-
-.close {
-  position: absolute;
-  top: 30px;
-  right: 45px;
-  color: #fff;
-  font-size: 40px;
-  font-weight: bold;
+.tournament-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 165, 0, 0.2);
+  transition: all 0.4s ease;
   cursor: pointer;
 }
+
+.tournament-card.featured {
+
+  border: 2px solid rgba(255, 165, 0, 0.4);
+  transform: scale(1.02);
+}
+
+.tournament-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(255, 165, 0, 0.2);
+  border-color: rgba(255, 165, 0, 0.5);
+}
+
+.card-background {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.trophy-bg {
+  font-size: 4rem;
+  transform: rotate(15deg);
+}
+
+.card-content {
+  position: relative;
+  z-index: 2;
+}
+
+.tournament-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.status-badge {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.tournament-date {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: rgba(0, 35, 102, 0.3);
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tournament-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.tournament-description {
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+.tournament-stats {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #FFA500;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 0.25rem;
+}
+
+.tournament-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.highlight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.highlight i {
+  width: 20px;
+  text-align: center;
+}
+
+.highlight.champion {
+  background: rgba(7, 7, 7, 0.404);
+  color: white;
+  border: 1px solid #a1b4d8;
+}
+
+.highlight.scorer {
+  background: rgba(7, 7, 7, 0.404);
+  color: white;
+  border: 1px solid #a1b4d8;
+}
+
+.highlight.revelation {
+  background: rgba(7, 7, 7, 0.404);
+  color: white;
+  border: 1px solid #a1b4d8;
+}
+
+.highlight.duration {
+  background: rgba(7, 7, 7, 0.404);
+  color: white;
+  border: 1px solid #a1b4d8;
+}
+
+.highlight.special {
+  background: rgba(7, 7, 7, 0.404); 
+  color: white;
+  border: 1px solid #a1b4d8;
+}
+
+.highlight.family {
+  background: rgba(7, 7, 7, 0.404);
+  color: white; 
+  border: 1px solid #a1b4d8;
+}
+
+.highlight:hover {
+  transform: translateX(5px);
+  opacity: 0.9;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tournaments-section {
+    padding: 3rem 1rem;
+  }
+  
+  .section-title {
+    font-size: 2.2rem;
+  }
+  
+  .tournaments-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .tournament-card {
+    padding: 1.5rem;
+  }
+  
+  .tournament-stats {
+    gap: 1rem;
+  }
+  
+  .header-content {
+    gap: 1rem;
+  }
+  
+  .icon-box {
+    padding: 1rem;
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-title {
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+  }
+  
+  .tournament-title {
+    font-size: 1.5rem;
+  }
+  
+  .tournament-stats {
+    justify-content: space-around;
+  }
+}
 </style>
+
