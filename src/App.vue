@@ -50,6 +50,9 @@
   </header>
 
   <RouterView />
+  
+  <!-- Botones flotantes de redes sociales -->
+  <SocialFloating />
 </template>
 
 <script setup lang="ts">
@@ -58,6 +61,7 @@ import { authService } from '@/services/api';
 import { onMounted, ref, watch } from 'vue';
 import router from './router';
 import ThemeToggle from '@/components/ThemeToggle.vue';
+import SocialFloating from '@/components/SocialFloating.vue';
 
 const isLoggedIn = ref(false);
 const username = ref('');

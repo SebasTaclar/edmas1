@@ -23,15 +23,24 @@
 
                 <div class="footer-section">
                     <h3>Síguenos</h3>
-                    <div class="social-links">
-                        <a href="https://facebook.com" class="social-link" target="_blank" rel="noopener">
-                            <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" width="24">
+                    <div class="social-cards">
+                        <a href="https://www.facebook.com/EDnoventamasuno" class="social-card facebook" target="_blank" rel="noopener">
+                            <div class="social-icon">
+                                <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" width="32">
+                            </div>
+                            <div class="social-info">
+                                <h4>Facebook</h4>
+                                <p>Síguenos en Facebook</p>
+                            </div>
                         </a>
-                        <a href="https://instagram.com" class="social-link" target="_blank" rel="noopener">
-                            <img src="https://cdn-icons-png.flaticon.com/512/3670/3670125.png" alt="Instagram" width="24">
-                        </a>
-                        <a href="https://twitter.com" class="social-link" target="_blank" rel="noopener">
-                            <img src="https://cdn-icons-png.flaticon.com/512/145/145807.png" alt="Twitter" width="24">
+                        <a href="https://www.instagram.com/ednoventamasuno/" class="social-card instagram" target="_blank" rel="noopener">
+                            <div class="social-icon">
+                                <img src="https://cdn-icons-png.flaticon.com/512/3670/3670125.png" alt="Instagram" width="32">
+                            </div>
+                            <div class="social-info">
+                                <h4>Instagram</h4>
+                                <p>Síguenos en Instagram</p>
+                            </div>
                         </a>
                     </div>
                 </div>
@@ -47,7 +56,7 @@
 <style scoped>
     /* FOOTER */
     .footer {
-        background: #031633;
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
         color: white;
         padding: 4rem 2rem 1rem;
     }
@@ -106,58 +115,77 @@
         color: #FFA500;
     }
 
-    .social-links {
+    .social-cards {
         display: flex;
-        gap: 1.5rem;
+        flex-direction: column;
+        gap: 1rem;
         margin-top: 1rem;
     }
 
-    .social-link {
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(145deg, #031f4d, #021326);
-        border-radius: 15px;
+    .social-card {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+    }
+
+    .social-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(5px);
+    }
+
+    .social-card.facebook {
+        border-left-color: #1877F2;
+    }
+
+    .social-card.facebook:hover {
+        box-shadow: 0 5px 15px rgba(24, 119, 242, 0.3);
+    }
+
+    .social-card.instagram {
+        border-left-color: #E4405F;
+    }
+
+    .social-card.instagram:hover {
+        box-shadow: 0 5px 15px rgba(228, 64, 95, 0.3);
+    }
+
+    .social-icon {
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 165, 0, 0.1);
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.3s ease;
-        box-shadow: 5px 5px 10px #021326,
-                   -5px -5px 10px #031f4d;
-        position: relative;
-        overflow: hidden;
+        margin-right: 1rem;
+        flex-shrink: 0;
     }
 
-    .social-link::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(45deg, #FFA500, #FF4500);
-        opacity: 0;
-        transition: opacity 0.3s ease;
+    .social-card.facebook .social-icon {
+        background: rgba(24, 119, 242, 0.1);
     }
 
-    .social-link:hover {
-        transform: translateY(-5px);
+    .social-card.instagram .social-icon {
+        background: rgba(228, 64, 95, 0.1);
     }
 
-    .social-link:hover::before {
-        opacity: 1;
+    .social-info h4 {
+        color: #ffffff;
+        font-size: 1rem;
+        margin: 0 0 0.25rem 0;
+        font-weight: 600;
     }
 
-    .social-link img {
-        width: 28px;
-        height: 28px;
-        filter: brightness(0) invert(1);
-        position: relative;
-        z-index: 1;
-        transition: transform 0.3s ease;
-    }
-
-    .social-link:hover img {
-        transform: scale(1.2);
+    .social-info p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.85rem;
+        margin: 0;
+        line-height: 1.2;
     }
 
     .footer-bottom {
@@ -181,8 +209,13 @@
             text-align: center;
         }
 
-        .social-links {
-            justify-content: center;
+        .social-cards {
+            align-items: center;
+        }
+
+        .social-card {
+            max-width: 300px;
+            margin: 0 auto;
         }
     }
 
