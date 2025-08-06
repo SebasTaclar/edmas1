@@ -86,7 +86,8 @@ import { useRouter } from 'vue-router';
 import { useCategories } from '@/composables/useCategories';
 import { useTournaments } from '@/composables/useTournaments';
 import { useTeams } from '@/composables/useTeams';
-import { getUserRole } from '@/utils/auth';
+import { usePlayers } from '@/composables/usePlayers';
+import { getUserRole, getUserTeamId } from '@/utils/auth';
 
 defineOptions({
   name: 'AdminView',
@@ -101,25 +102,16 @@ const userRole = ref<string | null>(getUserRole());
 const { categories, loadCategories } = useCategories();
 const { tournaments, loadTournaments } = useTournaments();
 const { teams, loadTeams } = useTeams();
+const { players, loadPlayersByTeam } = usePlayers();
 
 // Computed properties para estadísticas
 const teamsCount = computed(() => teams.value?.length || 0);
 const tournamentsCount = computed(() => tournaments.value?.length || 0);
-const activeTeamsCount = computed(() => teams.value?.filter(team => team.isActive)?.length || 0);
-const activeTournamentsCount = computed(() => tournaments.value?.filter(tournament => tournament.isActive)?.length || 0);
 const categoriesCount = computed(() => categories.value?.length || 0);
 
-// Para equipos: contador de jugadores (placeholder por ahora)
-const playersCount = computed(() => 0); // TODO: Implementar cuando tengamos el servicio de jugadores
-
-// Cálculo simple de registros totales (equipos * torneos promedio)
-const totalRegistrations = computed(() => {
-  return teams.value?.reduce((total, team) => total + (team.tournaments?.length || 0), 0) || 0;
-});
-
+const playersCount = computed(() => players.value?.length || 0);
 // Funciones
 const loadData = async () => {
-  // Solo cargar datos que el rol tiene permiso para ver
   if (userRole.value === 'admin') {
     await Promise.all([
       loadTeams(),
@@ -127,8 +119,10 @@ const loadData = async () => {
       loadCategories()
     ]);
   } else if (userRole.value === 'team') {
-    // Para equipos solo necesitamos cargar sus jugadores (cuando esté implementado)
-    // Por ahora no cargamos nada
+    const teamId = getUserTeamId();
+    if (teamId) {
+      await loadPlayersByTeam(teamId);
+    }
   }
 };
 

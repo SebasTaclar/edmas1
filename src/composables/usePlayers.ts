@@ -17,11 +17,18 @@ export function usePlayers() {
       loading.value = true
       error.value = null
 
+      console.log('Llamando a playerService.getPlayersByTeam...')
       const response = await playerService.getPlayersByTeam(teamId)
+
+      console.log('Respuesta del playerService:', response)
+
       players.value = response.data
+
+      console.log('Jugadores asignados a players.value:', players.value)
 
       return { success: true, message: 'Jugadores cargados exitosamente' }
     } catch (err) {
+      console.error('Error en loadPlayersByTeam:', err)
       const errorMessage =
         err instanceof Error ? err.message : 'Error desconocido al cargar jugadores'
       error.value = errorMessage

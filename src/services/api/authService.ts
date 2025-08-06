@@ -102,6 +102,7 @@ class AuthService {
    */
   getUserInfo(): DecodedToken | null {
     const userInfoStr = localStorage.getItem(this.USER_INFO_KEY)
+    console.log('Retrieved userInfo from localStorage:', userInfoStr)
     if (!userInfoStr) return null
 
     try {

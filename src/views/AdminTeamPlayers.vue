@@ -103,6 +103,7 @@ import { ref, onMounted, computed } from 'vue'
 import { usePlayers } from '@/composables/usePlayers'
 import { useTeams } from '@/composables/useTeams'
 import { getUserRole, getUserTeamId } from '@/utils/auth'
+import { authService } from '@/services/api'
 import type { Player } from '@/types/PlayerType'
 import type { Team } from '@/types/TeamType'
 import Spinner from '@/components/Spinner.vue'
@@ -152,12 +153,27 @@ onMounted(async () => {
   const userRole = getUserRole()
   const teamId = getUserTeamId()
 
+  console.log('=== DEBUG AdminTeamPlayers onMounted ===')
+  console.log('User Role:', userRole)
+  console.log('Team ID:', teamId)
+  console.log('User Info completa:', JSON.stringify(authService.getCurrentUser(), null, 2))
+
   // Solo cargar equipos una vez
   await loadTeams()
 
   // Si el usuario tiene rol 'team' y un teamId válido, cargar jugadores
   if (userRole === 'team' && teamId) {
-    await loadPlayersByTeam(teamId)
+    console.log('Cargando jugadores para equipo:', teamId)
+    const result = await loadPlayersByTeam(teamId)
+    if (!result.success) {
+      console.error('Error cargando jugadores:', result.message)
+    } else {
+      console.log('Jugadores cargados exitosamente:', result)
+    }
+  } else {
+    console.log('No se cumplen las condiciones para cargar jugadores:')
+    console.log('- userRole === "team":', userRole === 'team')
+    console.log('- teamId existe:', !!teamId)
   }
 })
 
