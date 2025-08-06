@@ -8,6 +8,7 @@ export interface LoginCredentials {
 
 export interface LoginResponse {
   token: string
+  user?: UserInfo | null
 }
 
 export interface DecodedToken {
@@ -18,6 +19,7 @@ export interface DecodedToken {
   membershipPaid: boolean
   iat: number
   exp: number
+  teamId?: number | null
 }
 
 export interface UserInfo {
@@ -26,6 +28,7 @@ export interface UserInfo {
   name: string
   role: string
   membershipPaid: boolean
+  teamId?: number | null
 }
 
 class AuthService {
@@ -165,6 +168,7 @@ class AuthService {
       name: userInfo.name,
       role: userInfo.role,
       membershipPaid: userInfo.membershipPaid,
+      teamId: userInfo.teamId || null,
     }
   }
 }

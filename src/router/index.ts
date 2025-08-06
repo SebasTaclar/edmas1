@@ -2,6 +2,15 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { authService } from '@/services/api'
 import Home from '@/views/Home.vue'
 
+declare module 'vue-router' {
+  interface RouteMeta {
+    requiresAuth?: boolean
+    requiresGuest?: boolean
+    requiredRole?: string
+    requiredRoles?: string[]
+  }
+}
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -24,7 +33,7 @@ const router = createRouter({
       component: () => import('../views/Admin.vue'),
       meta: {
         requiresAuth: true,
-        requiredRole: 'admin',
+        requiredRoles: ['admin', 'team'], // Permitir tanto admin como team
       },
     },
     {
@@ -54,6 +63,15 @@ const router = createRouter({
         requiredRole: 'admin',
       },
     },
+    {
+      path: '/admin/team-players',
+      name: 'admin-team-players',
+      component: () => import('../views/AdminTeamPlayers.vue'),
+      meta: {
+        requiresAuth: true,
+        requiredRole: 'team',
+      },
+    },
     // Catch-all route - debe ir al final
     {
       path: '/:pathMatch(.*)*',
@@ -79,6 +97,13 @@ router.beforeEach((to, from, next) => {
     // Verificar rol específico si se requiere
     if (to.meta.requiredRole && userRole !== to.meta.requiredRole) {
       // Redirigir a home si no tiene el rol requerido
+      next('/')
+      return
+    }
+
+    // Verificar múltiples roles si se requiere
+    if (to.meta.requiredRoles && (!userRole || !to.meta.requiredRoles.includes(userRole))) {
+      // Redirigir a home si no tiene ninguno de los roles requeridos
       next('/')
       return
     }

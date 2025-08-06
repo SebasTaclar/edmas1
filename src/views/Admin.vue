@@ -2,119 +2,80 @@
   <div class="admin-container">
     <div class="page-header">
       <h1>🛠️ MÓDULO ADMINISTRACIÓN</h1>
-      <p>Gestión completa del sistema Ed90+1 - Equipos y Torneos</p>
+      <p v-if="userRole === 'admin'">Gestión completa del sistema Ed90+1 - Equipos y Torneos</p>
+      <p v-else-if="userRole === 'team'">Gestión de tu equipo - Administra tus jugadores</p>
     </div>
 
     <div class="dashboard-grid">
-      <div class="card" @click="navigateTo('/admin/teams')">
-        <div class="card-header">
-          <h3>⚽ Administrar Equipos</h3>
-        </div>
-        <div class="card-content">
-          <div class="metric">
-            <span class="value">{{ teamsCount }}</span>
-            <span class="label">Equipos registrados</span>
+      <!-- Cards solo para administradores -->
+      <template v-if="userRole === 'admin'">
+        <div class="card" @click="navigateTo('/admin/teams')">
+          <div class="card-header">
+            <h3>⚽ Administrar Equipos</h3>
           </div>
-          <div class="admin-indicator teams"></div>
-          <div class="card-description">
-            <p>Crear, editar y gestionar equipos del sistema. Asignar torneos y controlar accesos.</p>
+          <div class="card-content">
+            <div class="metric">
+              <span class="value">{{ teamsCount }}</span>
+              <span class="label">Equipos registrados</span>
+            </div>
+            <div class="admin-indicator teams"></div>
+            <div class="card-description">
+              <p>Crear, editar y gestionar equipos del sistema. Asignar torneos y controlar accesos.</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="card" @click="navigateTo('/admin/tournaments')">
-        <div class="card-header">
-          <h3>🏆 Administrar Torneos</h3>
-        </div>
-        <div class="card-content">
-          <div class="metric">
-            <span class="value">{{ tournamentsCount }}</span>
-            <span class="label">Torneos activos</span>
+        <div class="card" @click="navigateTo('/admin/tournaments')">
+          <div class="card-header">
+            <h3>🏆 Administrar Torneos</h3>
           </div>
-          <div class="admin-indicator tournaments"></div>
-          <div class="card-description">
-            <p>Crear y gestionar torneos. Configurar categorías, fechas y reglas de participación.</p>
+          <div class="card-content">
+            <div class="metric">
+              <span class="value">{{ tournamentsCount }}</span>
+              <span class="label">Torneos activos</span>
+            </div>
+            <div class="admin-indicator tournaments"></div>
+            <div class="card-description">
+              <p>Crear y gestionar torneos. Configurar categorías, fechas y reglas de participación.</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="card" @click="navigateTo('/admin/categories')">
-        <div class="card-header">
-          <h3>🏷️ Administrar Categorías</h3>
-        </div>
-        <div class="card-content">
-          <div class="metric">
-            <span class="value">{{ categoriesCount }}</span>
-            <span class="label">Categorías disponibles</span>
+        <div class="card" @click="navigateTo('/admin/categories')">
+          <div class="card-header">
+            <h3>🏷️ Administrar Categorías</h3>
           </div>
-          <div class="admin-indicator categories"></div>
-          <div class="card-description">
-            <p>Crear y gestionar categorías para clasificar equipos según edad, género y nivel.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="card stats-card">
-        <div class="card-header">
-          <h3>📊 Estadísticas Generales</h3>
-        </div>
-        <div class="card-content">
-          <div class="stats-grid">
-            <div class="stat-item">
-              <span class="stat-value">{{ activeTeamsCount }}</span>
-              <span class="stat-label">Equipos Activos</span>
+          <div class="card-content">
+            <div class="metric">
+              <span class="value">{{ categoriesCount }}</span>
+              <span class="label">Categorías disponibles</span>
             </div>
-            <div class="stat-item">
-              <span class="stat-value">{{ activeTournamentsCount }}</span>
-              <span class="stat-label">Torneos Activos</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-value">{{ totalRegistrations }}</span>
-              <span class="stat-label">Registros Totales</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-value">{{ categoriesCount }}</span>
-              <span class="stat-label">Categorías</span>
+            <div class="admin-indicator categories"></div>
+            <div class="card-description">
+              <p>Crear y gestionar categorías para clasificar equipos según edad, género y nivel.</p>
             </div>
           </div>
         </div>
-      </div>
+      </template>
 
-      <div class="card activities-card">
-        <div class="card-header">
-          <h3>📋 Actividades Recientes</h3>
-        </div>
-        <div class="card-content">
-          <div class="activities-list">
-            <div class="activity-item">
-              <div class="activity-icon">⚽</div>
-              <div class="activity-content">
-                <h4>Nuevo Equipo Registrado</h4>
-                <p>Se registró un nuevo equipo en la categoría adultos</p>
-                <span class="activity-time">Hace 2 horas</span>
-              </div>
+      <!-- Card para equipos -->
+      <template v-if="userRole === 'team'">
+        <div class="card" @click="navigateTo('/admin/team-players')">
+          <div class="card-header">
+            <h3>👥 Administrar Jugadores</h3>
+          </div>
+          <div class="card-content">
+            <div class="metric">
+              <span class="value">{{ playersCount }}</span>
+              <span class="label">Jugadores registrados</span>
             </div>
-
-            <div class="activity-item">
-              <div class="activity-icon">🏆</div>
-              <div class="activity-content">
-                <h4>Torneo Creado</h4>
-                <p>Se creó el torneo "Copa Ed90+1 Verano 2025"</p>
-                <span class="activity-time">Ayer</span>
-              </div>
-            </div>
-
-            <div class="activity-item">
-              <div class="activity-icon">✅</div>
-              <div class="activity-content">
-                <h4>Equipo Activado</h4>
-                <p>Se activó el equipo "Los Leones FC"</p>
-                <span class="activity-time">Hace 3 días</span>
-              </div>
+            <div class="admin-indicator players"></div>
+            <div class="card-description">
+              <p>Gestiona los jugadores de tu equipo. Agrega información personal y fotos de identificación.</p>
             </div>
           </div>
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
@@ -125,12 +86,16 @@ import { useRouter } from 'vue-router';
 import { useCategories } from '@/composables/useCategories';
 import { useTournaments } from '@/composables/useTournaments';
 import { useTeams } from '@/composables/useTeams';
+import { getUserRole } from '@/utils/auth';
 
 defineOptions({
   name: 'AdminView',
 })
 
 const router = useRouter();
+
+// Obtener el rol del usuario
+const userRole = ref<string | null>(getUserRole());
 
 // Usar los composables
 const { categories, loadCategories } = useCategories();
@@ -144,6 +109,9 @@ const activeTeamsCount = computed(() => teams.value?.filter(team => team.isActiv
 const activeTournamentsCount = computed(() => tournaments.value?.filter(tournament => tournament.isActive)?.length || 0);
 const categoriesCount = computed(() => categories.value?.length || 0);
 
+// Para equipos: contador de jugadores (placeholder por ahora)
+const playersCount = computed(() => 0); // TODO: Implementar cuando tengamos el servicio de jugadores
+
 // Cálculo simple de registros totales (equipos * torneos promedio)
 const totalRegistrations = computed(() => {
   return teams.value?.reduce((total, team) => total + (team.tournaments?.length || 0), 0) || 0;
@@ -151,11 +119,17 @@ const totalRegistrations = computed(() => {
 
 // Funciones
 const loadData = async () => {
-  await Promise.all([
-    loadTeams(),
-    loadTournaments(),
-    loadCategories()
-  ]);
+  // Solo cargar datos que el rol tiene permiso para ver
+  if (userRole.value === 'admin') {
+    await Promise.all([
+      loadTeams(),
+      loadTournaments(),
+      loadCategories()
+    ]);
+  } else if (userRole.value === 'team') {
+    // Para equipos solo necesitamos cargar sus jugadores (cuando esté implementado)
+    // Por ahora no cargamos nada
+  }
 };
 
 const navigateTo = (path: string) => {
@@ -296,6 +270,10 @@ onMounted(() => {
 
 .admin-indicator.categories {
   background-color: #4caf50;
+}
+
+.admin-indicator.players {
+  background-color: #ff9800;
 }
 
 .card-description {
