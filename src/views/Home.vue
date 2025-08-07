@@ -3,17 +3,20 @@
     <section class="section">
       <MainBanner />
     </section>
-    <section class="section offset">
-      <TopPlayers />
-    </section>
-    <section class="section offset">
-      <CategoriesSection />
-    </section>
     <section id="ongoing_tournaments" class="section offset">
       <OngoingTournaments />
     </section>
+    <section class="section offset">
+      <TopTeams />
+    </section>
+    <section class="section offset">
+      <UpcomingTournaments />
+    </section>
+    <section class="section offset">
+      <TopPlayers />
+    </section>
     <section id="our_work" class="section offset">
-      <our_work />
+      <FinishedTournaments />
     </section>
     <section class="section offset">
       <Sponsors />
@@ -27,8 +30,10 @@
 <script setup lang="ts">
 import MainBanner from '@/components/MainBanner.vue';
 import TopPlayers from '@/components/TopPlayers.vue';
+import TopTeams from '@/components/TopTeams.vue';
 import OngoingTournaments from '@/components/OngoingTournaments.vue';
-import our_work from '@/components/our_work.vue';
+import UpcomingTournaments from '@/components/UpcomingTournaments.vue';
+import FinishedTournaments from '@/components/FinishedTournaments.vue';
 import Sponsors from '@/components/Sponsors.vue';
 import Footer_ from "@/components/Footer_.vue";
 

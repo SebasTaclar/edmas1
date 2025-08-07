@@ -19,7 +19,7 @@
 
       <!-- Controles de navegación desktop -->
       <div class="nav-controls desktop-nav">
-        <ThemeToggle />
+        <ThemeToggle v-if="route.name !== 'home' && route.path !== '/'" />
         <RouterLink v-if="isLoggedIn" class="link-navbar admin-link" to="/admin">Administración</RouterLink>
         <RouterLink v-if="!isLoggedIn" class="link-navbar access" to="/login">Acceder</RouterLink>
         <RouterLink v-if="isLoggedIn" @click="logout" class="link-navbar logout-btn" to="/">Cerrar sesión</RouterLink>
@@ -30,7 +30,7 @@
         <div class="mobile-menu-content">
           <!-- Controles mobile -->
           <div class="mobile-controls">
-            <ThemeToggle />
+            <ThemeToggle v-if="route.name !== 'home' && route.path !== '/'" />
             <RouterLink v-if="isLoggedIn" class="mobile-link admin-link" to="/admin" @click="closeMobileMenu">
               Administración
             </RouterLink>
@@ -50,7 +50,7 @@
   </header>
 
   <RouterView />
-  
+
   <!-- Botones flotantes de redes sociales -->
   <SocialFloating />
 </template>
@@ -95,11 +95,21 @@ const logout = () => {
 
 onMounted(() => {
   checkAuthStatus();
+  // Si estamos en home, forzar modo oscuro
+  if (route.name === 'home' || route.path === '/') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.setItem('theme', 'dark');
+  }
 });
 
 const route = useRoute();
 watch(route, () => {
   checkAuthStatus();
+  // Si navegamos a home, forzar modo oscuro
+  if (route.name === 'home' || route.path === '/') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.setItem('theme', 'dark');
+  }
 });
 </script>
 

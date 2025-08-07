@@ -2,7 +2,7 @@
   <section class="tournaments-section">
     <div class="tournaments-header">
       <div class="header-content">
-        
+
         <div class="header-text">
           <h2 class="section-title">Torneos Finalizados</h2>
           <p class="section-subtitle">Celebrando nuestros campeones y momentos épicos</p>
@@ -145,7 +145,7 @@ defineOptions({
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     radial-gradient(circle at 20% 20%, rgba(255, 165, 0, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(255, 165, 0, 0.08) 0%, transparent 50%);
   pointer-events: none;
@@ -378,14 +378,14 @@ defineOptions({
 }
 
 .highlight.special {
-  background: rgba(7, 7, 7, 0.404); 
+  background: rgba(7, 7, 7, 0.404);
   color: white;
   border: 1px solid #a1b4d8;
 }
 
 .highlight.family {
   background: rgba(7, 7, 7, 0.404);
-  color: white; 
+  color: white;
   border: 1px solid #a1b4d8;
 }
 
@@ -399,28 +399,28 @@ defineOptions({
   .tournaments-section {
     padding: 3rem 1rem;
   }
-  
+
   .section-title {
     font-size: 2.2rem;
   }
-  
+
   .tournaments-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  
+
   .tournament-card {
     padding: 1.5rem;
   }
-  
+
   .tournament-stats {
     gap: 1rem;
   }
-  
+
   .header-content {
     gap: 1rem;
   }
-  
+
   .icon-box {
     padding: 1rem;
     font-size: 1.5rem;
@@ -432,11 +432,11 @@ defineOptions({
     font-size: 1.8rem;
     letter-spacing: 2px;
   }
-  
+
   .tournament-title {
     font-size: 1.5rem;
   }
-  
+
   .tournament-stats {
     justify-content: space-around;
   }
