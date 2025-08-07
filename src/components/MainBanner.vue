@@ -30,8 +30,12 @@
         <!-- Sección de torneos destacados -->
         <div class="tournaments-section">
           <h3 class="tournaments-title">Partidos y sorteos</h3>
-          <div class="tournaments-carousel-container">
-            <div class="tournaments-carousel" :style="{ transform: `translateX(-${currentTournamentSlide * (100 / tournamentsPerView)}%)` }">
+          <div class="tournaments-carousel-container"
+               @touchstart="handleTouchStart"
+               @touchmove="handleTouchMove"
+               @touchend="handleTouchEnd">
+            <div class="tournaments-carousel" :style="{ transform: `translateX(-${currentTournamentSlide * (100 / tournamentsPerView)}%)` }"
+                 ref="tournamentsCarousel">
               <div class="tournament-card">
                 <div class="tournament-badge">
                   <span class="tournament-icon">🏆</span>
@@ -59,50 +63,15 @@
               <div class="tournament-card">
                 <div class="tournament-badge">
                   <span class="tournament-icon">⚽</span>
-                  <span class="tournament-league">UEFA Champions League</span>
+                  <span class="tournament-league">Próximos torneos</span>
                 </div>
                 <div class="tournament-info">
-                  <span class="tournament-time">4 ago • 5:00</span>
-                  <h4 class="tournament-name">Sorteo de los play-offs</h4>
+                  <span class="tournament-time">Seguimos participando</span>
+                  <h4 class="tournament-name">Revisa los torneos que tenemos disponibles</h4>
                 </div>
                 <button class="tournament-btn">Ver más detalles</button>
               </div>
 
-              <div class="tournament-card">
-                <div class="tournament-badge">
-                  <span class="tournament-icon">🏆</span>
-                  <span class="tournament-league">Copa Libertadores</span>
-                </div>
-                <div class="tournament-info">
-                  <span class="tournament-time">5 ago • 8:30</span>
-                  <h4 class="tournament-name">Semifinales</h4>
-                </div>
-                <button class="tournament-btn">Ver más detalles</button>
-              </div>
-
-              <div class="tournament-card">
-                <div class="tournament-badge">
-                  <span class="tournament-icon">⚽</span>
-                  <span class="tournament-league">Liga Bogotá</span>
-                </div>
-                <div class="tournament-info">
-                  <span class="tournament-time">6 ago • 4:00</span>
-                  <h4 class="tournament-name">Fecha 15</h4>
-                </div>
-                <button class="tournament-btn">Ver más detalles</button>
-              </div>
-
-              <div class="tournament-card">
-                <div class="tournament-badge">
-                  <span class="tournament-icon">🏆</span>
-                  <span class="tournament-league">Copa Nacional</span>
-                </div>
-                <div class="tournament-info">
-                  <span class="tournament-time">7 ago • 7:15</span>
-                  <h4 class="tournament-name">Cuartos de final</h4>
-                </div>
-                <button class="tournament-btn">Ver más detalles</button>
-              </div>
             </div>
 
             <!-- Controles del carrusel de torneos -->
@@ -158,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 
 // Configuración del carrusel principal
 const slides = ref([
@@ -189,8 +158,14 @@ let intervalId: number | null = null
 
 // Configuración del carrusel de torneos
 const currentTournamentSlide = ref(0)
-const totalTournaments = 6
+const totalTournaments = 3
 const windowWidth = ref(window.innerWidth)
+
+// Referencias para touch
+const tournamentsCarousel = ref<HTMLElement>()
+const touchStartX = ref(0)
+const touchEndX = ref(0)
+const isSwiping = ref(false)
 
 const tournamentsPerView = computed(() => {
   // En desktop mostrar 3, en tablet 2, en móvil 1
@@ -272,6 +247,38 @@ const scrollToTournaments = () => {
       block: 'start'
     })
   }
+}
+
+// Funciones para manejo táctil (solo en móviles)
+const handleTouchStart = (e: TouchEvent) => {
+  if (windowWidth.value >= 768) return // Solo en móviles
+  touchStartX.value = e.touches[0].clientX
+  isSwiping.value = true
+}
+
+const handleTouchMove = (e: TouchEvent) => {
+  if (windowWidth.value >= 768 || !isSwiping.value) return
+  e.preventDefault() // Prevenir scroll de la página
+}
+
+const handleTouchEnd = (e: TouchEvent) => {
+  if (windowWidth.value >= 768 || !isSwiping.value) return
+
+  touchEndX.value = e.changedTouches[0].clientX
+  const touchDiff = touchStartX.value - touchEndX.value
+  const minSwipeDistance = 50
+
+  if (Math.abs(touchDiff) > minSwipeDistance) {
+    if (touchDiff > 0) {
+      // Swipe left - siguiente
+      nextTournament()
+    } else {
+      // Swipe right - anterior
+      prevTournament()
+    }
+  }
+
+  isSwiping.value = false
 }
 
 onMounted(() => {
@@ -505,12 +512,14 @@ onUnmounted(() => {
   overflow: hidden;
   max-width: 1000px;
   margin: 0 auto;
+  padding: 0 10px;
 }
 
 .tournaments-carousel {
   display: flex;
   transition: transform 0.3s ease-in-out;
   gap: 1rem;
+  width: 100%;
 }
 
 .tournament-card {
@@ -803,9 +812,20 @@ onUnmounted(() => {
     text-align: center;
   }
 
+  .tournaments-carousel-container {
+    padding: 0 5px;
+    touch-action: pan-x;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tournaments-carousel {
+    gap: 0.75rem;
+  }
+
   .tournament-card {
-    flex: 0 0 100%;
+    flex: 0 0 calc(100% - 0.75rem);
     min-height: 140px;
+    margin: 0;
   }
 
   .tournaments-title {

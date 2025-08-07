@@ -236,9 +236,10 @@ onMounted(async () => {
 <style scoped>
 .categories-section {
   position: relative;
-  padding: 80px 0;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #f8f9fa 100%);
+  padding: 6rem 0;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   overflow: hidden;
+  color: white;
 }
 
 /* Background decorativo */
@@ -261,7 +262,7 @@ onMounted(async () => {
 .floating-shape {
   position: absolute;
   border-radius: 50%;
-  background: rgba(0, 123, 255, 0.03);
+  background: rgba(255, 193, 7, 0.08);
   animation: float 8s ease-in-out infinite;
 }
 
@@ -313,35 +314,32 @@ onMounted(async () => {
 .header-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  gap: 10px;
+  background: rgba(255, 193, 7, 0.15);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 123, 255, 0.2);
-  padding: 8px 20px;
-  border-radius: 25px;
-  color: #007bff;
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  padding: 12px 24px;
+  border-radius: 30px;
+  color: #FFC107;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px rgba(255, 193, 7, 0.2);
 }
 
 .section-header h2 {
-  font-size: 3rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: #212529;
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: white;
   line-height: 1.2;
-  background: linear-gradient(135deg, #007bff, #0056b3);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .section-subtitle {
-  font-size: 1.2rem;
-  color: #6c757d;
-  max-width: 600px;
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 700px;
   margin: 0 auto;
   line-height: 1.6;
 }
@@ -371,13 +369,14 @@ onMounted(async () => {
   position: relative;
   min-width: 300px;
   max-width: 300px;
-  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
   border-radius: 20px;
   padding: 2rem;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border: 2px solid transparent;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -385,8 +384,8 @@ onMounted(async () => {
 
 .category-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0, 123, 255, 0.15);
-  border-color: rgba(0, 123, 255, 0.3);
+  box-shadow: 0 20px 40px rgba(255, 193, 7, 0.15);
+  border-color: rgba(255, 193, 7, 0.3);
 }
 
 .card-glow {
@@ -396,7 +395,7 @@ onMounted(async () => {
   right: 0;
   bottom: 0;
   border-radius: 20px;
-  background: linear-gradient(45deg, #007bff, #FFC107);
+  background: linear-gradient(45deg, #FFC107, #FF8F00);
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: -1;
@@ -412,14 +411,14 @@ onMounted(async () => {
 .category-icon {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #007bff, #0056b3);
+  background: linear-gradient(135deg, #FFC107, #FF8F00);
   border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  color: white;
-  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.3);
+  color: #212529;
+  box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
   transition: transform 0.3s ease;
 }
 
@@ -431,13 +430,13 @@ onMounted(async () => {
 .category-content h3 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #212529;
+  color: white;
   margin: 0 0 0.5rem 0;
   line-height: 1.3;
 }
 
 .category-content p {
-  color: #6c757d;
+  color: rgba(255, 255, 255, 0.8);
   font-size: 1rem;
   line-height: 1.5;
   margin: 0 0 1rem 0;
@@ -454,7 +453,7 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   padding: 1rem;
-  background: rgba(0, 123, 255, 0.1);
+  background: rgba(255, 193, 7, 0.1);
   border-radius: 12px;
   flex: 1;
 }
@@ -462,13 +461,13 @@ onMounted(async () => {
 .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #007bff;
+  color: #FFC107;
   line-height: 1;
 }
 
 .stat-label {
   font-size: 0.8rem;
-  color: #6c757d;
+  color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
@@ -483,10 +482,10 @@ onMounted(async () => {
 .explore-btn {
   width: 100%;
   padding: 14px 20px;
-  background: linear-gradient(135deg, #007bff, #0056b3);
+  background: linear-gradient(135deg, #FFC107, #FF8F00);
   border: none;
   border-radius: 12px;
-  color: white;
+  color: #212529;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
@@ -516,7 +515,7 @@ onMounted(async () => {
 
 .explore-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+  box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
 }
 
 /* Controles de scroll */
@@ -599,7 +598,7 @@ onMounted(async () => {
 .loading-container {
   text-align: center;
   padding: 6rem 0;
-  color: #6c757d;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .modern-spinner {
@@ -626,7 +625,7 @@ onMounted(async () => {
   height: 60px;
   top: 10px;
   left: 10px;
-  border-top-color: #FFC107;
+  border-top-color: #FF8F00;
   animation-delay: -0.1s;
 }
 
@@ -635,7 +634,7 @@ onMounted(async () => {
   height: 40px;
   top: 20px;
   left: 20px;
-  border-top-color: #28a745;
+  border-top-color: white;
   animation-delay: -0.2s;
 }
 
@@ -647,7 +646,7 @@ onMounted(async () => {
 .error-container {
   text-align: center;
   padding: 6rem 0;
-  color: #6c757d;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .error-icon {
@@ -696,25 +695,25 @@ onMounted(async () => {
 .empty-icon {
   width: 100px;
   height: 100px;
-  background: rgba(0, 123, 255, 0.1);
+  background: rgba(255, 193, 7, 0.15);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 2rem;
-  color: #007bff;
+  color: #FFC107;
   font-size: 2.5rem;
-  border: 2px solid rgba(0, 123, 255, 0.2);
+  border: 2px solid rgba(255, 193, 7, 0.3);
 }
 
 .empty-state h3 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
-  color: #212529;
+  color: white;
 }
 
 .empty-state p {
-  color: #6c757d;
+  color: rgba(255, 255, 255, 0.8);
   line-height: 1.6;
 }
 

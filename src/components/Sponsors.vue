@@ -4,7 +4,7 @@
       <h2 class="sponsors-title">Nuestros Patrocinadores</h2>
       <p class="sponsors-subtitle">Orgullosos de contar con el apoyo de marcas líderes en el deporte</p>
     </div>
-    
+
     <div class="sponsors-container">
       <div class="sponsors-track">
         <div class="sponsors-content">
@@ -61,40 +61,26 @@ const duration = 30;
 
 <style scoped>
 .sponsors-wrapper {
-  background: linear-gradient(135deg, #a1b4d8 0%, #a1b4d8 50%, #002366 100%);
+  background: var(--bg-color);
   padding: 4rem 0;
   overflow: hidden;
   position: relative;
   margin: 0 auto;
   width: 100%;
+  color: var(--text-color);
 }
 
-.sponsors-wrapper::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 15% 25%, rgba(255, 165, 0, 0.15) 0%, transparent 45%),
-    radial-gradient(circle at 85% 75%, rgba(255, 165, 0, 0.12) 0%, transparent 45%),
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 60%),
-    linear-gradient(45deg, transparent 30%, rgba(255, 165, 0, 0.05) 50%, transparent 70%);
-  pointer-events: none;
-  animation: backgroundShift 15s ease-in-out infinite;
-}
 
 @keyframes backgroundShift {
-  0%, 100% { 
-    background: 
+  0%, 100% {
+    background:
       radial-gradient(circle at 15% 25%, rgba(255, 165, 0, 0.15) 0%, transparent 45%),
       radial-gradient(circle at 85% 75%, rgba(255, 165, 0, 0.12) 0%, transparent 45%),
       radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 60%),
       linear-gradient(45deg, transparent 30%, rgba(255, 165, 0, 0.05) 50%, transparent 70%);
   }
-  50% { 
-    background: 
+  50% {
+    background:
       radial-gradient(circle at 85% 25%, rgba(255, 165, 0, 0.12) 0%, transparent 45%),
       radial-gradient(circle at 15% 75%, rgba(255, 165, 0, 0.15) 0%, transparent 45%),
       radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 60%),
@@ -109,11 +95,11 @@ const duration = 30;
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(to right, 
-    transparent, 
-    rgba(255, 165, 0, 0.3), 
-    #FFA500, 
-    rgba(255, 165, 0, 0.3), 
+  background: linear-gradient(to right,
+    transparent,
+    rgba(255, 165, 0, 0.3),
+    #FFA500,
+    rgba(255, 165, 0, 0.3),
     transparent
   );
   box-shadow: 0 3px 15px rgba(255, 165, 0, 0.3);
@@ -128,50 +114,39 @@ const duration = 30;
 
 .sponsors-title {
   font-size: 2.5rem;
-  font-weight: 800;
-  color: #002366;
-  margin-bottom: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   text-transform: uppercase;
   letter-spacing: 2px;
-  text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.3);
   position: relative;
   display: inline-block;
 }
 
 .sponsors-subtitle {
-  color: #002366;
+  color: var(--text-secondary);
   font-size: 1.1rem;
   line-height: 1.6;
   margin: 0;
   font-weight: 500;
-  text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.2);
 }
 
-.sponsors-title::after {
-  content: '';
-  position: absolute;
-  bottom: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 4px;
-  background: linear-gradient(90deg, #FFA500, #FF8533);
-  border-radius: 2px;
-  box-shadow: 0 2px 10px rgba(255, 165, 0, 0.3);
-}
 
 .sponsors-container {
   width: 100%;
   max-width: 1200px;
   position: relative;
   overflow: visible;
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--bg-secondary);
   backdrop-filter: blur(15px);
   border-radius: 20px;
   padding: 3rem 2rem;
   margin: 2rem auto;
-  border: 2px solid rgba(255, 165, 0, 0.4);
-  box-shadow: 0 15px 40px rgba(0, 35, 102, 0.3);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 25px var(--shadow-primary);
 }
 
 .sponsors-track {
@@ -321,7 +296,7 @@ const duration = 30;
     flex: 0 0 150px;
     height: 150px;
   }
-  
+
   .sponsor-inner {
     border: 3px solid #FFA500;
     width: 100%;
@@ -349,12 +324,15 @@ const duration = 30;
 
   .sponsors-title {
     font-size: 2rem;
-    color: #002366;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .sponsors-subtitle {
     font-size: 1rem;
-    color: #002366;
+    color: var(--text-secondary);
   }
 }
 
@@ -380,7 +358,7 @@ const duration = 30;
     flex: 0 0 100px;
     height: 100px;
   }
-  
+
   .sponsor-inner {
     border-width: 3px;
     border-color: #FFA500;
@@ -404,12 +382,15 @@ const duration = 30;
   .sponsors-title {
     font-size: 1.8rem;
     letter-spacing: 1px;
-    color: #002366;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .sponsors-subtitle {
     font-size: 0.95rem;
-    color: #002366;
+    color: var(--text-secondary);
   }
 
   .sponsors-cta {
@@ -541,9 +522,8 @@ const duration = 30;
 .sponsors-cta h3 {
   font-size: 2rem;
   font-weight: 700;
-  color: #002366;
+  color: var(--text-color);
   margin-bottom: 1rem;
-  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.3);
 }
 
 .sponsors-cta p {
