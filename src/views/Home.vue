@@ -72,4 +72,17 @@ defineOptions({
   margin-top: -60px;
   /* Negative margin to offset the added padding */
 }
+
+/* Mobile adjustments for tournaments section */
+@media (max-width: 768px) {
+  .offset {
+    padding-top: 80px;
+    margin-top: -70px;
+  }
+  
+  #ongoing_tournaments {
+    padding-top: 90px;
+    margin-top: -80px;
+  }
+}
 </style>
