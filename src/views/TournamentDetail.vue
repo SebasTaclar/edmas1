@@ -462,18 +462,14 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useTournaments } from '@/composables/useTournaments'
+import { useTeams } from '@/composables/useTeams'
 import type { Tournament } from '@/types/TournamentType'
-
-// Definir el tipo de Team
-interface Team {
-  id: number
-  name: string
-  logoPath?: string
-}
+import type { Team } from '@/types/TeamType'
 
 const route = useRoute()
 const router = useRouter()
 const { tournaments, loading, error, loadTournaments } = useTournaments()
+const { teams, loadTeams } = useTeams()
 
 // Estado reactivo
 const activeSection = ref('inicio')
@@ -643,27 +639,82 @@ const loadTournamentData = async () => {
 
   if (tournament) {
     selectedTournament.value = tournament
-    // Aquí cargarías los equipos del torneo desde tu API
-    // Por ahora, usamos datos de ejemplo
-    loadMockTeams()
+    // Cargar equipos reales del torneo
+    await loadTournamentTeams()
   } else {
     // Si no se encuentra el torneo, redirigir al home
     router.push('/')
   }
 }
 
-// Cargar equipos de ejemplo (reemplazar con llamada real a la API)
+// Cargar equipos del torneo específico
+const loadTournamentTeams = async () => {
+  if (!selectedTournament.value) {
+    return
+  }
+
+  try {
+    // Asegurarse de que los equipos estén cargados
+    if (teams.value.length === 0) {
+      await loadTeams()
+    }
+
+    // Filtrar equipos que pertenezcan a este torneo específico
+    const tournamentId = selectedTournament.value.id
+    const teamsInTournament = teams.value.filter(team =>
+      team.tournaments.some(tournament => tournament.id === tournamentId)
+    )
+
+    tournamentTeams.value = teamsInTournament
+
+    console.log(`Equipos encontrados para el torneo ${selectedTournament.value.name}:`, teamsInTournament.length)
+  } catch (err) {
+    console.error('Error al cargar equipos del torneo:', err)
+    // En caso de error, usar equipos de ejemplo
+    loadMockTeams()
+  }
+}
+
+// Cargar equipos de ejemplo (como fallback)
 const loadMockTeams = () => {
+  console.warn('Usando equipos de ejemplo como fallback')
   tournamentTeams.value = [
-    { id: 1, name: 'Drink Team', logoPath: '/images/logo.png' },
-    { id: 2, name: 'Tecno Stop', logoPath: '/images/logo.png' },
-    { id: 3, name: 'Olympia FC', logoPath: '/images/logo.png' },
-    { id: 4, name: 'La Fábrica', logoPath: '/images/logo.png' },
-    { id: 5, name: 'La 12', logoPath: '/images/logo.png' },
-    { id: 6, name: 'Vodka Juniors', logoPath: '/images/logo.png' },
-    { id: 7, name: 'Torre Fuerte', logoPath: '/images/logo.png' },
-    { id: 8, name: 'Legion FC', logoPath: '/images/logo.png' },
-    { id: 9, name: 'Furano', logoPath: '/images/logo.png' }
+    {
+      id: 1,
+      name: 'Drink Team',
+      logoPath: '/images/logo.png',
+      userId: 1,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      user: { id: 1, email: 'test@test.com', name: 'Test User' },
+      teamTournaments: [],
+      tournaments: []
+    },
+    {
+      id: 2,
+      name: 'Tecno Stop',
+      logoPath: '/images/logo.png',
+      userId: 2,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      user: { id: 2, email: 'test2@test.com', name: 'Test User 2' },
+      teamTournaments: [],
+      tournaments: []
+    },
+    {
+      id: 3,
+      name: 'Olympia FC',
+      logoPath: '/images/logo.png',
+      userId: 3,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      user: { id: 3, email: 'test3@test.com', name: 'Test User 3' },
+      teamTournaments: [],
+      tournaments: []
+    }
   ]
 }
 
@@ -675,11 +726,479 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* ESTILOS BASE */
 .tournament-detail {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  color: #212529;
+  transition: all 0.3s ease;
+}
+
+/* MODO OSCURO - Compatible con ThemeToggle */
+[data-theme="dark"] .tournament-detail {
+  background: linear-gradient(135deg, #0d1421 0%, #1a2332 100%);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .tournament-navigation {
+  background: #1e293b;
+  border-bottom: 1px solid #475569;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Cards de navegación en dark mode */
+[data-theme="dark"] .nav-card {
+  background: linear-gradient(145deg, #1e293b 0%, #334155 100%);
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .nav-card:hover {
+  background: linear-gradient(145deg, #334155 0%, #1e293b 100%);
+  border-color: #3b82f6;
+}
+
+[data-theme="dark"] .nav-card.active {
+  background: linear-gradient(145deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+}
+
+/* Contenido de las tarjetas de navegación en dark mode */
+[data-theme="dark"] .nav-card-content h3 {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .nav-card-content p {
+  color: #cbd5e1 !important;
+}
+
+/* Contenido principal en dark mode */
+[data-theme="dark"] .tournament-main {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+/* Secciones en dark mode */
+[data-theme="dark"] .section-content {
+  background: transparent;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .section-header h2 {
+  color: #ffffff;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .section-description {
+  color: #cbd5e1;
+}
+
+/* Tarjetas generales en dark mode */
+[data-theme="dark"] .about-card,
+[data-theme="dark"] .contact-card,
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .schedule-container,
+[data-theme="dark"] .match-card,
+[data-theme="dark"] .team-card,
+[data-theme="dark"] .ranking-card {
+  background: linear-gradient(145deg, #1e293b 0%, #334155 100%);
+  border-color: #475569;
+  color: #e2e8f0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Títulos y textos en dark mode */
+[data-theme="dark"] .about-card h3,
+[data-theme="dark"] .contact-card h3,
+[data-theme="dark"] .stat-label,
+[data-theme="dark"] .match-team,
+[data-theme="dark"] .team-name,
+[data-theme="dark"] .ranking-team {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .detail-label,
+[data-theme="dark"] .detail-value,
+[data-theme="dark"] .stat-number {
+  color: #e2e8f0;
+}
+
+/* Botones en dark mode */
+[data-theme="dark"] .filter-btn {
+  background: #1e293b;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .filter-btn.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+[data-theme="dark"] .nav-scroll-btn,
+[data-theme="dark"] .theme-toggle-btn {
+  background: #1e293b;
+  border-color: #475569;
+  color: #4dabf7;
+}
+
+/* Hero section en dark mode */
+[data-theme="dark"] .tournament-hero {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+[data-theme="dark"] .hero-overlay {
+  background: linear-gradient(45deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.9) 100%);
+}
+
+[data-theme="dark"] .tournament-info-hero h1 {
+  color: #ffffff;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="dark"] .status-badge.live {
+  background: rgba(59, 130, 246, 0.9);
+  color: white;
+}
+
+[data-theme="dark"] .meta-item {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .progress-info {
+  color: #cbd5e1;
+}
+
+/* Elementos específicos adicionales en dark mode */
+[data-theme="dark"] .about-card-main {
+  background: linear-gradient(145deg, #1e293b 0%, #334155 100%);
+  border-color: #475569;
+  color: #e2e8f0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .about-card-main h3,
+[data-theme="dark"] .about-card-main h4 {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .about-card-main p,
+[data-theme="dark"] .about-card-main span {
+  color: #e2e8f0;
+}
+
+/* Tarjetas de equipos modernas en dark mode */
+[data-theme="dark"] .team-card-modern {
+  background: linear-gradient(145deg, #1e293b 0%, #334155 100%);
+  border-color: #475569;
+  color: #e2e8f0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .team-card-modern:hover {
+  background: linear-gradient(145deg, #334155 0%, #475569 100%);
+  border-color: #3b82f6;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+}
+
+[data-theme="dark"] .team-logo-modern {
+  border-color: #475569;
+  background: #0f172a;
+}
+
+[data-theme="dark"] .team-name-modern,
+[data-theme="dark"] .team-info-modern {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .team-stats-modern {
+  color: #cbd5e1;
+}
+
+/* Grid de equipos centrado */
+[data-theme="dark"] .teams-grid-centered {
+  background: transparent;
+}
+
+/* Textos generales faltantes */
+[data-theme="dark"] .detail-item {
+  background: #0f172a;
+  border-color: #475569;
+}
+
+[data-theme="dark"] .detail-item:hover {
+  background: #1e293b;
+}
+
+/* Títulos de secciones en dark mode */
+[data-theme="dark"] .section-header h2 {
+  color: #ffffff !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Cronograma y otras secciones - textos blancos */
+[data-theme="dark"] .schedule-container h3,
+[data-theme="dark"] .results-container h3,
+[data-theme="dark"] .classification-container h3,
+[data-theme="dark"] .rankings-container h3 {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .schedule-container p,
+[data-theme="dark"] .results-container p,
+[data-theme="dark"] .classification-container p,
+[data-theme="dark"] .rankings-container p {
+  color: #e2e8f0 !important;
+}
+
+/* Sección de contacto en dark mode */
+[data-theme="dark"] .contact-card h3,
+[data-theme="dark"] .contact-card h4 {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .contact-card p,
+[data-theme="dark"] .contact-card span,
+[data-theme="dark"] .contact-details {
+  color: #e2e8f0 !important;
+}
+
+/* Cifras y estadísticas - equipos participantes */
+[data-theme="dark"] .tournament-stats,
+[data-theme="dark"] .participant-count,
+[data-theme="dark"] .tournament-info {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .participant-count .number,
+[data-theme="dark"] .stats-number {
+  color: #3b82f6 !important;
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+/* Headers de tarjetas en dark mode */
+[data-theme="dark"] .about-header h3,
+[data-theme="dark"] .contact-header h3 {
+  color: #ffffff !important;
+}
+
+/* Todos los textos de labels en dark mode */
+[data-theme="dark"] .label,
+[data-theme="dark"] .title,
+[data-theme="dark"] .subtitle {
+  color: #ffffff !important;
+}
+
+/* Contact items en dark mode */
+[data-theme="dark"] .contact-item {
+  background: #0f172a;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .contact-item:hover {
+  background: #1e293b;
+  border-color: #3b82f6;
+}
+
+[data-theme="dark"] .contact-item h4,
+[data-theme="dark"] .contact-item .contact-title {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .contact-item p,
+[data-theme="dark"] .contact-item span,
+[data-theme="dark"] .contact-item .contact-value {
+  color: #e2e8f0 !important;
+}
+
+/* Stat mini en dark mode */
+[data-theme="dark"] .stat-mini {
+  background: linear-gradient(145deg, #1e293b 0%, #334155 100%);
+  border-color: #475569;
+  color: #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .stat-mini:hover {
+  background: linear-gradient(145deg, #334155 0%, #475569 100%);
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+[data-theme="dark"] .stat-mini .stat-number,
+[data-theme="dark"] .stat-mini .stat-value {
+  color: #3b82f6 !important;
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+}
+
+[data-theme="dark"] .stat-mini .stat-label,
+[data-theme="dark"] .stat-mini .stat-title {
+  color: #ffffff !important;
+}
+
+/* Classification legend en dark mode */
+[data-theme="dark"] .classification-legend {
+  background: linear-gradient(145deg, #1e293b 0%, #334155 100%);
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .classification-legend h4,
+[data-theme="dark"] .classification-legend .legend-title {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .classification-legend p,
+[data-theme="dark"] .classification-legend span,
+[data-theme="dark"] .classification-legend .legend-item {
+  color: #e2e8f0 !important;
+}
+
+/* Coming soon en dark mode */
+[data-theme="dark"] .coming-soon {
+  background: linear-gradient(145deg, #1e293b 0%, #334155 100%);
+  border-color: #475569;
+  color: #e2e8f0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .coming-soon h3,
+[data-theme="dark"] .coming-soon h4 {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .coming-soon p,
+[data-theme="dark"] .coming-soon span {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .coming-soon .icon,
+[data-theme="dark"] .coming-soon .emoji {
+  filter: brightness(1.2);
+}
+
+/* Tabla de clasificación completa en dark mode */
+[data-theme="dark"] .classification-table {
+  background: linear-gradient(145deg, #1e293b 0%, #334155 100%);
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .classification-table thead {
+  background: #0f172a;
+  border-bottom: 2px solid #475569;
+}
+
+[data-theme="dark"] .classification-table th {
+  color: #ffffff !important;
+  border-color: #475569;
+  background: #1e293b;
+}
+
+[data-theme="dark"] .classification-table td {
+  color: #e2e8f0 !important;
+  border-color: #475569;
+  background: transparent;
+}
+
+[data-theme="dark"] .classification-table tbody tr {
+  background: transparent;
+  border-bottom: 1px solid #475569;
+}
+
+[data-theme="dark"] .classification-table tbody tr:hover {
+  background: #334155;
+}
+
+[data-theme="dark"] .classification-table tbody tr:nth-child(even) {
+  background: rgba(15, 23, 42, 0.3);
+}
+
+[data-theme="dark"] .classification-table tbody tr:nth-child(even):hover {
+  background: #334155;
+}
+
+/* Posiciones y números en la tabla */
+[data-theme="dark"] .position-number,
+[data-theme="dark"] .team-position {
+  color: #3b82f6 !important;
+  font-weight: bold;
+}
+
+[data-theme="dark"] .team-name-table {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .team-stats-table {
+  color: #cbd5e1 !important;
+}
+
+/* Contenedor de clasificación */
+[data-theme="dark"] .classification-container {
+  background: transparent;
+}
+
+[data-theme="dark"] .classification-header {
+  color: #ffffff !important;
+}
+
+/* Tabla de clasificación en móvil - dark mode */
+@media (max-width: 768px) {
+  [data-theme="dark"] .classification-table {
+    border: 1px solid #475569;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  }
+
+  [data-theme="dark"] .classification-table th {
+    padding: 8px 4px;
+    font-size: 0.8rem;
+    border-right: 1px solid #475569;
+    text-align: center;
+  }
+
+  [data-theme="dark"] .classification-table th:last-child {
+    border-right: none;
+  }
+
+  [data-theme="dark"] .classification-table td {
+    padding: 10px 4px;
+    font-size: 0.85rem;
+    border-right: 1px solid #475569;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  [data-theme="dark"] .classification-table td:last-child {
+    border-right: none;
+  }
+
+  [data-theme="dark"] .classification-table tbody tr {
+    border-bottom: 1px solid #475569;
+  }
+
+  [data-theme="dark"] .classification-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  /* Texto más pequeño en móvil */
+  [data-theme="dark"] .team-name-table {
+    font-size: 0.8rem !important;
+    font-weight: 600;
+  }
+
+  [data-theme="dark"] .position-number {
+    font-size: 0.9rem !important;
+    font-weight: bold;
+  }
+
+  [data-theme="dark"] .team-stats-table {
+    font-size: 0.75rem !important;
+  }
 }
 
 /* Hero Section Mejorado */
@@ -870,10 +1389,13 @@ onMounted(async () => {
 .nav-cards-container {
   position: relative;
   padding: 2rem 0;
-  max-width: 100vw;
+  max-width: 1400px;
   margin: 0 auto;
   width: 100%;
   overflow: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .nav-cards-scroll {
@@ -882,6 +1404,10 @@ onMounted(async () => {
   overflow-x: auto;
   scroll-behavior: smooth;
   padding: 0.5rem 3rem;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
   scrollbar-width: none;
   -ms-overflow-style: none;
   justify-content: flex-start;
@@ -899,13 +1425,14 @@ onMounted(async () => {
   position: relative;
   min-width: 260px;
   max-width: 260px;
+  height: 160px; /* Altura fija para simetría */
   background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
   border-radius: 16px;
   padding: 1.75rem;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  border: 2px solid transparent;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 2px solid #dee2e6;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -915,7 +1442,7 @@ onMounted(async () => {
 .nav-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 12px 30px rgba(0, 123, 255, 0.15);
-  border-color: rgba(0, 123, 255, 0.2);
+  border-color: #007bff;
 }
 
 .nav-card.active {
@@ -969,12 +1496,25 @@ onMounted(async () => {
   transform: scale(1.1) rotate(5deg);
 }
 
+.nav-card-content {
+  flex: 1; /* Hace que ocupe el espacio disponible */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
 .nav-card-content h3 {
   font-size: 1rem;
   font-weight: 700;
   margin: 0 0 0.25rem 0;
   color: #212529;
   line-height: 1.3;
+  height: 2.6em; /* Altura fija para 2 líneas máximo */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .nav-card.active .nav-card-content h3 {
@@ -983,9 +1523,15 @@ onMounted(async () => {
 
 .nav-card-content p {
   font-size: 0.8rem;
-  color: #6c757d;
+  color: #f0f3f5;
   margin: 0;
   line-height: 1.4;
+  height: 2.8em; /* Altura fija para 2 líneas máximo */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .nav-card.active .nav-card-content p {
@@ -1021,8 +1567,8 @@ onMounted(async () => {
 .nav-scroll-btn {
   width: 44px;
   height: 44px;
-  background: white;
-  border: 2px solid #e9ecef;
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  border: 2px solid #dee2e6;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1056,6 +1602,33 @@ onMounted(async () => {
   margin-right: 10px;
 }
 
+/* Botón de toggle de tema */
+.theme-toggle-btn {
+  position: absolute;
+  top: -60px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  border: 2px solid #dee2e6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-size: 1.2rem;
+}
+
+.theme-toggle-btn:hover {
+  background: linear-gradient(145deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  border-color: #007bff;
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+}
+
 /* Contenido principal */
 .tournament-main {
   flex: 1;
@@ -1085,7 +1658,12 @@ onMounted(async () => {
 .section-content {
   width: 100%;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
 /* Layout centrado para sección inicio */
@@ -1399,8 +1977,9 @@ onMounted(async () => {
 }
 
 .section-header {
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
   text-align: center;
+  width: 100%;
 }
 
 .section-header h2 {
@@ -1422,10 +2001,14 @@ onMounted(async () => {
 
 /* Estilos para Cronograma */
 .schedule-container {
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px var(--shadow-color);
   overflow: hidden;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  border: 1px solid var(--border-color);
 }
 
 .schedule-filters {
@@ -1433,14 +2016,16 @@ onMounted(async () => {
   gap: 1rem;
   padding: 2rem 2rem 0;
   flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
 
 .filter-btn {
   padding: 12px 24px;
-  border: 2px solid #e9ecef;
-  background: white;
+  border: 2px solid var(--border-color);
+  background: var(--bg-card);
   border-radius: 25px;
-  color: #6c757d;
+  color: var(--text-secondary);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -1448,11 +2033,11 @@ onMounted(async () => {
 
 .filter-btn:hover,
 .filter-btn.active {
-  background: linear-gradient(135deg, #007bff, #0056b3);
-  border-color: #007bff;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-dark));
+  border-color: var(--accent-blue);
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 8px 20px var(--shadow-color);
 }
 
 .schedule-timeline {
@@ -1496,22 +2081,22 @@ onMounted(async () => {
   gap: 2rem;
   align-items: center;
   padding: 1.5rem;
-  background: #f8f9fa;
+  background: var(--bg-secondary);
   border-radius: 15px;
-  border: 2px solid transparent;
+  border: 2px solid var(--border-color);
   transition: all 0.3s ease;
 }
 
 .match-card:hover {
-  border-color: #007bff;
+  border-color: var(--accent-blue);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.1);
+  box-shadow: 0 8px 20px var(--shadow-color);
 }
 
 .match-time {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #007bff;
+  color: var(--accent-blue);
   min-width: 60px;
 }
 
@@ -1537,12 +2122,12 @@ onMounted(async () => {
 
 .team span {
   font-weight: 600;
-  color: #212529;
+  color: var(--text-primary);
 }
 
 .vs {
   font-weight: 700;
-  color: #6c757d;
+  color: var(--text-secondary);
   padding: 0 1rem;
 }
 
@@ -1900,18 +2485,19 @@ onMounted(async () => {
 }
 
 .team-card {
-  background: white;
+  background: var(--bg-card);
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--shadow-color);
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
+  border: 1px solid var(--border-color);
 }
 
 .team-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 25px var(--shadow-color);
 }
 
 .team-logo {
@@ -1920,7 +2506,7 @@ onMounted(async () => {
   margin: 0 auto 1rem;
   border-radius: 12px;
   overflow: hidden;
-  background: #f8f9fa;
+  background: var(--bg-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1935,7 +2521,7 @@ onMounted(async () => {
 .team-name {
   font-size: 1rem;
   font-weight: 600;
-  color: #212529;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -2014,6 +2600,7 @@ onMounted(async () => {
   .nav-card {
     min-width: 200px;
     max-width: 200px;
+    height: 140px; /* Altura fija para simetría en tablet */
     padding: 1.25rem;
   }
 
@@ -2024,11 +2611,12 @@ onMounted(async () => {
 
 @media (max-width: 768px) {
   .tournament-hero {
-    height: 300px;
+    height: 350px; /* Aumentado para compensar el padding */
   }
 
   .hero-content {
     padding: 1.5rem 1rem;
+    padding-top: 80px; /* Ajuste para el header fijo en móvil */
   }
 
   .tournament-logo-hero {
@@ -2105,10 +2693,12 @@ onMounted(async () => {
 
   .nav-card-content h3 {
     font-size: 1rem;
+    height: 2.2em; /* Ajustado para tablet */
   }
 
   .nav-card-content p {
     font-size: 0.8rem;
+    height: 2.4em; /* Ajustado para tablet */
   }
 
   .container {
@@ -2160,11 +2750,12 @@ onMounted(async () => {
 
 @media (max-width: 480px) {
   .tournament-hero {
-    height: 250px;
+    height: 320px; /* Aumentado para compensar el padding */
   }
 
   .hero-content {
     padding: 1rem;
+    padding-top: 90px; /* Más espacio en pantallas muy pequeñas */
     gap: 1.5rem;
   }
 
@@ -2189,6 +2780,7 @@ onMounted(async () => {
   .nav-card {
     min-width: 160px;
     max-width: 160px;
+    height: 120px; /* Altura fija para simetría en móvil */
     padding: 0.875rem;
   }
 
@@ -2200,10 +2792,12 @@ onMounted(async () => {
 
   .nav-card-content h3 {
     font-size: 0.9rem;
+    height: 2em; /* Ajustado para móvil pequeño */
   }
 
   .nav-card-content p {
     font-size: 0.75rem;
+    height: 2.2em; /* Ajustado para móvil pequeño */
   }
 
   .stats-grid {

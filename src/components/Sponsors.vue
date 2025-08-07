@@ -45,7 +45,6 @@
       </div>
     </div>
     <div class="sponsors-cta">
-      <h3>Únete a Nosotros</h3>
     </div>
   </section>
 </template>
@@ -74,17 +73,15 @@ const duration = 30;
 @keyframes backgroundShift {
   0%, 100% {
     background:
-      radial-gradient(circle at 15% 25%, rgba(255, 165, 0, 0.15) 0%, transparent 45%),
-      radial-gradient(circle at 85% 75%, rgba(255, 165, 0, 0.12) 0%, transparent 45%),
-      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 60%),
-      linear-gradient(45deg, transparent 30%, rgba(255, 165, 0, 0.05) 50%, transparent 70%);
+      radial-gradient(circle at 15% 25%, rgba(59, 130, 246, 0.08) 0%, transparent 45%),
+      radial-gradient(circle at 85% 75%, rgba(59, 130, 246, 0.06) 0%, transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 60%);
   }
   50% {
     background:
-      radial-gradient(circle at 85% 25%, rgba(255, 165, 0, 0.12) 0%, transparent 45%),
-      radial-gradient(circle at 15% 75%, rgba(255, 165, 0, 0.15) 0%, transparent 45%),
-      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 60%),
-      linear-gradient(-45deg, transparent 30%, rgba(255, 165, 0, 0.05) 50%, transparent 70%);
+      radial-gradient(circle at 85% 25%, rgba(59, 130, 246, 0.06) 0%, transparent 45%),
+      radial-gradient(circle at 15% 75%, rgba(59, 130, 246, 0.08) 0%, transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 60%);
   }
 }
 
@@ -97,12 +94,12 @@ const duration = 30;
   height: 3px;
   background: linear-gradient(to right,
     transparent,
-    rgba(255, 165, 0, 0.3),
-    #FFA500,
-    rgba(255, 165, 0, 0.3),
+    rgba(59, 130, 246, 0.3),
+    var(--primary-blue),
+    rgba(59, 130, 246, 0.3),
     transparent
   );
-  box-shadow: 0 3px 15px rgba(255, 165, 0, 0.3);
+  box-shadow: 0 3px 15px rgba(59, 130, 246, 0.3);
 }
 
 .sponsors-header {
@@ -113,17 +110,18 @@ const duration = 30;
 }
 
 .sponsors-title {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.8rem;
   background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   position: relative;
   display: inline-block;
+  line-height: 1.2;
 }
 
 .sponsors-subtitle {
@@ -190,7 +188,7 @@ const duration = 30;
   position: relative;
   overflow: hidden;
   aspect-ratio: 1;
-  border: 4px solid #FFA500;
+  border: 4px solid var(--primary-blue);
   transition: all 0.4s ease;
   cursor: pointer;
   background: rgba(255, 255, 255, 0.9);
@@ -217,7 +215,7 @@ const duration = 30;
 
 .sponsor-overlay i {
   font-size: 1.5rem;
-  color: #FFA500;
+  color: var(--primary-blue);
 }
 
 .sponsor-overlay span {
@@ -237,7 +235,7 @@ const duration = 30;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(120deg, transparent 30%, rgba(255, 165, 0, 0.3), transparent 70%);
+  background: linear-gradient(120deg, transparent 30%, rgba(59, 130, 246, 0.3), transparent 70%);
   transform: translateX(-100%);
   transition: transform 0.6s ease;
 }
@@ -245,14 +243,14 @@ const duration = 30;
 .sponsor-inner:hover {
   transform: translateY(-15px);
   box-shadow: 0 20px 50px rgba(0, 35, 102, 0.4);
-  border-color: #FF8533;
+  border-color: var(--secondary-blue);
   background: rgba(255, 255, 255, 1);
 }
 
 .sponsor-link:hover .sponsor-inner {
   transform: translateY(-15px);
   box-shadow: 0 20px 50px rgba(0, 35, 102, 0.4);
-  border-color: #FF8533;
+  border-color: var(--secondary-blue);
   background: rgba(255, 255, 255, 1);
 }
 
@@ -298,7 +296,7 @@ const duration = 30;
   }
 
   .sponsor-inner {
-    border: 3px solid #FFA500;
+    border: 3px solid var(--primary-blue);
     width: 100%;
     box-shadow: 0 8px 25px rgba(0, 35, 102, 0.25);
     background: rgba(255, 255, 255, 0.95);
@@ -361,7 +359,7 @@ const duration = 30;
 
   .sponsor-inner {
     border-width: 3px;
-    border-color: #FFA500;
+    border-color: var(--primary-blue);
     width: 100%;
     box-shadow: 0 6px 20px rgba(0, 35, 102, 0.2);
     background: rgba(255, 255, 255, 0.9);
@@ -528,22 +526,22 @@ const duration = 30;
 
 .sponsors-cta p {
   font-size: 1.1rem;
-  color: #FFA500;
+  color: var(--primary-blue);
   margin: 0;
   cursor: pointer;
   display: inline-block;
   padding: 0.5rem 1.5rem;
-  border: 2px solid #FFA500;
+  border: 2px solid var(--primary-blue);
   border-radius: 25px;
   transition: all 0.3s ease;
   font-weight: 500;
 }
 
 .sponsors-cta p:hover {
-  background: #FFA500;
+  background: var(--primary-blue);
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 165, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 @media (max-width: 1024px) {

@@ -19,7 +19,7 @@
 
       <!-- Controles de navegación desktop -->
       <div class="nav-controls desktop-nav">
-        <ThemeToggle v-if="route.name !== 'home' && route.path !== '/'" />
+        <ThemeToggle />
         <RouterLink v-if="isLoggedIn" class="link-navbar admin-link" to="/admin">Administración</RouterLink>
         <RouterLink v-if="!isLoggedIn" class="link-navbar access" to="/login">Acceder</RouterLink>
         <RouterLink v-if="isLoggedIn" @click="logout" class="link-navbar logout-btn" to="/">Cerrar sesión</RouterLink>
@@ -30,7 +30,7 @@
         <div class="mobile-menu-content">
           <!-- Controles mobile -->
           <div class="mobile-controls">
-            <ThemeToggle v-if="route.name !== 'home' && route.path !== '/'" />
+            <ThemeToggle />
             <RouterLink v-if="isLoggedIn" class="mobile-link admin-link" to="/admin" @click="closeMobileMenu">
               Administración
             </RouterLink>
