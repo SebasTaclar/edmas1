@@ -34,7 +34,7 @@
                @touchstart="handleTouchStart"
                @touchmove="handleTouchMove"
                @touchend="handleTouchEnd">
-            <div class="tournaments-carousel" :style="{ transform: `translateX(-${currentTournamentSlide * (100 / tournamentsPerView)}%)` }"
+            <div class="tournaments-carousel" :style="{ transform: `translateX(-${currentTournamentSlide * 100}%)` }"
                  ref="tournamentsCarousel">
               <div class="tournament-card">
                 <div class="tournament-badge">
@@ -813,19 +813,20 @@ onUnmounted(() => {
   }
 
   .tournaments-carousel-container {
-    padding: 0 5px;
+    padding: 0 3rem;
     touch-action: pan-x;
     -webkit-overflow-scrolling: touch;
   }
 
   .tournaments-carousel {
-    gap: 0.75rem;
+    gap: 0;
+    justify-content: flex-start;
   }
 
   .tournament-card {
-    flex: 0 0 calc(100% - 0.75rem);
+    flex: 0 0 90%;
     min-height: 140px;
-    margin: 0;
+    margin: 0 5%;
   }
 
   .tournaments-title {
@@ -845,11 +846,11 @@ onUnmounted(() => {
   }
 
   .tournament-carousel-control.prev {
-    left: -15px;
+    left: 0.5rem;
   }
 
   .tournament-carousel-control.next {
-    right: -15px;
+    right: 0.5rem;
   }
 
   .tournament-carousel-control svg {

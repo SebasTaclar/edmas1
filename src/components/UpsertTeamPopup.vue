@@ -1,9 +1,9 @@
 <template>
-  <div class="modal-overlay" @click="$emit('close')">
+  <div class="modal-overlay" @click="handleOverlayClick">
     <div class="modal upsert-team-modal" @click.stop>
       <div class="modal-header">
         <h3>{{ mode === 'create' ? 'Crear Nuevo Equipo' : 'Editar Equipo' }}</h3>
-        <button @click="$emit('close')" class="close-btn">×</button>
+        <button @click="handleCloseClick" class="close-btn">×</button>
       </div>
 
       <div class="modal-body">
@@ -172,7 +172,7 @@
 
           <!-- Botones de acción -->
           <div class="form-actions">
-            <button type="button" @click="$emit('close')" class="btn-secondary">
+            <button type="button" @click="handleCloseClick" class="btn-secondary">
               Cancelar
             </button>
             <button type="submit" :disabled="loading || !isFormValid" class="btn-primary">
@@ -182,6 +182,11 @@
         </form>
       </div>
     </div>
+
+    <!-- Confirmation Modal -->
+    <ConfirmationModal v-if="showConfirmation" title="¿Descartar cambios?"
+      message="¿Estás seguro de que deseas cerrar el formulario? Los cambios no guardados se perderán."
+      confirm-text="Descartar" cancel-text="Continuar editando" @confirm="confirmClose" @cancel="cancelClose" />
   </div>
 </template>
 
@@ -191,6 +196,7 @@ import { useTeams } from '@/composables/useTeams'
 import { useTournaments } from '@/composables/useTournaments'
 import type { Team, CreateTeamRequest, UpdateTeamRequest } from '@/types/TeamType'
 import type { Tournament } from '@/types/TournamentType'
+import ConfirmationModal from '@/components/ConfirmationModal.vue'
 
 interface Props {
   teamData?: Team | null
@@ -227,8 +233,22 @@ const formData = ref<CreateTeamRequest>({
 
 const errors = ref<Record<string, string>>({})
 
-// Computed
-const availableTournaments = computed(() => tournaments.value || [])
+// Variables para confirmación de cambios
+const showConfirmation = ref(false)
+const initialFormData = ref<string>('')
+const availableTournaments = computed(() => {
+  const now = new Date()
+  return (tournaments.value || []).filter(tournament => {
+    const endDate = new Date(tournament.endDate)
+    // Solo mostrar torneos que no hayan terminado (vigentes o futuros)
+    return endDate >= now
+  })
+})
+
+// Computed para detectar cambios
+const hasChanges = computed(() => {
+  return JSON.stringify(formData.value) !== initialFormData.value
+})
 
 const isFormValid = computed(() => {
   if (props.mode === 'create') {
@@ -378,6 +398,9 @@ const loadFormData = () => {
   } else {
     resetForm()
   }
+
+  // Guardar estado inicial para detectar cambios
+  initialFormData.value = JSON.stringify(formData.value)
 }
 
 const handleSubmit = async () => {
@@ -434,6 +457,35 @@ const handleSubmit = async () => {
     console.error('Error saving team:', error)
     errors.value.general = 'Error interno del sistema'
   }
+}
+
+// Funciones de confirmación de cambios
+const handleOverlayClick = (event: MouseEvent) => {
+  // Solo cerrar si el click fue exactamente en el overlay, no en sus elementos hijos
+  if (event.target === event.currentTarget) {
+    if (hasChanges.value) {
+      showConfirmation.value = true
+    } else {
+      emit('close')
+    }
+  }
+}
+
+const handleCloseClick = () => {
+  if (hasChanges.value) {
+    showConfirmation.value = true
+  } else {
+    emit('close')
+  }
+}
+
+const confirmClose = () => {
+  showConfirmation.value = false
+  emit('close')
+}
+
+const cancelClose = () => {
+  showConfirmation.value = false
 }
 
 // Watchers

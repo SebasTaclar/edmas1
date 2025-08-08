@@ -228,6 +228,10 @@ const clearFilters = () => {
 // Función para navegar al detalle del torneo
 const goToTournamentDetail = (tournament: Tournament) => {
   router.push(`/tournament/${tournament.id}`)
+  // Desplazar al top después de navegar
+  setTimeout(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, 100)
 }
 
 // Función para manejar errores de imagen
