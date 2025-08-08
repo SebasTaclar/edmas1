@@ -3,7 +3,7 @@
     <div class="modal tournament-modal" @click.stop>
       <div class="modal-header">
         <h3>{{ mode === 'create' ? 'Crear Nuevo Torneo' : 'Editar Torneo' }}</h3>
-        <button @click="handleOverlayClick" class="close-btn">×</button>
+        <button @click="handleCloseClick" class="close-btn">×</button>
       </div>
 
       <form @submit.prevent="handleSubmit" class="modal-body">
@@ -339,7 +339,18 @@ const handleSubmit = async () => {
   }
 }
 
-const handleOverlayClick = () => {
+const handleOverlayClick = (event: MouseEvent) => {
+  // Solo cerrar si el click fue exactamente en el overlay, no en sus elementos hijos
+  if (event.target === event.currentTarget) {
+    if (hasChanges.value) {
+      showConfirmation.value = true
+    } else {
+      emit('close')
+    }
+  }
+}
+
+const handleCloseClick = () => {
   if (hasChanges.value) {
     showConfirmation.value = true
   } else {
@@ -447,7 +458,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9000;
   overflow-y: auto;
   padding: 1rem;
 }

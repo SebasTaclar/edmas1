@@ -720,6 +720,9 @@ const loadMockTeams = () => {
 
 // Montar componente
 onMounted(async () => {
+  // Scroll to top para navegación móvil
+  window.scrollTo({top: 0, behavior: 'smooth'})
+
   await loadTournaments()
   await loadTournamentData()
 })
@@ -734,6 +737,7 @@ onMounted(async () => {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   color: #212529;
   transition: all 0.3s ease;
+  padding-top: 60px; /* Compensar header fijo en desktop */
 }
 
 /* MODO OSCURO - Compatible con ThemeToggle */
@@ -1425,7 +1429,6 @@ onMounted(async () => {
   position: relative;
   min-width: 260px;
   max-width: 260px;
-  height: 160px; /* Altura fija para simetría */
   background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
   border-radius: 16px;
   padding: 1.75rem;
@@ -1496,25 +1499,12 @@ onMounted(async () => {
   transform: scale(1.1) rotate(5deg);
 }
 
-.nav-card-content {
-  flex: 1; /* Hace que ocupe el espacio disponible */
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
 .nav-card-content h3 {
   font-size: 1rem;
   font-weight: 700;
   margin: 0 0 0.25rem 0;
   color: #212529;
   line-height: 1.3;
-  height: 2.6em; /* Altura fija para 2 líneas máximo */
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
 }
 
 .nav-card.active .nav-card-content h3 {
@@ -1526,12 +1516,6 @@ onMounted(async () => {
   color: #f0f3f5;
   margin: 0;
   line-height: 1.4;
-  height: 2.8em; /* Altura fija para 2 líneas máximo */
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
 }
 
 .nav-card.active .nav-card-content p {
@@ -2600,7 +2584,6 @@ onMounted(async () => {
   .nav-card {
     min-width: 200px;
     max-width: 200px;
-    height: 140px; /* Altura fija para simetría en tablet */
     padding: 1.25rem;
   }
 
@@ -2610,13 +2593,16 @@ onMounted(async () => {
 }
 
 @media (max-width: 768px) {
+  .tournament-detail {
+    padding-top: 70px; /* Compensar header fijo en móvil */
+  }
+
   .tournament-hero {
-    height: 350px; /* Aumentado para compensar el padding */
+    height: 300px;
   }
 
   .hero-content {
     padding: 1.5rem 1rem;
-    padding-top: 80px; /* Ajuste para el header fijo en móvil */
   }
 
   .tournament-logo-hero {
@@ -2693,12 +2679,10 @@ onMounted(async () => {
 
   .nav-card-content h3 {
     font-size: 1rem;
-    height: 2.2em; /* Ajustado para tablet */
   }
 
   .nav-card-content p {
     font-size: 0.8rem;
-    height: 2.4em; /* Ajustado para tablet */
   }
 
   .container {
@@ -2750,12 +2734,11 @@ onMounted(async () => {
 
 @media (max-width: 480px) {
   .tournament-hero {
-    height: 320px; /* Aumentado para compensar el padding */
+    height: 250px;
   }
 
   .hero-content {
     padding: 1rem;
-    padding-top: 90px; /* Más espacio en pantallas muy pequeñas */
     gap: 1.5rem;
   }
 
@@ -2780,7 +2763,6 @@ onMounted(async () => {
   .nav-card {
     min-width: 160px;
     max-width: 160px;
-    height: 120px; /* Altura fija para simetría en móvil */
     padding: 0.875rem;
   }
 
@@ -2792,12 +2774,10 @@ onMounted(async () => {
 
   .nav-card-content h3 {
     font-size: 0.9rem;
-    height: 2em; /* Ajustado para móvil pequeño */
   }
 
   .nav-card-content p {
     font-size: 0.75rem;
-    height: 2.2em; /* Ajustado para móvil pequeño */
   }
 
   .stats-grid {

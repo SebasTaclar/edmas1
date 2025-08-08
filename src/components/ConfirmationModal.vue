@@ -1,6 +1,6 @@
 <template>
-  <div class="confirmation-overlay" @click.self="handleOverlayClick">
-    <div class="confirmation-modal">
+  <div class="confirmation-overlay" @click="handleOverlayClick">
+    <div class="confirmation-modal" @click.stop>
       <div class="confirmation-icon">
         <div class="warning-icon">⚠️</div>
       </div>
@@ -109,7 +109,7 @@ const handleOverlayClick = () => {
 
 .warning-icon {
   font-size: 3rem;
-  filter: drop-shadow(0 2px 8px rgba(255, 193, 7, 0.3));
+  filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.3));
   animation: pulse 2s infinite;
 }
 
@@ -175,16 +175,16 @@ const handleOverlayClick = () => {
 }
 
 .btn-warning {
-  background: linear-gradient(135deg, rgba(255, 193, 7, 0.9), rgba(255, 152, 0, 0.9));
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(96, 165, 250, 0.9));
   color: white;
-  border: 1px solid rgba(255, 193, 7, 0.3);
-  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
 }
 
 .btn-warning:hover {
-  background: linear-gradient(135deg, rgba(255, 193, 7, 1), rgba(255, 152, 0, 1));
+  background: linear-gradient(135deg, rgba(59, 130, 246, 1), rgba(96, 165, 250, 1));
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
 
 /* Responsive */
